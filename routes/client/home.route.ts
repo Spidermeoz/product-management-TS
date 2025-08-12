@@ -1,8 +1,9 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
+
+import * as controller from "../../controllers/client/home.controller";
+
 const router: Router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
-  res.render("client/pages/home/index");
-});
+router.get("/", controller.index);
 
 export const homeRoutes: Router = router;
