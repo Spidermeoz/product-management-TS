@@ -24,44 +24,21 @@ block main
                             li(data-filter=".lemon") Chanh
 
             .row.product-lists
-                .col-lg-4.col-md-6.text-center.strawberry
-                    .single-product-item
-                        .product-image
-                            a(href="product_1.html")
-                                img(src="/img/products/product-img-1.jpg", alt="")
-                        h3 Dâu Tây
-                        p.product-price
-                            span Giá mỗi Kg
-                            |  85$
-                        a.cart-btn(href="/cart")
-                            i.fas.fa-shopping-cart
-                            |  Thêm Vào Giỏ Hàng
-
-                .col-lg-4.col-md-6.text-center.berry
-                    .single-product-item
-                        .product-image
-                            a(href="#")
-                                img(src="/img/products/product-img-2.jpg", alt="")
-                        h3 Quả Nho
-                        p.product-price
-                            span Giá mỗi Kg
-                            |  70$
-                        a.cart-btn(href="/cart")
-                            i.fas.fa-shopping-cart
-                            |  Thêm Vào Giỏ Hàng
-
-                .col-lg-4.col-md-6.text-center.lemon
-                    .single-product-item
-                        .product-image
-                            a(href="#")
-                                img(src="/img/products/product-img-3.jpg", alt="")
-                        h3 Chanh
-                        p.product-price
-                            span Giá mỗi Kg
-                            |  35$
-                        a.cart-btn(href="/cart")
-                            i.fas.fa-shopping-cart
-                            |  Thêm Vào Giỏ Hàng
+                each product in products
+                    .col-lg-4.col-md-6.text-center
+                        .single-product-item
+                            .product-image
+                                a(href=`#`)
+                                    img(src=product.thumbnail, alt=product.title)
+                            h3 #{product.title}
+                            p.product-price
+                                span Giá mỗi Kg
+                                del.old-price #{product.price}
+                                span.new-price #{product.newPrice}
+                                span.discount -#{product.discountPercentage}%
+                            a.cart-btn(href="/cart")
+                                i.fas.fa-shopping-cart
+                                |  Thêm Vào Giỏ Hàng
 
             .row
                 .col-lg-12.text-center
