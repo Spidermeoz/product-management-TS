@@ -1,7 +1,78 @@
-doctype html 
-html 
-    head 
-        title Danh sách sản phẩm
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
 
-    body
-        h1 Danh sách sản phẩm
+block main
+    // khu vực breadcrumb
+    .breadcrumb-section.breadcrumb-bg
+        .container
+            .row
+                .col-lg-8.offset-lg-2.text-center
+                    .breadcrumb-text
+                        p Tươi và Hữu cơ
+                        h1 Cửa Hàng
+
+    // sản phẩm
+    .product-section.mt-150.mb-150
+        .container
+            .row
+                .col-md-12
+                    .product-filters
+                        ul
+                            li.active(data-filter="*") Tất Cả
+                            li(data-filter=".strawberry") Dâu Tây
+                            li(data-filter=".berry") Quả Nho
+                            li(data-filter=".lemon") Chanh
+
+            .row.product-lists
+                .col-lg-4.col-md-6.text-center.strawberry
+                    .single-product-item
+                        .product-image
+                            a(href="product_1.html")
+                                img(src="/img/products/product-img-1.jpg", alt="")
+                        h3 Dâu Tây
+                        p.product-price
+                            span Giá mỗi Kg
+                            |  85$
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng
+
+                .col-lg-4.col-md-6.text-center.berry
+                    .single-product-item
+                        .product-image
+                            a(href="#")
+                                img(src="/img/products/product-img-2.jpg", alt="")
+                        h3 Quả Nho
+                        p.product-price
+                            span Giá mỗi Kg
+                            |  70$
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng
+
+                .col-lg-4.col-md-6.text-center.lemon
+                    .single-product-item
+                        .product-image
+                            a(href="#")
+                                img(src="/img/products/product-img-3.jpg", alt="")
+                        h3 Chanh
+                        p.product-price
+                            span Giá mỗi Kg
+                            |  35$
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng
+
+            .row
+                .col-lg-12.text-center
+                    .pagination-wrap
+                        ul
+                            li
+                                a(href="#") Trước
+                            li
+                                a.active(href="#") 1
+                            li
+                                a(href="#") 2
+                            li
+                                a(href="#") Tiếp
+

@@ -1,0 +1,98 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+    // khu vực breadcrumb
+    .breadcrumb-section.breadcrumb-bg
+        .container
+            .row
+                .col-lg-8.offset-lg-2.text-center
+                    .breadcrumb-text
+                        p Xem Thêm Chi Tiết
+                        h1 Sản Phẩm Đơn
+    
+    // sản phẩm đơn
+    .single-product.mt-150.mb-150
+        .container
+            .row
+                .col-md-5
+                    .single-product-img
+                        img(src="/img/products/product-img-1.jpg", alt="Ảnh Dâu")
+                .col-md-7
+                    .single-product-content
+                        h3 Dâu Tây tươi ngon
+                        p.single-product-pricing
+                            span Giá mỗi Kg
+                            |  $85
+                        p Khám phá hương vị tuyệt vời của dâu tây tươi ngon nhập khẩu! Những trái dâu tây đỏ mọng, giòn tan và đầy màu sắc được chọn lựa kỹ càng từ những vườn dâu tốt nhất. Hãy thưởng thức sự ngọt ngào và bổ dưỡng mà trái dâu tây mang lại cho sức khỏe của bạn. Đặt hàng ngay hôm nay để trải nghiệm sự khác biệt!
+                    .single-product-form
+                        form(action="#")
+                            input(type="number", placeholder="0")
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng
+                        p
+                            strong Danh Mục:
+                            |  Trái Cây, Hữu Cơ
+                    h4 Chia Sẻ:
+                    ul.product-share
+                        li
+                            a(href="#")
+                                i.fab.fa-facebook-f
+                        li
+                            a(href="#")
+                                i.fab.fa-twitter
+                        li
+                            a(href="#")
+                                i.fab.fa-google-plus-g
+                        li
+                            a(href="#")
+                                i.fab.fa-linkedin
+
+    // sản phẩm liên quan
+    .more-products.mb-150
+        .container
+            .row
+                .col-lg-8.offset-lg-2.text-center
+                    .section-title
+                        h3
+                            span.orange-text Sản Phẩm
+                            |  Liên Quan
+                        p Khám phá những sản phẩm tươi ngon khác mà bạn sẽ yêu thích! Tất cả đều được chọn lọc kỹ lưỡng để đảm bảo chất lượng và hương vị tốt nhất.
+            .row
+                .col-lg-4.col-md-6.text-center
+                    .single-product-item
+                        .product-image
+                            a(href="product_1.html")
+                                img(src="/img/products/product-img-1.jpg", alt="")
+                        h3 Dâu Tây
+                        p.product-price
+                            span Giá mỗi Kg
+                            |  85$
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng
+                .col-lg-4.col-md-6.text-center
+                    .single-product-item
+                        .product-image
+                            a(href="#")
+                                img(src="/img/products/product-img-2.jpg", alt="")
+                        h3 Quả Nho
+                        p.product-price
+                            span Giá mỗi Kg
+                            |  70$
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng
+                .col-lg-4.col-md-6.offset-lg-0.offset-md-3.text-center
+                    .single-product-item
+                        .product-image
+                            a(href="#")
+                                img(src="/img/products/product-img-3.jpg", alt="")
+                        h3 Chanh
+                        p.product-price
+                            span Giá mỗi Kg
+                            |  35$
+                        a.cart-btn(href="/cart")
+                            i.fas.fa-shopping-cart
+                            |  Thêm Vào Giỏ Hàng

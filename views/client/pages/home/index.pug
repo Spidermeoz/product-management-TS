@@ -1,7 +1,227 @@
-doctype html 
-html 
-    head 
-        title Trang chủ
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
 
-    body
-        h1 Trang chủ
+block main
+    // khu vực chính
+    .hero-area.hero-bg
+        .container
+            .row
+                .col-lg-9.offset-lg-2.text-center
+                    .hero-text
+                        .hero-text-tablecell
+                            p.subtitle Tươi & Hữu cơ
+                            h1 Trái Cây Theo Mùa Thơm Ngon
+                            .hero-btns
+                                a.boxed-btn(href="/products") Bộ Sưu Tập Trái Cây
+                                a.bordered-btn(href="/contact") Liên Hệ
+    // kết thúc khu vực chính
+
+    // features list section
+    .list-section.pt-80.pb-80
+    .container
+        .row
+            .col-lg-4.col-md-6.mb-4.mb-lg-0
+                .list-box.d-flex.align-items-center
+                    .list-icon
+                        i.fas.fa-shipping-fast
+                    .content
+                        h3 Miễn Phí Vận Chuyển
+                        p Khi đơn hàng trên 75$
+            .col-lg-4.col-md-6.mb-4.mb-lg-0
+                .list-box.d-flex.align-items-center
+                    .list-icon
+                        i.fas.fa-phone-volume
+                    .content
+                        h3 Hỗ Trợ 24/7
+                        p Nhận hỗ trợ suốt ngày
+            .col-lg-4.col-md-6
+                .list-box.d-flex.justify-content-start.align-items-center
+                    .list-icon
+                        i.fas.fa-sync
+                    .content
+                        h3 Hoàn Tiền
+                        p Hoàn tiền trong vòng 3 ngày!
+    // kết thúc khu vực danh sách tính năng
+
+    // khu vực sản phẩm
+    .product-section.mt-150.mb-150
+    .container
+        .row
+            .col-lg-8.offset-lg-2.text-center
+                .section-title
+                    h3
+                        span.orange-text Sản Phẩm
+                        |  Của Chúng Tôi
+                    p Cuộc sống tươi đẹp với nhiều lựa chọn, đôi khi mang đến cơ hội bất ngờ và đầy giá trị.
+        .row
+            .col-lg-4.col-md-6.text-center
+                .single-product-item
+                    .product-image
+                        a(href="product_1.html")
+                            img(src="/img/products/product-img-1.jpg", alt="")
+                    h3 Dâu Tây
+                    p.product-price
+                        span Giá mỗi Kg
+                        |  85$
+                    a.cart-btn(href="/cart")
+                        i.fas.fa-shopping-cart
+                        |  Thêm Vào Giỏ Hàng
+            .col-lg-4.col-md-6.text-center
+                .single-product-item
+                    .product-image
+                        a(href="#")
+                        img(src="/img/products/product-img-2.jpg", alt="")
+                    h3 Quả Nho
+                    p.product-price
+                        span Giá mỗi Kg
+                        |  70$
+                    a.cart-btn(href="/cart")
+                        i.fas.fa-shopping-cart
+                        |  Thêm Vào Giỏ Hàng
+            .col-lg-4.col-md-6.offset-md-3.offset-lg-0.text-center
+                .single-product-item
+                    .product-image
+                        a(href="product_3.html")
+                            img(src="/img/products/product-img-3.jpg", alt="")
+                    h3 Chanh
+                    p.product-price
+                        span Giá mỗi Kg
+                        |  35$
+                    a.cart-btn(href="/cart")
+                        i.fas.fa-shopping-cart
+                        |  Thêm Vào Giỏ Hàng
+    // kết thúc khu vực sản phẩm
+
+    // khu vực banner giỏ hàng
+    section.cart-banner.pt-100.pb-100
+    .container
+        .row.clearfix
+            // Cột Hình Ảnh
+            .image-column.col-lg-6
+                .image
+                    .price-box
+                        .inner-price
+                            span.price
+                                strong 30%
+                                br
+                                |  giảm mỗi Kg
+                    img(src="/img/a.jpg", alt="")
+            // Cột Nội Dung
+            .content-column.col-lg-6
+                h3
+                    span.orange-text Ưu Đãi
+                    |  Của Tháng
+                h4 Dâu Tây Hikan
+                .text Mọi khó khăn đều có thể vượt qua, và ngay cả lỗi lầm cũng mang đến những bài học quý giá. Hãy đón nhận thử thách với tinh thần mạnh mẽ.
+                // Bộ Đếm Thời Gian
+                .time-counter
+                    .time-countdown.clearfix(data-countdown="2020/2/01")
+                        .counter-column
+                            .inner
+                                span.count 00
+                                | Ngày
+                        .counter-column
+                            .inner
+                                span.count 00
+                                | Giờ
+                        .counter-column
+                            .inner
+                                span.count 00
+                                | Phút
+                        .counter-column
+                            .inner
+                                span.count 00
+                                | Giây
+                a.cart-btn.mt-3(href="/cart")
+                    i.fas.fa-shopping-cart
+                    |  Thêm Vào Giỏ Hàng
+    // kết thúc khu vực banner giỏ hàng
+
+    // khu vực lời chứng thực
+    .testimonail-section.mt-150.mb-150
+    .container
+        .row
+            .col-lg-10.offset-lg-1.text-center
+                .testimonial-sliders
+                    each item in testimonials
+                        .single-testimonial-slider
+                            .client-avater
+                                img(src=`/img/avaters/${item.img}`, alt="")
+                            .client-meta
+                                h3 #{item.name} 
+                                    span #{item.role}
+                                p.testimonial-body #{item.text}
+                                .last-icon
+                                    i.fas.fa-quote-right
+    // kết thúc khu vực lời chứng thực
+
+    // khu vực quảng cáo
+    .abt-section.mb-150
+        .container
+            .row
+                .col-lg-6.col-md-12
+                    .abt-bg
+                        a.video-play-btn.popup-youtube(href="https://www.youtube.com/watch?v=J1-Acd0M3S4")
+                            i.fas.fa-play
+                .col-lg-6.col-md-12
+                    .abt-text
+                        p.top-sub Từ Năm 1999
+                        h2
+                            | Chúng tôi là 
+                            span.orange-text Fruitkha
+                        p Chúng tôi luôn nỗ lực mang đến những sản phẩm tươi ngon nhất. Với sự tận tâm, chúng tôi đã xây dựng được uy tín qua nhiều năm phục vụ khách hàng.
+                        p Mọi nỗ lực của chúng tôi đều hướng đến việc mang lại trải nghiệm tốt nhất cho bạn. Hãy đồng hành cùng chúng tôi trong hành trình này.
+                        a.boxed-btn.mt-4(href="about.html") Tìm hiểu thêm
+    // kết thúc khu vực quảng cáo
+
+    // banner cửa hàng
+    section.shop-banner
+        .container
+            h3
+                | Khuyến mãi tháng 12 đã bắt đầu! 
+                br
+                |  với 
+                span.orange-text Giảm Giá Lớn...
+            .sale-percent
+                span Giảm Giá! 
+                    br
+                    | Lên đến
+                | 50%
+                span giảm
+            a.cart-btn.btn-lg(href="/products") Mua Ngay
+    // kết thúc banner cửa hàng
+
+    // tin tức mới nhất
+    .latest-news.pt-150.pb-150
+        .container
+            .row
+                .col-lg-8.offset-lg-2.text-center
+                    .section-title
+                        h3
+                            span.orange-text Tin
+                            |  Tức Của Chúng Tôi
+                        p Cuộc sống đầy màu sắc và cơ hội, đôi khi ta tìm thấy giá trị quý báu trong những điều bất ngờ.
+            .row
+                each news in listNews
+                    .col-lg-4.col-md-6(class=(news.bg === "news-bg-3" ? "offset-md-3 offset-lg-0" : ""))
+                        .single-latest-news
+                            a(href="single-news.html")
+                                .latest-news-bg(class=news.bg)
+                            .news-text-box
+                                h3
+                                    a(href="single-news.html") #{news.title}
+                                p.blog-meta
+                                    span.author
+                                        i.fas.fa-user
+                                        |  Quản trị viên
+                                    span.date
+                                        i.fas.fa-calendar
+                                        |  #{news.date}
+                                p.excerpt Như dòng nước êm đềm, cuộc sống trở nên đẹp hơn khi ta biết chấp nhận thử thách và nỗ lực tiến về phía trước.
+                                a.read-more-btn(href="single-news.html")
+                                    | Đọc thêm 
+                                    i.fas.fa-angle-right
+            .row
+                .col-lg-12.text-center
+                    a.boxed-btn(href="/news") Xem Thêm Tin Tức
+    // kết thúc tin tức mới nhất
