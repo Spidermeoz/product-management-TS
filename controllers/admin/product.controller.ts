@@ -1,18 +1,16 @@
 // controllers/admin/products.controller.ts
 import { Request, Response } from "express";
 import Product from "../../models/product.model";
+import {
+  makeFilterStatus,
+  isStatus,
+  Status,
+} from "../../helpers/filterStatus.helper";
 
-// ----- Types -----
-type Status = "active" | "inactive";
-
+// Query types cho route
 interface ProductsQuery {
-  status?: Status | ""; // "" ~ Tất cả
-}
-
-interface FilterStatusItem {
-  name: string;
-  status: Status | "";
-  class: "" | "active";
+  status?: Status | "";
+  keyword?: string;
 }
 
 interface ProductFind {
@@ -21,50 +19,34 @@ interface ProductFind {
   title?: string | { $regex: string; $options?: string };
 }
 
-// Type guard for status
-const isStatus = (val: unknown): val is Status =>
-  val === "active" || val === "inactive";
-
 // [GET] /admin/products
 export const index = async (
   req: Request<unknown, unknown, unknown, ProductsQuery>,
   res: Response
 ): Promise<void> => {
-  // Filter status menu
-  const filterStatus: FilterStatusItem[] = [
-    { name: "Tất cả", status: "", class: "" },
-    { name: "Hoạt động", status: "active", class: "" },
-    { name: "Dừng hoạt động", status: "inactive", class: "" },
-  ];
+  // Lấy filterStatus + currentStatus từ helper
+  const { filterStatus, currentStatus } = makeFilterStatus(req.query.status);
 
-  // Mark active item (default: "Tất cả")
-  let activeIndex = 0;
-  if (isStatus(req.query.status)) {
-    const idx = filterStatus.findIndex((i) => i.status === req.query.status);
-    if (idx !== -1) activeIndex = idx;
-  }
-  filterStatus[activeIndex].class = "active";
-
-  // Build find conditions
+  // Điều kiện tìm kiếm
   const find: ProductFind = { deleted: false };
-  if (isStatus(req.query.status)) {
-    find.status = req.query.status;
-  }
+  if (currentStatus) find.status = currentStatus;
 
+  // Từ khóa tìm kiếm (không phân biệt hoa/thường)
   let keyword = "";
-  if (req.query["keyword"]) {
-    keyword = req.query["keyword"];
-    find.title = { $regex: keyword, $options: "i" }; // Tìm kiếm không phân biệt chữ hoa chữ thường
+  if (typeof req.query.keyword === "string" && req.query.keyword.trim()) {
+    keyword = req.query.keyword.trim();
+    find.title = { $regex: keyword, $options: "i" };
   }
 
-  // Query products (use .lean() for performance if you render only)
+  // Lấy dữ liệu
   const productsData = await Product.find(find).lean();
 
+  // Render
   res.render("admin/pages/products/index", {
     pageTitle: "Danh sách sản phẩm",
     activePage: "products",
     products: productsData,
-    filterStatus: filterStatus,
-    keyword: keyword
+    filterStatus,
+    keyword,
   });
 };

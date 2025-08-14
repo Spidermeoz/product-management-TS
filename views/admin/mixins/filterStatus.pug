@@ -1,0 +1,8 @@
+mixin filter-status(filterStatus)
+    each item in filterStatus
+        button.btn.btn-sm.btn-outline-success.mr-2(
+            type="button"
+            class=item.class
+            button-status=item.status
+            aria-pressed=(item.class==='active' ? 'true' : 'false')
+        ) #{item.name}

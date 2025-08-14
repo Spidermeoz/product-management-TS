@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/filterStatus.pug
 
 block main
     .col-lg-10
@@ -13,13 +14,7 @@ block main
                         .d-flex.flex-wrap.align-items-center.w-100
                             //- Nhóm nút lọc trạng thái
                             .btn-group.btn-group-sm(role="group" aria-label="Lọc theo trạng thái")
-                                each item in filterStatus
-                                    button.btn.btn-sm.btn-outline-success.mr-2(
-                                        type="button"
-                                        class=item.class
-                                        button-status=item.status
-                                        aria-pressed=(item.class==='active' ? 'true' : 'false')
-                                    ) #{item.name}
+                                +filter-status(filterStatus)
 
                         //- Tìm kiếm (GET). Giữ lại status hiện tại (nếu có).
                         form#searchForm.form-inline.ml-auto(method="GET" action=`/${prefixAdmin}/products` role="search" aria-label="Tìm kiếm sản phẩm")
