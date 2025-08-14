@@ -456,3 +456,42 @@ body {
   }
   .sidebar.show { transform: translateX(0); }
 }
+
+/* FIX: sidebar không bị cuộn theo nội dung */
+/* Khung tổng cao đúng phần còn lại dưới navbar, chặn cuộn body */
+.container-fluid > .row {
+  height: calc(100vh - 56px);
+  overflow: hidden;        /* tránh cuộn toàn trang */
+  align-items: stretch;
+}
+
+/* Sidebar đứng yên, cuộn riêng nếu danh sách dài */
+@media (min-width: 769px) {
+  .sidebar {
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    position: sticky;      /* hoặc bỏ sticky cũng được trong cấu hình này */
+    top: 56px;
+  }
+}
+
+/* Chỉ phần nội dung cuộn */
+.main-content {
+  height: calc(100vh - 56px);
+  overflow: auto;
+}
+
+/* FIX: thêm khoảng cách giữa các card */
+/* Khoảng cách giữa các card xếp chồng trong cùng section */
+.content-section > .card + .card {
+  margin-top: 1rem;          /* chỉnh 1rem -> 1.25rem/1.5rem nếu muốn rộng hơn */
+}
+
+/* Tăng nhẹ trên màn lớn */
+@media (min-width: 768px) {
+  .content-section > .card + .card { margin-top: 1.25rem; }
+}
+@media (min-width: 1200px) {
+  .content-section > .card + .card { margin-top: 1.5rem; }
+}
+
