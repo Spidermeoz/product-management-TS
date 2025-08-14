@@ -273,8 +273,12 @@ body {
 
 /* Canh giữa nội dung ô, hàng hover dịu */
 #productsTableBody th,
-#productsTableBody td { vertical-align: middle; }
-#productsTableBody tr:hover { background: rgba(0,123,255,.04); }
+#productsTableBody td {
+  vertical-align: middle;
+}
+#productsTableBody tr:hover {
+  background: rgba(0, 123, 255, 0.04);
+}
 
 /* Cột Hành động: canh phải và không xuống dòng */
 #productsTableBody td:last-child {
@@ -282,34 +286,62 @@ body {
   white-space: nowrap;
 }
 /* Khoảng cách giữa các nút hành động (ưu tiên hơn .mr-1/.ml-1) */
-#productsTableBody td:last-child .btn + .btn { margin-left: .25rem; }
+#productsTableBody td:last-child .btn + .btn {
+  margin-left: 0.25rem;
+}
 
 /* Thumbnail 60x60 cover, bo nhẹ cho đẹp */
 .thumb-60-cover {
   width: 60px;
   height: 60px;
   object-fit: cover;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   display: block;
 }
 
 /* Badge pulse (giữ màu Bootstrap, thêm hiệu ứng nhịp) */
-.badge-pulse { animation: pulseScale 2s infinite; }
-@keyframes pulseScale { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.badge-pulse {
+  animation: pulseScale 2s infinite;
+}
+@keyframes pulseScale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
 
 /* Vòng lan tỏa theo trạng thái (tùy chọn – đẹp mắt hơn) */
-.badge-success.badge-pulse { animation: pulseScale 2s infinite, ringGreen 2s infinite; }
-.badge-danger.badge-pulse  { animation: pulseScale 2s infinite, ringRed   2s infinite; }
+.badge-success.badge-pulse {
+  animation: pulseScale 2s infinite, ringGreen 2s infinite;
+}
+.badge-danger.badge-pulse {
+  animation: pulseScale 2s infinite, ringRed 2s infinite;
+}
 
 @keyframes ringGreen {
-  0%   { box-shadow: 0 0 0 0 rgba(40,167,69,.35); }
-  70%  { box-shadow: 0 0 0 10px rgba(40,167,69,0); }
-  100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
 }
 @keyframes ringRed {
-  0%   { box-shadow: 0 0 0 0 rgba(220,53,69,.35); }
-  70%  { box-shadow: 0 0 0 10px rgba(220,53,69,0); }
-  100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+  }
 }
 
 /* =========================
@@ -320,8 +352,8 @@ body {
   position: relative;
   overflow: hidden;
   font-weight: 600;
-  border-radius: .35rem;
-  transition: transform .2s ease, box-shadow .25s ease, filter .25s ease;
+  border-radius: 0.35rem;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease;
 }
 
 /* Vệt sáng shimmer chạy chéo */
@@ -332,7 +364,12 @@ body {
   left: -150%;
   width: 300%;
   height: 300%;
-  background: linear-gradient(120deg, transparent 45%, rgba(255,255,255,.55) 50%, transparent 55%);
+  background: linear-gradient(
+    120deg,
+    transparent 45%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 55%
+  );
   transform: rotate(12deg);
   opacity: 0;
 }
@@ -342,28 +379,36 @@ body {
   opacity: 1;
 }
 @keyframes btnShimmer {
-  0%   { transform: translateX(-20%) rotate(12deg); opacity: 0; }
-  30%  { opacity: .9; }
-  100% { transform: translateX(20%)  rotate(12deg); opacity: 0; }
+  0% {
+    transform: translateX(-20%) rotate(12deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(20%) rotate(12deg);
+    opacity: 0;
+  }
 }
 
 /* Glow vàng + nhấc nhẹ */
 .btn-glow:hover {
   transform: translateY(-1px);
-  box-shadow:
-    0 8px 20px rgba(255,215,0,.28),
-    0 0 8px rgba(255,215,0,.35);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.28),
+    0 0 8px rgba(255, 215, 0, 0.35);
   filter: brightness(1.03);
 }
 .btn-glow:focus-visible {
   outline: none;
-  box-shadow:
-    0 0 0 3px rgba(255,215,0,.35),
-    0 8px 20px rgba(255,215,0,.25);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.35),
+    0 8px 20px rgba(255, 215, 0, 0.25);
 }
 
 /* Icon trong nút nhỏ cân đối hơn */
-.btn-glow.btn-sm i { margin-right: .25rem; }
+.btn-glow.btn-sm i {
+  margin-right: 0.25rem;
+}
 
 /* ===== Spacing cho ô Hành động trong bảng sản phẩm ===== */
 
@@ -373,31 +418,39 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: .5rem;              /* chỉnh  .5rem -> .75rem hoặc 1rem nếu muốn rộng hơn */
+  gap: 0.5rem; /* chỉnh  .5rem -> .75rem hoặc 1rem nếu muốn rộng hơn */
   text-align: right;
 }
 
 /* Fallback cho trình duyệt chưa hỗ trợ flex-gap */
 @supports not (gap: 0.5rem) {
   #productsTableBody td:last-child > *,
-  #productsTableBody td.actions-cell > * { margin-left: .5rem; }
+  #productsTableBody td.actions-cell > * {
+    margin-left: 0.5rem;
+  }
   #productsTableBody td:last-child > *:first-child,
-  #productsTableBody td.actions-cell > *:first-child { margin-left: 0; }
+  #productsTableBody td.actions-cell > *:first-child {
+    margin-left: 0;
+  }
 }
 
 /* Xóa margin mặc định để tránh “đúp” khoảng cách khi có .ml-1/.mr-1 trong markup */
 #productsTableBody td:last-child .btn,
-#productsTableBody td.actions-cell .btn { margin: 0; }
+#productsTableBody td.actions-cell .btn {
+  margin: 0;
+}
 #productsTableBody td:last-child form,
-#productsTableBody td.actions-cell form { margin: 0; }
+#productsTableBody td.actions-cell form {
+  margin: 0;
+}
 
 /* ===== Actions column: align LEFT ===== */
 #productsTableBody td:last-child,
 #productsTableBody td.actions-cell {
   display: flex;
   align-items: center;
-  justify-content: flex-start;   /* was flex-end */
-  gap: .5rem;                    /* chỉnh rộng hơn nếu muốn */
+  justify-content: flex-start; /* was flex-end */
+  gap: 0.5rem; /* chỉnh rộng hơn nếu muốn */
   text-align: left;
 }
 
@@ -408,18 +461,24 @@ body {
 }
 
 /* Fallback nếu trình duyệt chưa hỗ trợ gap cho flex */
-@supports not (gap: .5rem) {
+@supports not (gap: 0.5rem) {
   #productsTableBody td:last-child > *,
-  #productsTableBody td.actions-cell > * { margin-right: .5rem; }
+  #productsTableBody td.actions-cell > * {
+    margin-right: 0.5rem;
+  }
   #productsTableBody td:last-child > *:last-child,
-  #productsTableBody td.actions-cell > *:last-child { margin-right: 0; }
+  #productsTableBody td.actions-cell > *:last-child {
+    margin-right: 0;
+  }
 }
 
 /* Xoá margin mặc định trên btn/form để khoảng cách chỉ do gap điều khiển */
 #productsTableBody td:last-child .btn,
 #productsTableBody td.actions-cell .btn,
 #productsTableBody td:last-child form,
-#productsTableBody td.actions-cell form { margin: 0; }
+#productsTableBody td.actions-cell form {
+  margin: 0;
+}
 
 /* ==== FIX: Sidebar luôn kéo tới chân trang khi nội dung dài ==== */
 
@@ -434,11 +493,11 @@ body {
 @media (min-width: 769px) {
   .sidebar {
     /* Ghi đè rule cũ: bỏ min-height theo viewport */
-    min-height: 100% !important;  /* kéo bằng chiều cao của .row */
+    min-height: 100% !important; /* kéo bằng chiều cao của .row */
     height: 100%;
     position: sticky;
-    top: 56px;                    /* đúng bằng chiều cao navbar */
-    overflow: auto;               /* nếu menu dài vẫn cuộn được */
+    top: 56px; /* đúng bằng chiều cao navbar */
+    overflow: auto; /* nếu menu dài vẫn cuộn được */
   }
 }
 
@@ -454,14 +513,16 @@ body {
     transition: transform 0.3s ease;
     /* KHÔNG đặt height:100% ở đây để overlay hoạt động đúng */
   }
-  .sidebar.show { transform: translateX(0); }
+  .sidebar.show {
+    transform: translateX(0);
+  }
 }
 
 /* FIX: sidebar không bị cuộn theo nội dung */
 /* Khung tổng cao đúng phần còn lại dưới navbar, chặn cuộn body */
 .container-fluid > .row {
   height: calc(100vh - 56px);
-  overflow: hidden;        /* tránh cuộn toàn trang */
+  overflow: hidden; /* tránh cuộn toàn trang */
   align-items: stretch;
 }
 
@@ -470,7 +531,7 @@ body {
   .sidebar {
     height: calc(100vh - 56px);
     overflow-y: auto;
-    position: sticky;      /* hoặc bỏ sticky cũng được trong cấu hình này */
+    position: sticky; /* hoặc bỏ sticky cũng được trong cấu hình này */
     top: 56px;
   }
 }
@@ -484,14 +545,129 @@ body {
 /* FIX: thêm khoảng cách giữa các card */
 /* Khoảng cách giữa các card xếp chồng trong cùng section */
 .content-section > .card + .card {
-  margin-top: 1rem;          /* chỉnh 1rem -> 1.25rem/1.5rem nếu muốn rộng hơn */
+  margin-top: 1rem; /* chỉnh 1rem -> 1.25rem/1.5rem nếu muốn rộng hơn */
 }
 
 /* Tăng nhẹ trên màn lớn */
 @media (min-width: 768px) {
-  .content-section > .card + .card { margin-top: 1.25rem; }
+  .content-section > .card + .card {
+    margin-top: 1.25rem;
+  }
 }
 @media (min-width: 1200px) {
-  .content-section > .card + .card { margin-top: 1.5rem; }
+  .content-section > .card + .card {
+    margin-top: 1.5rem;
+  }
 }
 
+/* =========================
+   Card: Bộ lọc & Tìm kiếm (balanced)
+   ========================= */
+.card.filter-card {
+  --toolbar-gap: 0.75rem; /* khoảng cách tổng thể */
+  --ctl-h: 34px; /* chiều cao control đồng bộ */
+  --ctl-radius: 999px; /* bo tròn pill cho nút */
+}
+
+.card.filter-card .card-header {
+  padding: 0.75rem 1rem;
+}
+.card.filter-card .card-body {
+  padding: 0.75rem 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto; /* trái = filters, phải = search */
+  column-gap: 1rem;
+  row-gap: var(--toolbar-gap);
+  align-items: center;
+}
+
+/* Nhóm nút lọc: cho phép wrap + khoảng cách đều */
+.card.filter-card .btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem; /* dùng gap thay margin lẻ tẻ */
+}
+
+/* Nút lọc trạng thái: cao bằng input, bo tròn pill, viền dày hơn */
+.card.filter-card [button-status] {
+  border-width: 2px;
+  border-radius: var(--ctl-radius);
+  height: var(--ctl-h);
+  line-height: calc(var(--ctl-h) - 2px);
+  padding: 0 0.9rem;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, color 0.2s ease,
+    background 0.2s ease, border-color 0.2s ease;
+}
+.card.filter-card .btn-outline-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(40, 167, 69, 0.18);
+}
+
+/* Active state rõ ràng */
+.card.filter-card .btn-outline-success.active,
+.card.filter-card .btn-outline-success[aria-pressed="true"] {
+  color: #fff;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-color: #28a745;
+  box-shadow: 0 8px 22px rgba(32, 201, 151, 0.28),
+    0 0 0 3px rgba(255, 215, 0, 0.18);
+}
+
+/* Form tìm kiếm: canh phải, cao đồng bộ với nút */
+.card.filter-card #searchForm {
+  margin-left: 0; /* grid đã canh phải rồi */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.card.filter-card #searchForm .form-control {
+  height: var(--ctl-h);
+  padding: 0 0.75rem;
+  border-radius: var(--ctl-radius);
+  min-width: 240px;
+}
+.card.filter-card #searchForm .btn {
+  height: var(--ctl-h);
+  line-height: calc(var(--ctl-h) - 2px);
+  padding: 0 0.9rem;
+  border-radius: var(--ctl-radius);
+  font-weight: 600;
+}
+
+/* Đường phân tách nhẹ giữa filter và search ở desktop */
+@media (min-width: 769px) {
+  .card.filter-card #searchForm {
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
+    padding-left: 1rem;
+  }
+  [data-theme="dark"] .card.filter-card #searchForm {
+    border-left-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Mobile: xếp dọc, search full width */
+@media (max-width: 768px) {
+  .card.filter-card .card-body {
+    grid-template-columns: 1fr; /* một cột */
+  }
+  .card.filter-card #searchForm {
+    width: 100%;
+  }
+  .card.filter-card #searchForm .form-control {
+    flex: 1;
+    min-width: 0; /* tránh overflow */
+  }
+}
+
+/* Fallback nếu trình duyệt chưa hỗ trợ gap trong flex */
+@supports not (gap: 0.5rem) {
+  .card.filter-card .btn-group > * {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .card.filter-card .btn-group > *:last-child {
+    margin-right: 0;
+  }
+}

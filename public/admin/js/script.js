@@ -139,3 +139,49 @@ $(() => {
   // Chart (only on dashboard page)
   initializeChart();
 });
+
+// status-filter.js
+(() => {
+  const ATTR = 'button-status';
+
+  const isStatus = (val) => val === 'active' || val === 'inactive';
+
+  const readStatus = (el) => {
+    const raw = el.getAttribute(ATTR);
+    return isStatus(raw) ? raw : ''; // '' = Tất cả
+  };
+
+  const buildNextHref = (nextStatus) => {
+    const url = new URL(window.location.href);
+    const curStatus = url.searchParams.get('status') || '';
+
+    // Toggle: click lại filter đang active -> xóa param (về Tất cả)
+    if (curStatus === nextStatus) {
+      url.searchParams.delete('status');
+    } else {
+      if (nextStatus) url.searchParams.set('status', nextStatus);
+      else url.searchParams.delete('status');
+    }
+
+    // Đổi filter thì reset trang (nếu có phân trang)
+    url.searchParams.delete('page');
+
+    return url.toString();
+  };
+
+  const buttons = document.querySelectorAll(`[${ATTR}]`);
+  if (!buttons.length) return;
+
+  buttons.forEach((btn) => {
+    btn.addEventListener(
+      'click',
+      (e) => {
+        e.preventDefault();
+        const status = readStatus(btn);
+        const nextHref = buildNextHref(status);
+        window.location.href = nextHref;
+      },
+      { passive: true }
+    );
+  });
+})();

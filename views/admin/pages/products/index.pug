@@ -4,6 +4,37 @@ block main
     .col-lg-10
         .main-content#mainContent(role="main")
             section#products-section.content-section
+                .card.filter-card.mb-3
+                    .card-header.d-flex.justify-content-between.align-items-center
+                        h5.mb-0
+                            i.fas.fa-filter.mr-2
+                            | Bộ lọc & Tìm kiếm
+                    .card-body
+                        .d-flex.flex-wrap.align-items-center.w-100
+                            //- Nhóm nút lọc trạng thái
+                            .btn-group.btn-group-sm(role="group" aria-label="Lọc theo trạng thái")
+                                each item in filterStatus
+                                    button.btn.btn-sm.btn-outline-success.mr-2(
+                                        type="button"
+                                        class=item.class
+                                        button-status=item.status
+                                        aria-pressed=(item.class==='active' ? 'true' : 'false')
+                                    ) #{item.name}
+
+                        //- Tìm kiếm (GET). Giữ lại status hiện tại (nếu có).
+                        //- form#searchForm.form-inline.ml-auto(method="GET" action=`/${prefixAdmin}/products` role="search" aria-label="Tìm kiếm sản phẩm")
+                        //-     input.form-control.form-control-sm.mr-2(
+                        //-         type="text"
+                        //-         name="keyword"
+                        //-         placeholder="Tìm kiếm..."
+                        //-         value=(typeof keyword !== 'undefined' ? keyword : '')
+                        //-         aria-label="Từ khóa tìm kiếm"
+                        //-     )
+                        //-     if typeof status !== 'undefined' && status
+                        //-         input(type="hidden" name="status" value=status)
+                        //-     button.btn.btn-secondary.btn-sm(type="submit")
+                        //-         i.fas.fa-search.mr-1
+                        //-         | Tìm
                 .card
                     .card-header.d-flex.justify-content-between.align-items-center
                         h5.mb-0
