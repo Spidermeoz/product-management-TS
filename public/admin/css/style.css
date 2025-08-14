@@ -1,0 +1,422 @@
+:root {
+  --primary-color: #343a40;
+  --secondary-color: #007bff;
+  --bg-gradient-start: #f8f9fa;
+  --bg-gradient-end: #e9ecef;
+  --glow-color: #ffd700;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+}
+[data-theme="dark"] {
+  --primary-color: #212529;
+  --secondary-color: #0d6efd;
+  --bg-gradient-start: #1a1d20;
+  --bg-gradient-end: #2c3034;
+  --text-color: #f8f9fa;
+  --card-bg: #343a40;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-end) 100%
+  );
+  color: var(--text-color);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+/* Chỉ transition cho element tương tác (tránh * {transition: all}) */
+.nav-link,
+.btn,
+.card,
+.search-input {
+  transition: all 0.3s ease;
+}
+
+/* Header */
+.navbar {
+  background: var(--primary-color) !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #fff !important;
+}
+
+/* Particles */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--glow-color);
+  border-radius: 50%;
+  animation: float 6s linear infinite;
+  opacity: 0.7;
+}
+@keyframes float {
+  0% {
+    transform: translateY(100vh) rotate(0);
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Layout */
+.container-fluid {
+  position: relative;
+  z-index: 1;
+} /* nổi trên particles */
+
+/* Sidebar */
+.sidebar {
+  background: var(--primary-color);
+  min-height: calc(100vh - 56px);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+.nav-pills .nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  margin: 5px 0;
+}
+.nav-pills .nav-link:hover,
+.nav-pills .nav-link.active {
+  background: var(--secondary-color);
+  color: #fff;
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* Sidebar mobile overlay */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 250px;
+    z-index: 1040;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+}
+
+/* Main content */
+.main-content {
+  padding: 20px;
+} /* không cần margin-left thủ công vì đã dùng grid */
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.6s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Table */
+.table {
+  background: var(--card-bg);
+  animation: fadeIn 0.8s ease;
+}
+.table tbody tr {
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.table tbody tr:hover {
+  background: rgba(0, 123, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(0, 123, 255, 0.1);
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Glow buttons */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 215, 0, 0.35);
+  animation: glow 1.5s alternate infinite;
+}
+@keyframes glow {
+  from {
+    box-shadow: 0 0 6px var(--glow-color), 0 0 12px var(--glow-color);
+  }
+  to {
+    box-shadow: 0 0 12px var(--glow-color), 0 0 24px var(--glow-color);
+  }
+}
+
+/* Status badge (pulse) */
+.badge-pulse {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Search */
+.search-container {
+  position: relative;
+}
+.search-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 25px;
+  padding: 8px 40px 8px 15px;
+}
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--glow-color);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
+  color: #fff;
+}
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Chart */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin: 20px 0;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1060;
+}
+.toast {
+  background: var(--card-bg);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle i {
+  color: var(--text-color); /* Mặc định sử dụng màu văn bản */
+  transition: color 0.3s ease; /* Hiệu ứng chuyển đổi màu */
+}
+
+[data-theme="dark"] .theme-toggle i {
+  color: #fff; /* Màu trắng khi ở chế độ tối */
+}
+
+[data-theme="light"] .theme-toggle i {
+  color: #000; /* Màu đen khi ở chế độ sáng */
+}
+
+/* 60x60 cover cho thumbnail bảng */
+.thumb-60-cover {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+/* =========================
+   Products table styling
+   ========================= */
+
+/* Canh giữa nội dung ô, hàng hover dịu */
+#productsTableBody th,
+#productsTableBody td { vertical-align: middle; }
+#productsTableBody tr:hover { background: rgba(0,123,255,.04); }
+
+/* Cột Hành động: canh phải và không xuống dòng */
+#productsTableBody td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+/* Khoảng cách giữa các nút hành động (ưu tiên hơn .mr-1/.ml-1) */
+#productsTableBody td:last-child .btn + .btn { margin-left: .25rem; }
+
+/* Thumbnail 60x60 cover, bo nhẹ cho đẹp */
+.thumb-60-cover {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: .5rem;
+  display: block;
+}
+
+/* Badge pulse (giữ màu Bootstrap, thêm hiệu ứng nhịp) */
+.badge-pulse { animation: pulseScale 2s infinite; }
+@keyframes pulseScale { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+/* Vòng lan tỏa theo trạng thái (tùy chọn – đẹp mắt hơn) */
+.badge-success.badge-pulse { animation: pulseScale 2s infinite, ringGreen 2s infinite; }
+.badge-danger.badge-pulse  { animation: pulseScale 2s infinite, ringRed   2s infinite; }
+
+@keyframes ringGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(40,167,69,.35); }
+  70%  { box-shadow: 0 0 0 10px rgba(40,167,69,0); }
+  100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+}
+@keyframes ringRed {
+  0%   { box-shadow: 0 0 0 0 rgba(220,53,69,.35); }
+  70%  { box-shadow: 0 0 0 10px rgba(220,53,69,0); }
+  100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+}
+
+/* =========================
+   Action buttons glow + shimmer
+   ========================= */
+
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  border-radius: .35rem;
+  transition: transform .2s ease, box-shadow .25s ease, filter .25s ease;
+}
+
+/* Vệt sáng shimmer chạy chéo */
+.btn-glow::after {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(120deg, transparent 45%, rgba(255,255,255,.55) 50%, transparent 55%);
+  transform: rotate(12deg);
+  opacity: 0;
+}
+.btn-glow:hover::after,
+.btn-glow:focus-visible::after {
+  animation: btnShimmer 900ms ease;
+  opacity: 1;
+}
+@keyframes btnShimmer {
+  0%   { transform: translateX(-20%) rotate(12deg); opacity: 0; }
+  30%  { opacity: .9; }
+  100% { transform: translateX(20%)  rotate(12deg); opacity: 0; }
+}
+
+/* Glow vàng + nhấc nhẹ */
+.btn-glow:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 8px 20px rgba(255,215,0,.28),
+    0 0 8px rgba(255,215,0,.35);
+  filter: brightness(1.03);
+}
+.btn-glow:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(255,215,0,.35),
+    0 8px 20px rgba(255,215,0,.25);
+}
+
+/* Icon trong nút nhỏ cân đối hơn */
+.btn-glow.btn-sm i { margin-right: .25rem; }
+
+/* ===== Spacing cho ô Hành động trong bảng sản phẩm ===== */
+
+/* Căn phải & dùng flex để chia khoảng giữa các phần tử (a, form, a) */
+#productsTableBody td:last-child,
+#productsTableBody td.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem;              /* chỉnh  .5rem -> .75rem hoặc 1rem nếu muốn rộng hơn */
+  text-align: right;
+}
+
+/* Fallback cho trình duyệt chưa hỗ trợ flex-gap */
+@supports not (gap: 0.5rem) {
+  #productsTableBody td:last-child > *,
+  #productsTableBody td.actions-cell > * { margin-left: .5rem; }
+  #productsTableBody td:last-child > *:first-child,
+  #productsTableBody td.actions-cell > *:first-child { margin-left: 0; }
+}
+
+/* Xóa margin mặc định để tránh “đúp” khoảng cách khi có .ml-1/.mr-1 trong markup */
+#productsTableBody td:last-child .btn,
+#productsTableBody td.actions-cell .btn { margin: 0; }
+#productsTableBody td:last-child form,
+#productsTableBody td.actions-cell form { margin: 0; }
+
+/* ===== Actions column: align LEFT ===== */
+#productsTableBody td:last-child,
+#productsTableBody td.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;   /* was flex-end */
+  gap: .5rem;                    /* chỉnh rộng hơn nếu muốn */
+  text-align: left;
+}
+
+/* Header cell align left (phòng khi th có .text-right) */
+#productsTable thead th:last-child,
+#productsTable thead th.actions-cell {
+  text-align: left !important;
+}
+
+/* Fallback nếu trình duyệt chưa hỗ trợ gap cho flex */
+@supports not (gap: .5rem) {
+  #productsTableBody td:last-child > *,
+  #productsTableBody td.actions-cell > * { margin-right: .5rem; }
+  #productsTableBody td:last-child > *:last-child,
+  #productsTableBody td.actions-cell > *:last-child { margin-right: 0; }
+}
+
+/* Xoá margin mặc định trên btn/form để khoảng cách chỉ do gap điều khiển */
+#productsTableBody td:last-child .btn,
+#productsTableBody td.actions-cell .btn,
+#productsTableBody td:last-child form,
+#productsTableBody td.actions-cell form { margin: 0; }

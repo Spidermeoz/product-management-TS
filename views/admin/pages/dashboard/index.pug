@@ -1,0 +1,43 @@
+extends ../../layouts/default.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            // Overview Section
+            section#overview-section.content-section
+                .row.mb-4
+                    .col-md-3.mb-3
+                        .card.text-center
+                            .card-body
+                                i.fas.fa-box.fa-2x.text-primary.mb-2
+                                h5.card-title Sản phẩm
+                                h3.text-primary 1,234
+                    .col-md-3.mb-3
+                        .card.text-center
+                            .card-body
+                                i.fas.fa-cart-shopping.fa-2x.text-success.mb-2
+                                h5.card-title Đơn hàng
+                                h3.text-success 567
+                    .col-md-3.mb-3
+                        .card.text-center
+                            .card-body
+                                i.fas.fa-users.fa-2x.text-info.mb-2
+                                h5.card-title Khách hàng
+                                h3.text-info 890
+                    .col-md-3.mb-3
+                        .card.text-center
+                            .card-body
+                                i.fas.fa-dollar-sign.fa-2x.text-warning.mb-2
+                                h5.card-title Doanh thu
+                                h3.text-warning ₫123M
+
+                .card
+                    .card-header
+                        h5
+                            i.fas.fa-chart-line.mr-2
+                            | Biểu đồ doanh thu
+                    .card-body
+                        .chart-container
+                            canvas#revenueChart(aria-label="Biểu đồ doanh thu theo tháng" role="img")
+
+

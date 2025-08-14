@@ -1,0 +1,19 @@
+//- Sidebar (left)
+.col-lg-2.p-0
+    nav.sidebar#sidebar(aria-label="Thanh điều hướng bên")
+        .p-3
+            ul.nav.nav-pills.flex-column
+                li.nav-item
+                    a.nav-link(
+                        href=`/${prefixAdmin}/dashboard`
+                        class=(activePage==='dashboard' ? 'active' : '')
+                    )
+                        i.fas.fa-tachometer-alt.mr-2
+                        | Tổng quan
+                li.nav-item
+                    a.nav-link(
+                        href=`/${prefixAdmin}/products`
+                        class=(activePage==='products' ? 'active' : '')
+                    )
+                        i.fas.fa-tags.mr-2
+                        | Sản phẩm
