@@ -1,8 +1,10 @@
 // controllers/admin/products.controller.ts
-import { Request, Response } from "express";import Product from "../../models/product.model";
+import { Request, Response } from "express";
+import Product from "../../models/product.model";
 import { makeFilterStatus, Status } from "../../helpers/filterStatus.helper";
 import { makeSearch } from "../../helpers/search.helper";
 import { makePagination } from "../../helpers/pagination.helper";
+import { systemConfig } from "../../config/config";
 
 interface ProductsQuery {
   page?: string;
@@ -24,8 +26,31 @@ interface ChangeMultiBody {
   ids?: string | string[]; // "id1,id2" hoặc ["id1","id2"]
 }
 
+interface CreateProductBody {
+  title: string;
+  description?: string;
+  price: string | number;
+  discountPercentage?: string | number;
+  stock?: string | number;
+  thumbnail?: string;
+  position?: string | number;
+  status?: Status;
+}
+
+const toInt = (v: unknown, def = 0): number => {
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  if (typeof v === "string") {
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : def;
+  }
+  return def;
+};
+
 const isChangeType = (t: unknown): t is ChangeMultiType =>
-  t === "active" || t === "inactive" || t === "delete-all" || t === "change-position";
+  t === "active" ||
+  t === "inactive" ||
+  t === "delete-all" ||
+  t === "change-position";
 
 const toIdList = (ids: string | string[] | undefined): string[] => {
   if (!ids) return [];
@@ -119,7 +144,10 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           { $set: { status: "active" } }
         );
-        req.flash("success", `${idList.length} sản phẩm được cập nhật trạng thái thành công!`);
+        req.flash(
+          "success",
+          `${idList.length} sản phẩm được cập nhật trạng thái thành công!`
+        );
         break;
 
       case "inactive":
@@ -127,7 +155,10 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           { $set: { status: "inactive" } }
         );
-        req.flash("success", `${idList.length} sản phẩm được cập nhật trạng thái thành công!`);
+        req.flash(
+          "success",
+          `${idList.length} sản phẩm được cập nhật trạng thái thành công!`
+        );
         break;
 
       case "delete-all":
@@ -141,8 +172,14 @@ export const changeMulti = async (
       case "change-position":
         for (const item of idList) {
           const [id, position] = item.split("-");
-          await Product.updateOne({ _id: id }, { position: parseInt(position) });
-          req.flash("success", `${idList.length} sản phẩm được đổi vị trí thành công!`);
+          await Product.updateOne(
+            { _id: id },
+            { position: parseInt(position) }
+          );
+          req.flash(
+            "success",
+            `${idList.length} sản phẩm được đổi vị trí thành công!`
+          );
         }
         break;
     }
@@ -156,7 +193,7 @@ export const changeMulti = async (
 
 // [DELETE] /admin/products/delete/:id
 export const deleteItem = async (
-  req: Request<{ id: string }, unknown, unknown, ProductsQuery>,
+  req: Request<{ id: string }>,
   res: Response
 ): Promise<void> => {
   const id = req.params.id;
@@ -167,4 +204,57 @@ export const deleteItem = async (
   );
 
   res.redirect(req.headers.referer);
+};
+
+// [GET] /admin/products/create
+export const create = async (req: Request, res: Response): Promise<void> => {
+  res.render("admin/pages/products/create", {
+    pageTitle: "Danh sách sản phẩm",
+  });
+};
+
+// [POST] /admin/products/create
+export const createPost = async (
+  req: Request<unknown, unknown, CreateProductBody>,
+  res: Response
+): Promise<void> => {
+  try {
+    const body = req.body;
+
+    const price = toInt(body.price, 0);
+    const discountPercentage = toInt(body.discountPercentage, 0);
+    const stock = toInt(body.stock, 0);
+
+    // position: nếu rỗng hoặc không có -> tự động tăng theo tổng số sản phẩm hiện có
+    let position = 0;
+    const posRaw = body.position;
+    if (
+      posRaw === undefined ||
+      posRaw === null ||
+      String(posRaw).trim() === ""
+    ) {
+      const countProducts = await Product.countDocuments();
+      position = countProducts + 1;
+    } else {
+      position = toInt(posRaw, 1);
+    }
+
+    const payload = {
+      ...body,
+      price,
+      discountPercentage,
+      stock,
+      position,
+    };
+
+    const product = new Product(payload);
+    await product.save();
+
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+  } catch (err) {
+    console.error("[createPost] error:", err);
+    // Có thể flash lỗi nếu bạn đã cấu hình connect-flash
+    // req.flash("error", "Tạo sản phẩm thất bại!");
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+  }
 };

@@ -29,7 +29,9 @@ block main
                             i.fas.fa-box.mr-2
                             | Danh sách sản phẩm
                         .d-flex.align-items-center
-                            button#addBtn.btn.btn-primary.btn-glow(type="button")
+                            a#addBtn.btn.btn-primary.btn-glow(
+                                href= `/${prefixAdmin}/products/create`
+                            )
                                 i.fas.fa-plus.mr-2
                                 | Thêm sản phẩm
 
