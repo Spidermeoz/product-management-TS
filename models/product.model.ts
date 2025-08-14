@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
   title: String,
@@ -9,7 +9,11 @@ const productSchema = new mongoose.Schema({
   thumbnail: String,
   status: String,
   position: Number,
-  deleted: Boolean
+  deleted: Boolean,
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 const Product = mongoose.model("Product", productSchema, "products");

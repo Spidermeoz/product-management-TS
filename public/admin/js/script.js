@@ -292,13 +292,17 @@ $(() => {
   });
 })();
 
-// Checkbox multi (ổn định, có indeterminate)
+// Checkbox multi + Bulk UI + Submit (gộp, có confirm delete-all)
 (() => {
   const table = document.querySelector('table[checkbox-multi]');
-  if (!table) return;
+  const formBulk = document.querySelector('[form-change-multi]');
+  if (!table || !formBulk) return;
 
   const checkAll = table.querySelector('input[name="checkall"]');
   const rowChecks = table.querySelectorAll('tbody input[name="ids"]');
+  const hiddenIds = formBulk.querySelector('input[name="ids"]');
+  const btnApply  = formBulk.querySelector('button[type="submit"]');
+  const selectType = formBulk.querySelector('select[name="type"]');
 
   const updateHeader = () => {
     const total = rowChecks.length;
@@ -308,85 +312,51 @@ $(() => {
     checkAll.checked = total > 0 && checked === total;
   };
 
-  // tick từng dòng -> cập nhật header
-  rowChecks.forEach(c => c.addEventListener('change', updateHeader));
-
-  // tick header -> set tất cả dòng
-  if (checkAll) {
-    checkAll.addEventListener('change', () => {
-      rowChecks.forEach(c => (c.checked = checkAll.checked));
-      updateHeader();
-    });
-  }
-
-  // khởi tạo
-  updateHeader();
-})();
-
-
-// Form change multi (giữ nguyên logic)
-(() => {
-  const form = document.querySelector('[form-change-multi]');
-  const table = document.querySelector('table[checkbox-multi]');
-  if (!form || !table) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const checked = table.querySelectorAll('tbody input[name="ids"]:checked');
-    if (!checked.length) {
-      alert('Vui lòng chọn ít nhất một sản phẩm để thay đổi trạng thái.');
-      return;
-    }
-    const idsField = form.querySelector('input[name="ids"]');
-    idsField.value = [...checked].map(c => c.value).join(',');
-    form.submit();
-  });
-})();
-
-// Checkbox multi + Bulk button state
-(() => {
-  const formBulk = document.querySelector('[form-change-multi]');
-  const btnApply = formBulk?.querySelector('button[type="submit"]');
-  const hiddenIds = formBulk?.querySelector('input[name="ids"]');
-  const table = document.querySelector('table[checkbox-multi]');
-  if (!table) return;
-
-  const checkAll = table.querySelector('input[name="checkall"]');
-  const rowChecks = table.querySelectorAll('tbody input[name="ids"]');
-
   const updateBulkUI = () => {
     const ids = [...rowChecks].filter(c => c.checked).map(c => c.value);
     if (hiddenIds) hiddenIds.value = ids.join(',');
     if (btnApply) btnApply.disabled = ids.length === 0;
   };
 
-  const updateHeaderState = () => {
-    const total = rowChecks.length;
-    const checked = [...rowChecks].filter(c => c.checked).length;
-    if (!checkAll) return;
-    checkAll.indeterminate = checked > 0 && checked < total;
-    checkAll.checked = total > 0 && checked === total;
-  };
-
-  // Delegation cho mọi thay đổi trong bảng
+  // Thay đổi trong bảng
   table.addEventListener('change', (e) => {
     const t = e.target;
     if (!(t instanceof HTMLInputElement)) return;
 
     if (t.name === 'checkall') {
-      // Toggle tất cả hàng
       rowChecks.forEach(c => { c.checked = t.checked; });
-      updateHeaderState();
-      updateBulkUI();            // <-- QUAN TRỌNG: bật/tắt nút ngay tại đây
+      updateHeader();
+      updateBulkUI(); // cần gọi để bật/tắt nút Áp dụng
     } else if (t.name === 'ids') {
-      // Tick từng hàng
-      updateHeaderState();
+      updateHeader();
       updateBulkUI();
     }
   });
 
-  // Khởi tạo trạng thái ban đầu
-  updateHeaderState();
+  // Submit form: confirm khi delete-all
+  formBulk.addEventListener('submit', (e) => {
+    // đảm bảo đã có id
+    const ids = hiddenIds?.value?.trim() || '';
+    if (!ids) {
+      e.preventDefault();
+      alert('Vui lòng chọn ít nhất một sản phẩm để thay đổi.');
+      return;
+    }
+
+    const type = (selectType && 'value' in selectType) ? selectType.value : '';
+    if (type === 'delete-all') {
+      const ok = confirm('Bạn có chắc muốn XÓA các sản phẩm đã chọn? Hành động này là xóa mềm (deleted=true).');
+      if (!ok) {
+        e.preventDefault();
+        return;
+      }
+    }
+    // nếu dùng method-override ?_method=PATCH thì cứ submit bình thường
+  });
+
+  // Khởi tạo
+  updateHeader();
   updateBulkUI();
 })();
+
 

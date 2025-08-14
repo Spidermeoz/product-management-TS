@@ -18,7 +18,7 @@ interface ProductFind {
   [key: string]: unknown;
 }
 
-type ChangeMultiType = "active" | "inactive";
+type ChangeMultiType = "active" | "inactive" | "delete-all";
 
 interface ChangeMultiBody {
   type?: ChangeMultiType;
@@ -26,7 +26,7 @@ interface ChangeMultiBody {
 }
 
 const isChangeType = (t: unknown): t is ChangeMultiType =>
-  t === "active" || t === "inactive";
+  t === "active" || t === "inactive" || t === "delete-all";
 
 const toIdList = (ids: string | string[] | undefined): string[] => {
   if (!ids) return [];
@@ -102,30 +102,57 @@ export const changeMulti = async (
   req: Request<unknown, unknown, ChangeMultiBody>,
   res: Response
 ): Promise<void> => {
+  const referer = req.get("referer") || "/admin/products";
+
   try {
     const { type } = req.body;
     const idList = toIdList(req.body.ids);
 
     if (!isChangeType(type) || idList.length === 0) {
-      return res.redirect(req.headers.referer);
+      return res.redirect(referer);
     }
 
-    await Product.updateMany({ _id: { $in: idList } }, { $set: { status: type } });
-    return res.redirect(req.headers.referer);
+    switch (type) {
+      case "active":
+        await Product.updateMany(
+          { _id: { $in: idList } },
+          { $set: { status: "active" } }
+        );
+        break;
+
+      case "inactive":
+        await Product.updateMany(
+          { _id: { $in: idList } },
+          { $set: { status: "inactive" } }
+        );
+        break;
+
+      case "delete-all":
+        await Product.updateMany(
+          { _id: { $in: idList } },
+          { $set: { deleted: true, deletedAt: new Date() } }
+        );
+        break;
+    }
+
+    return res.redirect(referer);
   } catch (err) {
     console.error("[changeMulti] error:", err);
-    return res.redirect(req.headers.referer);
+    return res.redirect(referer);
   }
 };
 
 // [DELETE] /admin/products/delete/:id
 export const deleteItem = async (
-  req: Request<{id: string }, unknown, unknown, ProductsQuery>,
+  req: Request<{ id: string }, unknown, unknown, ProductsQuery>,
   res: Response
 ): Promise<void> => {
   const id = req.params.id;
 
-  await Product.deleteOne({ _id: id });
+  await Product.updateOne(
+    { _id: id },
+    { deleted: true, deletedAt: new Date() }
+  );
 
   res.redirect(req.headers.referer);
 };
