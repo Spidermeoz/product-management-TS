@@ -420,3 +420,39 @@ body {
 #productsTableBody td.actions-cell .btn,
 #productsTableBody td:last-child form,
 #productsTableBody td.actions-cell form { margin: 0; }
+
+/* ==== FIX: Sidebar luôn kéo tới chân trang khi nội dung dài ==== */
+
+/* Cho hàng bao ngoài luôn cao ít nhất bằng màn hình trừ navbar,
+   và các cột giãn đều chiều cao */
+.container-fluid > .row {
+  min-height: calc(100vh - 56px);
+  align-items: stretch; /* đảm bảo 2 cột cùng chiều cao */
+}
+
+/* Desktop/Tablet: sidebar cao bằng cột, bám dưới header khi cuộn */
+@media (min-width: 769px) {
+  .sidebar {
+    /* Ghi đè rule cũ: bỏ min-height theo viewport */
+    min-height: 100% !important;  /* kéo bằng chiều cao của .row */
+    height: 100%;
+    position: sticky;
+    top: 56px;                    /* đúng bằng chiều cao navbar */
+    overflow: auto;               /* nếu menu dài vẫn cuộn được */
+  }
+}
+
+/* Mobile overlay vẫn giữ hành vi trượt từ trái ra như bạn đã có */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 250px;
+    z-index: 1040;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    /* KHÔNG đặt height:100% ở đây để overlay hoạt động đúng */
+  }
+  .sidebar.show { transform: translateX(0); }
+}

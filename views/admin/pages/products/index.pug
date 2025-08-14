@@ -38,9 +38,9 @@ block main
                                             td #{idx + 1}
                                             td
                                                 // Ảnh 60x60, object-fit: cover (dùng class, không inline style)
-                                                img.img-thumbnail.thumb-60-cover(src=p.image, alt=`${p.name} thumbnail 100x100 SEO`)
+                                                img.img-thumbnail.thumb-60-cover(src=p.thumbnail, alt=`${p.title} thumbnail 100x100 SEO`)
                                             td
-                                                strong= p.name
+                                                strong= p.title
                                             td= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price)
                                             td
                                                 if p.status === 'active'
@@ -50,7 +50,7 @@ block main
                                             td
                                                 a.btn.btn-warning.btn-sm.btn-glow(
                                                 href=`/${prefixAdmin}/products/edit/${p._id}`
-                                                aria-label=`Sửa sản phẩm ${p.name}`
+                                                aria-label=`Sửa sản phẩm ${p.title}`
                                                 )
                                                     i.fas.fa-edit.mr-1
                                                     | Sửa
@@ -58,13 +58,13 @@ block main
                                                     button.btn.btn-danger.btn-sm.btn-glow(
                                                         type="submit"
                                                         onclick="return confirm('Bạn có chắc chắn muốn xóa?')"
-                                                        aria-label=`Xóa sản phẩm ${p.name}`
+                                                        aria-label=`Xóa sản phẩm ${p.title}`
                                                     )
                                                         i.fas.fa-trash.mr-1
                                                         | Xóa
                                                 a.btn.btn-info.btn-sm.btn-glow.ml-1(
                                                 href=`/${prefixAdmin}/products/${p._id}/sync`
-                                                aria-label=`Cập nhật sản phẩm ${p.name}`
+                                                aria-label=`Cập nhật sản phẩm ${p.title}`
                                                 )
                                                     i.fas.fa-sync.mr-1
                                                     | Cập nhật
