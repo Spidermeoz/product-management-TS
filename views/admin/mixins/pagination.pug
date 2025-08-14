@@ -1,0 +1,58 @@
+mixin pagination(pagination)
+    - const cp = pagination.currentPage || 1
+    - const tp = pagination.totalPages || 1
+    - const win = 2
+    - let start = Math.max(1, cp - win)
+    - let end = Math.min(tp, cp + win)
+    - if (start > 1 && (end - start) < win * 2) { start = Math.max(1, end - win * 2) }
+    - if (end < tp && (end - start) < win * 2) { end = Math.min(tp, start + win * 2) }
+
+    if tp > 1
+    nav.pagination-wrapper(aria-label="Phân trang")
+        ul.pagination.pagination-modern.justify-content-center(
+            data-current-page=cp
+            data-total-pages=tp
+        )
+            //- Prev
+            li.page-item(class=cp === 1 ? 'disabled' : '')
+                button.page-link(
+                    type="button"
+                    aria-label="Trang trước"
+                    button-pagination=(cp - 1)
+                )
+                    i.fas.fa-angle-left
+
+            //- First + ellipsis
+            if start > 1
+                li.page-item
+                    button.page-link(type="button" button-pagination=1 aria-label="Trang 1") 1
+                if start > 2
+                    li.page-item.disabled
+                        span.page-link &hellip;
+
+            //- Window
+            - for (let i = start; i <= end; i++)
+                li.page-item(class=i === cp ? 'active' : '')
+                    button.page-link(
+                        type="button"
+                        button-pagination=i
+                        aria-current=(i === cp ? 'page' : false)
+                        aria-label=`Trang ${i}`
+                    ) #{i}
+
+            //- Ellipsis + last
+            if end < tp
+                if end < tp - 1
+                    li.page-item.disabled
+                        span.page-link &hellip;
+                li.page-item
+                    button.page-link(type="button" button-pagination=tp aria-label=`Trang ${tp}`) #{tp}
+
+            //- Next
+            li.page-item(class=cp === tp ? 'disabled' : '')
+                button.page-link(
+                    type="button"
+                    aria-label="Kế tiếp"
+                    button-pagination=(cp + 1)
+                )
+                    i.fas.fa-angle-right

@@ -1,15 +1,12 @@
 // controllers/admin/products.controller.ts
 import { Request, Response } from "express";
 import Product from "../../models/product.model";
-import {
-  makeFilterStatus,
-  isStatus,
-  Status,
-} from "../../helpers/filterStatus.helper";
+import { makeFilterStatus, Status } from "../../helpers/filterStatus.helper";
 import { makeSearch } from "../../helpers/search.helper";
+import { makePagination } from "../../helpers/pagination.helper";
 
 interface ProductsQuery {
-  page: any;
+  page?: string;
   status?: Status | "";
   keyword?: string;
 }
@@ -17,7 +14,6 @@ interface ProductsQuery {
 interface ProductFind {
   deleted: boolean;
   status?: Status;
-  // hỗ trợ $or hoặc field đơn lẻ từ helper
   $or?: unknown[];
   [key: string]: unknown;
 }
@@ -27,47 +23,47 @@ export const index = async (
   req: Request<unknown, unknown, unknown, ProductsQuery>,
   res: Response
 ): Promise<void> => {
-  // Filter theo trạng thái
+  // Filter trạng thái
   const { filterStatus, currentStatus } = makeFilterStatus(req.query.status);
 
-  // Tìm kiếm theo từ khóa (mặc định field 'title', có thể đổi ['title','sku'])
-  const { keyword, criteria } = makeSearch(req.query as unknown as Record<string, unknown>, { fields: ["title"] });
+  // Search theo từ khóa (mặc định field 'title')
+  const { keyword, criteria } = makeSearch(
+    req.query as unknown as Record<string, unknown>,
+    {
+      fields: ["title"],
+      // paramKey: "keyword" // (mặc định là 'keyword', có thể đổi)
+    }
+  );
 
   // Điều kiện Mongo
   const find: ProductFind = { deleted: false };
   if (currentStatus) find.status = currentStatus;
   if (criteria) Object.assign(find, criteria);
 
+  // Đếm tổng số bản ghi theo điều kiện
+  const totalItems = await Product.countDocuments(find);
+
   // Pagination
-  let objectPagination = {
-    currentPage: 1,
-    limitItems: 6,
-    skip: 0,
-    totalPages: 0
-  }
+  const pagination = makePagination({
+    page: req.query.page, // page trực tiếp từ query
+    totalItems,
+    limit: 6, // hoặc lấy từ config .env
+  });
 
-  if (req.query.page) {
-    objectPagination.currentPage = parseInt(req.query.page);
-  }
+  // Lấy dữ liệu trang hiện tại
+  const productsData = await Product.find(find)
+    .limit(pagination.limitItems)
+    .skip(pagination.skip)
+    .lean();
 
-  objectPagination.skip = (objectPagination.currentPage - 1) * objectPagination.limitItems;
-
-  const countProducts = await Product.countDocuments(find);
-  const totalPages = Math.ceil(countProducts / objectPagination.limitItems);
-  objectPagination.totalPages = totalPages;
-  //End of Pagination
-
-
-  // Lấy dữ liệu
-  const productsData = await Product.find(find).limit(objectPagination.limitItems).skip(objectPagination.skip);
   // Render
   res.render("admin/pages/products/index", {
     pageTitle: "Danh sách sản phẩm",
     activePage: "products",
     products: productsData,
-    filterStatus: filterStatus,
-    keyword: keyword, // để prefill ô search
-    status: currentStatus, // nếu view cần giữ hidden input status,
-    pagination: objectPagination
+    filterStatus,
+    keyword, // prefill ô search
+    status: currentStatus, // nếu view cần giữ hidden input status
+    pagination, // truyền nguyên state phân trang
   });
 };
