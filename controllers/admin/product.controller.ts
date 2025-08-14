@@ -117,3 +117,15 @@ export const changeMulti = async (
     return res.redirect(req.headers.referer);
   }
 };
+
+// [DELETE] /admin/products/delete/:id
+export const deleteItem = async (
+  req: Request<{id: string }, unknown, unknown, ProductsQuery>,
+  res: Response
+): Promise<void> => {
+  const id = req.params.id;
+
+  await Product.deleteOne({ _id: id });
+
+  res.redirect(req.headers.referer);
+};
