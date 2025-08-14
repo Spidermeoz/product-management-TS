@@ -671,3 +671,72 @@ body {
     margin-right: 0;
   }
 }
+
+/* =========================
+   Pagination (modern)
+   ========================= */
+.pagination-wrapper { margin-top: 1rem; }
+
+.pagination-modern .page-item { margin: 0 .125rem; }
+
+.pagination-modern .page-link{
+  min-width: 38px;
+  height: 38px;
+  padding: 0 .75rem;
+  border: none;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  background: var(--card-bg);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  transition: transform .18s ease, box-shadow .22s ease, background .2s ease, color .2s ease;
+}
+
+.pagination-modern .page-link:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.10);
+}
+
+.pagination-modern .page-item.active .page-link{
+  color: #fff;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #5aa9ff 100%);
+  box-shadow: 0 10px 24px rgba(0,123,255,.35), 0 0 0 3px rgba(255,215,0,.18);
+  cursor: default;
+}
+
+.pagination-modern .page-item.disabled .page-link{
+  color: rgba(0,0,0,.35);
+  background: rgba(0,0,0,.04);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.pagination-modern .page-link:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,215,0,.35), 0 6px 16px rgba(0,0,0,.12);
+}
+
+/* Dark mode */
+[data-theme="dark"] .pagination-modern .page-link{
+  color: var(--text-color);
+  background: #2a2f34;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+[data-theme="dark"] .pagination-modern .page-item.disabled .page-link{
+  color: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.08);
+  box-shadow: none;
+}
+
+/* Nhỏ gọn khi đặt ngay sau .table */
+.table + .pagination-wrapper .pagination-modern .page-link{
+  min-width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+/* Icon căn giữa đẹp hơn */
+.pagination-modern .page-link i { line-height: 1; }
+

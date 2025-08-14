@@ -1,0 +1,15 @@
+mixin search(keyword)
+    //- Tìm kiếm (GET). Giữ lại status hiện tại (nếu có).
+    form#searchForm.form-inline.ml-auto(method="GET" action=`/${prefixAdmin}/products` role="search" aria-label="Tìm kiếm sản phẩm")
+        input.form-control.form-control-sm.mr-2(
+            type="text"
+            name="keyword"
+            placeholder="Tìm kiếm..."
+            value=(typeof keyword !== 'undefined' ? keyword : '')
+            aria-label="Từ khóa tìm kiếm"
+        )
+        if typeof status !== 'undefined' && status
+            input(type="hidden" name="status" value=status)
+        button.btn.btn-secondary.btn-sm(type="submit")
+            i.fas.fa-search.mr-1
+            | Tìm

@@ -186,6 +186,7 @@ $(() => {
   });
 })();
 
+// Search
 (() => {
   const FORM_ID = 'searchForm';
   const INPUT_NAME = 'q';
@@ -246,4 +247,47 @@ $(() => {
   } else {
     initSearch();
   }
+})();
+
+// Pagination (delegation + guard + clean URL)
+(() => {
+  const pager = document.querySelector("ul.pagination");
+  if (!pager) return;
+
+  // (optional) đọc current & total nếu bạn gắn data-* trong Pug
+  const getInt = (v, fb = 0) => {
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : fb;
+  };
+  const current = getInt(pager.dataset.currentPage, 1);     // data-current-page
+  const total   = getInt(pager.dataset.totalPages, 0);       // data-total-pages (0 = unknown)
+
+  pager.addEventListener("click", (e) => {
+    const btn = e.target.closest("[button-pagination]");
+    if (!btn || !pager.contains(btn)) return;
+
+    // nếu cha là .page-item.disabled thì bỏ qua
+    if (btn.closest(".page-item.disabled")) return;
+
+    e.preventDefault();
+
+    // lấy số trang mục tiêu
+    const targetRaw = btn.getAttribute("button-pagination");
+    let target = parseInt(targetRaw || "", 10);
+    if (!Number.isFinite(target)) return;
+
+    // nếu có total => clamp vào [1, total]
+    if (total > 0) target = Math.max(1, Math.min(total, target));
+
+    // trùng trang hiện tại => khỏi reload
+    if (target === current) return;
+
+    // cập nhật URL
+    const url = new URL(window.location.href);
+    if (target <= 1) url.searchParams.delete("page"); // sạch URL khi về trang 1
+    else url.searchParams.set("page", String(target));
+
+    // giữ nguyên các param khác: status, keyword... (vì mình chỉ đụng 'page')
+    window.location.href = url.toString();
+  });
 })();
