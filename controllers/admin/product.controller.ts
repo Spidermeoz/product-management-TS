@@ -258,7 +258,7 @@ export const createPost = async (
     const product = new Product(payload);
     await product.save();
 
-    // req.flash?.("success", "Tạo sản phẩm thành công!");
+    req.flash?.("success", "Tạo sản phẩm thành công!");
     res.redirect(`/${systemConfig.prefixAdmin}/products`);
   } catch (err) {
     console.error("[createPost] error:", err);
