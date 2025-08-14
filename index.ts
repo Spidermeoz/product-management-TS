@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import * as database from "./config/database";
+import methodOverride from "method-override"
 
 import { systemConfig } from "./config/config";
 
@@ -18,6 +19,11 @@ app.use(express.static("public"));
 
 app.set("views", `./views`);
 app.set("view engine", "pug");
+
+app.use(methodOverride('_method'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // App Local Variables
 app.locals.prefixAdmin = systemConfig.prefixAdmin;

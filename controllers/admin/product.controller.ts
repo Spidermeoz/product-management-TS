@@ -18,6 +18,22 @@ interface ProductFind {
   [key: string]: unknown;
 }
 
+type ChangeMultiType = "active" | "inactive";
+
+interface ChangeMultiBody {
+  type?: ChangeMultiType;
+  ids?: string | string[]; // "id1,id2" hoặc ["id1","id2"]
+}
+
+const isChangeType = (t: unknown): t is ChangeMultiType =>
+  t === "active" || t === "inactive";
+
+const toIdList = (ids: string | string[] | undefined): string[] => {
+  if (!ids) return [];
+  const raw = Array.isArray(ids) ? ids : ids.split(",");
+  return raw.map((s) => String(s).trim()).filter(Boolean);
+};
+
 // [GET] /admin/products
 export const index = async (
   req: Request<unknown, unknown, unknown, ProductsQuery>,
@@ -66,4 +82,38 @@ export const index = async (
     status: currentStatus, // nếu view cần giữ hidden input status
     pagination, // truyền nguyên state phân trang
   });
+};
+
+// [PATCH] /admin/products/change-status/:status/:id
+export const changeStatus = async (
+  req: Request<{ status: string; id: string }, unknown, unknown, ProductsQuery>,
+  res: Response
+): Promise<void> => {
+  const status = req.params.status;
+  const id = req.params.id;
+
+  await Product.updateOne({ _id: id }, { status: status });
+
+  res.redirect(req.headers.referer);
+};
+
+// [PATCH] /admin/products/change-multi
+export const changeMulti = async (
+  req: Request<unknown, unknown, ChangeMultiBody>,
+  res: Response
+): Promise<void> => {
+  try {
+    const { type } = req.body;
+    const idList = toIdList(req.body.ids);
+
+    if (!isChangeType(type) || idList.length === 0) {
+      return res.redirect(req.headers.referer);
+    }
+
+    await Product.updateMany({ _id: { $in: idList } }, { $set: { status: type } });
+    return res.redirect(req.headers.referer);
+  } catch (err) {
+    console.error("[changeMulti] error:", err);
+    return res.redirect(req.headers.referer);
+  }
 };

@@ -675,14 +675,18 @@ body {
 /* =========================
    Pagination (modern)
    ========================= */
-.pagination-wrapper { margin-top: 1rem; }
+.pagination-wrapper {
+  margin-top: 1rem;
+}
 
-.pagination-modern .page-item { margin: 0 .125rem; }
+.pagination-modern .page-item {
+  margin: 0 0.125rem;
+}
 
-.pagination-modern .page-link{
+.pagination-modern .page-link {
   min-width: 38px;
   height: 38px;
-  padding: 0 .75rem;
+  padding: 0 0.75rem;
   border: none;
   border-radius: 10px;
   display: inline-flex;
@@ -690,53 +694,295 @@ body {
   justify-content: center;
   color: var(--text-color);
   background: var(--card-bg);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
-  transition: transform .18s ease, box-shadow .22s ease, background .2s ease, color .2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.2s ease,
+    color 0.2s ease;
 }
 
-.pagination-modern .page-link:hover{
+.pagination-modern .page-link:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(0,0,0,.10);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
 }
 
-.pagination-modern .page-item.active .page-link{
+.pagination-modern .page-item.active .page-link {
   color: #fff;
   background: linear-gradient(135deg, var(--secondary-color) 0%, #5aa9ff 100%);
-  box-shadow: 0 10px 24px rgba(0,123,255,.35), 0 0 0 3px rgba(255,215,0,.18);
+  box-shadow: 0 10px 24px rgba(0, 123, 255, 0.35),
+    0 0 0 3px rgba(255, 215, 0, 0.18);
   cursor: default;
 }
 
-.pagination-modern .page-item.disabled .page-link{
-  color: rgba(0,0,0,.35);
-  background: rgba(0,0,0,.04);
+.pagination-modern .page-item.disabled .page-link {
+  color: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.04);
   box-shadow: none;
   pointer-events: none;
 }
 
-.pagination-modern .page-link:focus-visible{
+.pagination-modern .page-link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255,215,0,.35), 0 6px 16px rgba(0,0,0,.12);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Dark mode */
-[data-theme="dark"] .pagination-modern .page-link{
+[data-theme="dark"] .pagination-modern .page-link {
   color: var(--text-color);
   background: #2a2f34;
-  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
-[data-theme="dark"] .pagination-modern .page-item.disabled .page-link{
-  color: rgba(255,255,255,.5);
-  background: rgba(255,255,255,.08);
+[data-theme="dark"] .pagination-modern .page-item.disabled .page-link {
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
   box-shadow: none;
 }
 
 /* Nhỏ gọn khi đặt ngay sau .table */
-.table + .pagination-wrapper .pagination-modern .page-link{
+.table + .pagination-wrapper .pagination-modern .page-link {
   min-width: 34px;
   height: 34px;
   border-radius: 8px;
 }
 
 /* Icon căn giữa đẹp hơn */
-.pagination-modern .page-link i { line-height: 1; }
+.pagination-modern .page-link i {
+  line-height: 1;
+}
 
+/* =========================
+   Products Table – Checkboxes (multi-select)
+   ========================= */
+
+/* Cột checkbox: căn giữa, chiều rộng gọn */
+table[checkbox-multi] thead th:first-child,
+table[checkbox-multi] tbody td:first-child {
+  width: 44px;
+  text-align: center;
+  vertical-align: middle;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* --- Base checkbox --- */
+table[checkbox-multi] input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-radius: 0.35rem;
+  background: var(--card-bg);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.18s ease, box-shadow 0.22s ease,
+    border-color 0.2s ease, background 0.2s ease;
+}
+
+/* Hover: nổi nhẹ + viền theo màu secondary */
+table[checkbox-multi] input[type="checkbox"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  border-color: var(--secondary-color);
+}
+
+/* Focus A11Y */
+table[checkbox-multi] input[type="checkbox"]:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.35);
+  border-color: var(--secondary-color);
+}
+
+/* Nền/viền khi checked hoặc indeterminate */
+table[checkbox-multi] input[type="checkbox"]:checked,
+table[checkbox-multi] input[type="checkbox"]:indeterminate {
+  background: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+/* Pseudo hiển thị icon (tick/indeterminate) bằng SVG sắc nét */
+table[checkbox-multi] input[type="checkbox"]::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 14px;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+/* Dấu tick (stroke bo tròn) */
+table[checkbox-multi] input[type="checkbox"]:checked::after {
+  background-image: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" \
+stroke="%23fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">\
+<polyline points="3.5,8.5 6.8,11.8 12.8,4.8"/></svg>');
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Trạng thái indeterminate (gạch ngang bo tròn) */
+table[checkbox-multi] input[type="checkbox"]:indeterminate::after {
+  background-image: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23fff">\
+<rect x="3" y="7" width="10" height="2.4" rx="1.2" ry="1.2"/></svg>');
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Disabled */
+table[checkbox-multi] input[type="checkbox"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Highlight cả hàng khi checkbox của hàng đó được chọn (yêu cầu :has) */
+table[checkbox-multi]
+  tbody
+  tr:has(td:first-child input[type="checkbox"]:checked) {
+  background: rgba(0, 123, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(0, 123, 255, 0.12);
+}
+
+/* Dark mode: viền & nền checkbox dịu hơn */
+[data-theme="dark"] table[checkbox-multi] input[type="checkbox"] {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: #2a2f34;
+}
+
+/* Tinh chỉnh cho bảng .table-sm (checkbox nhỏ gọn) */
+.table-sm table[checkbox-multi] input[type="checkbox"],
+table.table-sm[checkbox-multi] input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+.table-sm table[checkbox-multi] input[type="checkbox"]::after,
+table.table-sm[checkbox-multi] input[type="checkbox"]::after {
+  width: 12px;
+  height: 12px;
+  background-size: 12px 12px;
+}
+
+/* Ngăn click được trên item phân trang disabled (phòng khi đặt gần checkbox) */
+.pagination .page-item.disabled .page-link {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* =========================
+   Bulk Change Form (form-change-multi)
+   ========================= */
+
+[form-change-multi] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem; /* khoảng cách giữa select & nút */
+  padding: 0.5rem 0.75rem;
+  margin: 0.75rem 0;
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] [form-change-multi] {
+  background: #2a2f34;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Nhóm bên trong từ mixin (.d-flex...) — đảm bảo canh giữa theo trục dọc */
+[form-change-multi] > .d-flex {
+  align-items: center !important;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+
+/* Form-group gọn lại (xóa margin Bootstrap mặc định) */
+[form-change-multi] .form-group {
+  margin: 0;
+}
+
+/* Kích thước control đồng bộ (pill) */
+[form-change-multi] {
+  --ctl-h: 36px;
+  --ctl-radius: 999px;
+}
+
+/* Select chọn hành động */
+[form-change-multi] select.form-control {
+  height: var(--ctl-h);
+  line-height: calc(var(--ctl-h) - 2px);
+  padding: 0 0.9rem;
+  min-width: 180px;
+  border-radius: var(--ctl-radius);
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.22s ease,
+    transform 0.18s ease;
+}
+[form-change-multi] select.form-control:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--secondary-color);
+}
+[form-change-multi] select.form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.28);
+}
+
+[data-theme="dark"] [form-change-multi] select.form-control {
+  background-color: #1f2327;
+  color: var(--text-color);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Input ids ẩn (giữ nguyên .d-none) */
+[form-change-multi] input[name="ids"].d-none {
+  display: none !important;
+}
+
+/* Nút áp dụng */
+[form-change-multi] button[type="submit"].btn {
+  height: var(--ctl-h);
+  line-height: calc(var(--ctl-h) - 2px);
+  padding: 0 1rem;
+  border-radius: var(--ctl-radius);
+  font-weight: 600;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+[form-change-multi] button[type="submit"].btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 123, 255, 0.25),
+    0 0 8px rgba(255, 215, 0, 0.25);
+  filter: brightness(1.02);
+}
+[form-change-multi] button[type="submit"].btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.35);
+}
+
+/* Trạng thái disabled khi chưa chọn item (JS có thể set disabled) */
+[form-change-multi] button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Mobile: full width & stack dọc */
+@media (max-width: 768px) {
+  [form-change-multi] {
+    padding: 0.5rem;
+  }
+  [form-change-multi] select.form-control {
+    min-width: 0;
+    flex: 1;
+  }
+  [form-change-multi] button[type="submit"].btn {
+    width: 100%;
+  }
+}
