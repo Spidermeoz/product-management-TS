@@ -7,7 +7,7 @@ export const index = async (req: Request, res: Response) => {
   const products = await Product.find({
     status: "active",
     deleted: false,
-  });
+  }).sort({ position: "desc" }); // Sắp xếp theo vị trí giảm dần
 
   const newProducts = products.map((item) => {
     item["newPrice"] = item.price - (item.price * item.discountPercentage) / 100;

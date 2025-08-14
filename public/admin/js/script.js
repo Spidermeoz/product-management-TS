@@ -16,13 +16,16 @@ const initializeParticles = () => {
 const updateThemeIcon = (theme) => {
   const icon = $("#themeToggle i");
   if (!icon.length) return;
-  icon.removeClass("fa-moon fa-sun").addClass(theme === "dark" ? "fa-sun" : "fa-moon");
+  icon
+    .removeClass("fa-moon fa-sun")
+    .addClass(theme === "dark" ? "fa-sun" : "fa-moon");
 };
 
 const toggleTheme = () => {
   const cur = document.documentElement.getAttribute("data-theme");
   const next = cur === "dark" ? "light" : "dark";
-  if (next === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  if (next === "dark")
+    document.documentElement.setAttribute("data-theme", "dark");
   else document.documentElement.removeAttribute("data-theme");
   localStorage.setItem("theme", next);
   updateThemeIcon(next);
@@ -36,25 +39,40 @@ const initializeChart = () => {
   new Chart(ctx, {
     type: "line",
     data: {
-      labels: ["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12"],
-      datasets: [{
-        label: "Doanh thu (triệu VNĐ)",
-        data: [65,59,80,81,56,55,40,65,75,85,90,95],
-        borderColor: "#007BFF",
-        backgroundColor: "rgba(0,123,255,.12)",
-        borderWidth: 3,
-        fill: true,
-        tension: .4,
-        pointRadius: 3
-      }]
+      labels: [
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6",
+        "T7",
+        "T8",
+        "T9",
+        "T10",
+        "T11",
+        "T12",
+      ],
+      datasets: [
+        {
+          label: "Doanh thu (triệu VNĐ)",
+          data: [65, 59, 80, 81, 56, 55, 40, 65, 75, 85, 90, 95],
+          borderColor: "#007BFF",
+          backgroundColor: "rgba(0,123,255,.12)",
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+        },
+      ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: true, position: "top" } },
       scales: { y: { beginAtZero: true }, x: {} },
-      animation: { duration: 1200, easing: "easeInOutQuart" }
-    }
+      animation: { duration: 1200, easing: "easeInOutQuart" },
+    },
   });
 };
 
@@ -65,7 +83,7 @@ const showToast = (title, message, type = "info") => {
     success: "fa-check-circle text-success",
     error: "fa-exclamation-circle text-danger",
     warning: "fa-exclamation-triangle text-warning",
-    info: "fa-info-circle text-info"
+    info: "fa-info-circle text-info",
   }[type];
   const html = `
     <div class="toast" id="${id}" role="status" data-autohide="true" data-delay="4000" aria-live="assertive" aria-atomic="true">
@@ -79,7 +97,11 @@ const showToast = (title, message, type = "info") => {
       <div class="toast-body">${message}</div>
     </div>`;
   $("#toastContainer").append(html);
-  $("#" + id).toast("show").on("hidden.bs.toast", function () { $(this).remove(); });
+  $("#" + id)
+    .toast("show")
+    .on("hidden.bs.toast", function () {
+      $(this).remove();
+    });
 };
 
 let searchTimer;
@@ -112,7 +134,10 @@ $(() => {
   // Sidebar toggle (mobile)
   $("#sidebarToggle").on("click", () => $("#sidebar").toggleClass("show"));
   $(document).on("click", (e) => {
-    if ($(window).width() < 768 && !$(e.target).closest("#sidebar, #sidebarToggle").length) {
+    if (
+      $(window).width() < 768 &&
+      !$(e.target).closest("#sidebar, #sidebarToggle").length
+    ) {
       $("#sidebar").removeClass("show");
     }
   });
@@ -142,29 +167,29 @@ $(() => {
 
 // status-filter.js
 (() => {
-  const ATTR = 'button-status';
+  const ATTR = "button-status";
 
-  const isStatus = (val) => val === 'active' || val === 'inactive';
+  const isStatus = (val) => val === "active" || val === "inactive";
 
   const readStatus = (el) => {
     const raw = el.getAttribute(ATTR);
-    return isStatus(raw) ? raw : ''; // '' = Tất cả
+    return isStatus(raw) ? raw : ""; // '' = Tất cả
   };
 
   const buildNextHref = (nextStatus) => {
     const url = new URL(window.location.href);
-    const curStatus = url.searchParams.get('status') || '';
+    const curStatus = url.searchParams.get("status") || "";
 
     // Toggle: click lại filter đang active -> xóa param (về Tất cả)
     if (curStatus === nextStatus) {
-      url.searchParams.delete('status');
+      url.searchParams.delete("status");
     } else {
-      if (nextStatus) url.searchParams.set('status', nextStatus);
-      else url.searchParams.delete('status');
+      if (nextStatus) url.searchParams.set("status", nextStatus);
+      else url.searchParams.delete("status");
     }
 
     // Đổi filter thì reset trang (nếu có phân trang)
-    url.searchParams.delete('page');
+    url.searchParams.delete("page");
 
     return url.toString();
   };
@@ -174,7 +199,7 @@ $(() => {
 
   buttons.forEach((btn) => {
     btn.addEventListener(
-      'click',
+      "click",
       (e) => {
         e.preventDefault();
         const status = readStatus(btn);
@@ -188,9 +213,9 @@ $(() => {
 
 // Search
 (() => {
-  const FORM_ID = 'searchForm';
-  const INPUT_NAME = 'q';
-  const INSTANT_ATTR = 'data-instant'; // bật tìm kiếm tức thì khi form có attr này
+  const FORM_ID = "searchForm";
+  const INPUT_NAME = "q";
+  const INSTANT_ATTR = "data-instant"; // bật tìm kiếm tức thì khi form có attr này
 
   const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -198,9 +223,9 @@ $(() => {
     const url = new URL(window.location.href);
 
     // set / delete q
-    const q = (qValue || '').trim();
-    if (q) url.searchParams.set('q', q);
-    else url.searchParams.delete('q');
+    const q = (qValue || "").trim();
+    if (q) url.searchParams.set("q", q);
+    else url.searchParams.delete("q");
 
     // giữ nguyên status hiện tại nếu có (đã nằm trong URL)
     // nếu form có input hidden name="status", trình duyệt cũng sẽ gửi lên
@@ -208,7 +233,7 @@ $(() => {
     // -> KHÔNG động vào 'status' ở đây
 
     // reset phân trang nếu có
-    url.searchParams.delete('page');
+    url.searchParams.delete("page");
 
     return url.toString();
   };
@@ -221,7 +246,7 @@ $(() => {
     if (!input) return;
 
     // Submit chuẩn (Enter hoặc click nút "Tìm")
-    form.addEventListener('submit', (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       const nextHref = buildNextHref(input.value);
       window.location.href = nextHref;
@@ -230,7 +255,7 @@ $(() => {
     // Tìm kiếm tức thì (tuỳ chọn): thêm data-instant="true" vào #searchForm
     if (form.hasAttribute(INSTANT_ATTR)) {
       let timer;
-      input.addEventListener('input', (e) => {
+      input.addEventListener("input", (e) => {
         clearTimeout(timer);
         const val = e.currentTarget.value;
         timer = setTimeout(() => {
@@ -242,8 +267,8 @@ $(() => {
   };
 
   // Khởi tạo khi DOM sẵn sàng
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSearch, { once: true });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSearch, { once: true });
   } else {
     initSearch();
   }
@@ -259,8 +284,8 @@ $(() => {
     const n = parseInt(v, 10);
     return Number.isFinite(n) ? n : fb;
   };
-  const current = getInt(pager.dataset.currentPage, 1);     // data-current-page
-  const total   = getInt(pager.dataset.totalPages, 0);       // data-total-pages (0 = unknown)
+  const current = getInt(pager.dataset.currentPage, 1); // data-current-page
+  const total = getInt(pager.dataset.totalPages, 0); // data-total-pages (0 = unknown)
 
   pager.addEventListener("click", (e) => {
     const btn = e.target.closest("[button-pagination]");
@@ -294,69 +319,100 @@ $(() => {
 
 // Checkbox multi + Bulk UI + Submit (gộp, có confirm delete-all)
 (() => {
-  const table = document.querySelector('table[checkbox-multi]');
-  const formBulk = document.querySelector('[form-change-multi]');
+  const table = document.querySelector("table[checkbox-multi]");
+  const formBulk = document.querySelector("[form-change-multi]");
   if (!table || !formBulk) return;
 
   const checkAll = table.querySelector('input[name="checkall"]');
   const rowChecks = table.querySelectorAll('tbody input[name="ids"]');
   const hiddenIds = formBulk.querySelector('input[name="ids"]');
-  const btnApply  = formBulk.querySelector('button[type="submit"]');
+  const btnApply = formBulk.querySelector('button[type="submit"]');
   const selectType = formBulk.querySelector('select[name="type"]');
 
   const updateHeader = () => {
     const total = rowChecks.length;
-    const checked = [...rowChecks].filter(c => c.checked).length;
+    const checked = [...rowChecks].filter((c) => c.checked).length;
     if (!checkAll) return;
     checkAll.indeterminate = checked > 0 && checked < total;
     checkAll.checked = total > 0 && checked === total;
   };
 
   const updateBulkUI = () => {
-    const ids = [...rowChecks].filter(c => c.checked).map(c => c.value);
-    if (hiddenIds) hiddenIds.value = ids.join(',');
+    const ids = [...rowChecks].filter((c) => c.checked).map((c) => c.value);
+    if (hiddenIds) hiddenIds.value = ids.join(",");
     if (btnApply) btnApply.disabled = ids.length === 0;
   };
 
   // Thay đổi trong bảng
-  table.addEventListener('change', (e) => {
+  table.addEventListener("change", (e) => {
     const t = e.target;
     if (!(t instanceof HTMLInputElement)) return;
 
-    if (t.name === 'checkall') {
-      rowChecks.forEach(c => { c.checked = t.checked; });
+    if (t.name === "checkall") {
+      rowChecks.forEach((c) => {
+        c.checked = t.checked;
+      });
       updateHeader();
       updateBulkUI(); // cần gọi để bật/tắt nút Áp dụng
-    } else if (t.name === 'ids') {
+    } else if (t.name === "ids") {
       updateHeader();
       updateBulkUI();
     }
   });
 
-  // Submit form: confirm khi delete-all
-  formBulk.addEventListener('submit', (e) => {
-    // đảm bảo đã có id
-    const ids = hiddenIds?.value?.trim() || '';
-    if (!ids) {
-      e.preventDefault();
-      alert('Vui lòng chọn ít nhất một sản phẩm để thay đổi.');
+  // Submit form: confirm khi delete-all + build payload cho change-position
+  formBulk.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // checkbox đang chọn
+    const checked = table.querySelectorAll('tbody input[name="ids"]:checked');
+    if (!checked.length) {
+      alert("Vui lòng chọn ít nhất một sản phẩm để thay đổi.");
       return;
     }
 
-    const type = (selectType && 'value' in selectType) ? selectType.value : '';
-    if (type === 'delete-all') {
-      const ok = confirm('Bạn có chắc muốn XÓA các sản phẩm đã chọn? Hành động này là xóa mềm (deleted=true).');
-      if (!ok) {
-        e.preventDefault();
-        return;
-      }
+    const type = selectType && "value" in selectType ? selectType.value : "";
+
+    // Confirm xoá nhiều
+    if (type === "delete-all") {
+      const ok = confirm(
+        "Bạn có chắc muốn XÓA các sản phẩm đã chọn? Hành động này là xóa mềm (deleted=true)."
+      );
+      if (!ok) return;
     }
-    // nếu dùng method-override ?_method=PATCH thì cứ submit bình thường
+
+    // Tạo payload ids tuỳ theo loại tác vụ
+    let payload = "";
+
+    if (type === "change-position") {
+      const pairs = [];
+      // dùng for...of để có thể break/return sớm khi gặp lỗi
+      for (const c of checked) {
+        const id = c.value;
+        const tr = c.closest("tr");
+        const posInput = tr ? tr.querySelector("input[name='position']") : null;
+        const position = posInput ? String(posInput.value).trim() : "";
+
+        // Validate đơn giản: yêu cầu có giá trị và là số
+        if (position === "" || isNaN(Number(position))) {
+          alert("Vui lòng nhập vị trí hợp lệ cho các sản phẩm đã chọn.");
+          return; // dừng submit
+        }
+        pairs.push(`${id}-${position}`);
+      }
+      payload = pairs.join(",");
+    } else {
+      // Mặc định: active / inactive / delete-all...
+      payload = [...checked].map((c) => c.value).join(",");
+    }
+
+    if (hiddenIds) hiddenIds.value = payload;
+
+    // Gửi form (method-override ?_method=PATCH vẫn hoạt động bình thường)
+    formBulk.submit();
   });
 
   // Khởi tạo
   updateHeader();
   updateBulkUI();
 })();
-
-

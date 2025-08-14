@@ -36,6 +36,10 @@ if(buttonsDelete.length > 0) {
         formDeleteItem.action = action;
         // Gửi form
         formDeleteItem.submit();
+        if (!id) {
+          alert("Không tìm thấy ID sản phẩm!");
+          return;
+        }
       }
     });
   });

@@ -986,3 +986,133 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
     width: 100%;
   }
 }
+
+/* Fallback: nếu chưa gán class, Vị trí đang là cột thứ 6 */
+#productsTable thead th:nth-child(6),
+#productsTableBody td:nth-child(6) {
+  text-align: center;
+  vertical-align: middle;
+  width: 92px;
+}
+
+/* Ô nhập vị trí */
+#productsTableBody td.position-col input[name="position"],
+#productsTableBody td:nth-child(6) input[name="position"] {
+  max-width: 84px;        /* khống chế độ rộng */
+  height: 34px;
+  padding: 0 .5rem;
+  margin: 0 auto;         /* căn giữa trong ô */
+  text-align: center;
+  font-weight: 600;
+  border-radius: .5rem;
+  border: 2px solid rgba(0,0,0,.15);
+  background: var(--card-bg);
+  color: var(--text-color);
+  transition: border-color .2s ease, box-shadow .22s ease, transform .18s ease;
+}
+
+/* Hover/Focus: nổi nhẹ + ring đẹp */
+#productsTableBody td.position-col input[name="position"]:hover,
+#productsTableBody td:nth-child(6) input[name="position"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+  border-color: var(--secondary-color);
+}
+#productsTableBody td.position-col input[name="position"]:focus,
+#productsTableBody td:nth-child(6) input[name="position"]:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(255,215,0,.28);
+}
+
+/* Xoá spinner mặc định (Chrome/Edge/Safari) */
+#productsTableBody td.position-col input[name="position"]::-webkit-outer-spin-button,
+#productsTableBody td.position-col input[name="position"]::-webkit-inner-spin-button,
+#productsTableBody td:nth-child(6) input[name="position"]::-webkit-outer-spin-button,
+#productsTableBody td:nth-child(6) input[name="position"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+#productsTableBody td.position-col input[name="position"],
+#productsTableBody td:nth-child(6) input[name="position"] {
+  -moz-appearance: textfield;
+}
+
+/* Trạng thái lỗi (nếu bạn thêm class .is-invalid bằng JS) */
+#productsTableBody td.position-col input[name="position"].is-invalid,
+#productsTableBody td:nth-child(6) input[name="position"].is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220,53,69,.18);
+}
+
+/* Dark mode */
+[data-theme="dark"] #productsTableBody td.position-col input[name="position"],
+[data-theme="dark"] #productsTableBody td:nth-child(6) input[name="position"] {
+  background: #2a2f34;
+  border-color: rgba(255,255,255,.18);
+  color: var(--text-color);
+}
+
+/* Bảng .table-sm: thu gọn hơn */
+.table-sm #productsTableBody td.position-col input[name="position"],
+.table-sm #productsTableBody td:nth-child(6) input[name="position"] {
+  height: 30px;
+  max-width: 76px;
+  font-size: .95rem;
+}
+
+/* =========================
+   Products table – Giá (price)
+   ========================= */
+
+/* Fallback: nếu chưa gán class, cột Giá là cột thứ 5 */
+#productsTable thead th:nth-child(5),
+#productsTableBody td:nth-child(5) {
+  text-align: left;
+  vertical-align: middle;
+  width: 140px;
+  white-space: nowrap;
+}
+
+/* Tăng khả năng đọc cho số tiền */
+#productsTableBody td.price-col,
+#productsTableBody td:nth-child(5) {
+  font-weight: 700;
+  letter-spacing: .2px;
+  font-variant-numeric: tabular-nums lining-nums;   /* CSS standard */
+  font-feature-settings: "tnum" 1, "lnum" 1;        /* Fallback cho trình duyệt cũ */
+  color: var(--text-color);
+}
+
+/* (Tuỳ chọn) dùng chip cho giá nếu bạn bọc <span class="price-chip">...</span> */
+#productsTableBody td.price-col .price-chip,
+#productsTableBody td:nth-child(5) .price-chip {
+  display: inline-block;
+  padding: .25rem .5rem;
+  border-radius: .5rem;
+  background: rgba(0,123,255,.06);
+  box-shadow: inset 0 0 0 1px rgba(0,123,255,.12);
+}
+
+/* Hover nhẹ cho hàng có giá (khớp với hover row hiện có) */
+#productsTableBody tr:hover td.price-col,
+#productsTableBody tr:hover td:nth-child(5) {
+  color: var(--text-color);
+  filter: brightness(1.02);
+}
+
+/* Dark mode cho chip giá */
+[data-theme="dark"] #productsTableBody td.price-col .price-chip,
+[data-theme="dark"] #productsTableBody td:nth-child(5) .price-chip {
+  background: rgba(90, 160, 255, .14);
+  box-shadow: inset 0 0 0 1px rgba(90,160,255,.22);
+}
+
+/* .table-sm: thu gọn cột giá */
+.table-sm #productsTable thead th.price-col,
+.table-sm #productsTableBody td.price-col,
+.table-sm #productsTable thead th:nth-child(5),
+.table-sm #productsTableBody td:nth-child(5) {
+  width: 120px;
+}

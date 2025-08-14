@@ -18,7 +18,7 @@ interface ProductFind {
   [key: string]: unknown;
 }
 
-type ChangeMultiType = "active" | "inactive" | "delete-all";
+type ChangeMultiType = "active" | "inactive" | "delete-all" | "change-position";
 
 interface ChangeMultiBody {
   type?: ChangeMultiType;
@@ -26,7 +26,7 @@ interface ChangeMultiBody {
 }
 
 const isChangeType = (t: unknown): t is ChangeMultiType =>
-  t === "active" || t === "inactive" || t === "delete-all";
+  t === "active" || t === "inactive" || t === "delete-all" || t === "change-position";
 
 const toIdList = (ids: string | string[] | undefined): string[] => {
   if (!ids) return [];
@@ -68,6 +68,7 @@ export const index = async (
 
   // Lấy dữ liệu trang hiện tại
   const productsData = await Product.find(find)
+    .sort({ position: "desc" })
     .limit(pagination.limitItems)
     .skip(pagination.skip)
     .lean();
@@ -132,6 +133,13 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           { $set: { deleted: true, deletedAt: new Date() } }
         );
+        break;
+
+      case "change-position":
+        for (const item of idList) {
+          const [id, position] = item.split("-");
+          await Product.updateOne({ _id: id }, { position: parseInt(position) });
+        }
         break;
     }
 

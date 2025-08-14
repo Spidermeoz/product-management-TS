@@ -57,6 +57,7 @@ block main
                                         th(data-sort="price" role="button" tabindex="0" aria-label="Sắp xếp theo giá")
                                             | Giá
                                             i.fas.fa-sort.ml-1
+                                        th vị trí
                                         th Trạng thái
                                         th Hành động
                                 tbody#productsTableBody
@@ -75,6 +76,14 @@ block main
                                             td
                                                 strong= p.title
                                             td= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price)
+                                            td
+                                                input.form-control.form-control-sm(
+                                                    type="number"
+                                                    name="position"
+                                                    min="1"
+                                                    value=p.position
+                                                    aria-label="Vị trí sắp xếp"
+                                                )
                                             td
                                                 if p.status === 'active'
                                                     a.badge.badge-success.badge-pulse(
