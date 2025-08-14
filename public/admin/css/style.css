@@ -1116,3 +1116,130 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
 .table-sm #productsTableBody td:nth-child(5) {
   width: 120px;
 }
+
+/* =======================================
+   Alert Success (mixin alert-success)
+   ======================================= */
+:root{
+  --success-color: #28a745;
+}
+
+/* Vùng chứa (stack nhiều alert) */
+.message.info{
+  position: fixed;
+  top: 80px;          /* tránh đè navbar fixed-top */
+  right: 20px;
+  z-index: 1060;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  pointer-events: none; /* click xuyên qua vùng trống */
+}
+
+/* Thẻ alert */
+.message.info .alert{
+  position: relative;
+  min-width: 260px;
+  max-width: 480px;
+  padding: .75rem 2.25rem .75rem 2.25rem; /* chừa chỗ icon & nút đóng */
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.06);
+  background: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+  pointer-events: auto; /* cho phép click vào alert */
+  animation: alertSlideIn .28s ease-out, alertPop .28s ease-out;
+}
+
+/* Biểu tượng trước (check) */
+.message.info .alert.alert-success{
+  border-color: rgba(40,167,69,.35);
+  box-shadow:
+    0 10px 24px rgba(40,167,69,.18),
+    inset 0 0 0 1px rgba(40,167,69,.10);
+  background:
+    linear-gradient(135deg, rgba(40,167,69,.10), rgba(40,167,69,.06)),
+    var(--card-bg);
+}
+.message.info .alert.alert-success::before{
+  content: "";
+  position: absolute;
+  left: .75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  /* icon check circle trắng/green trên mọi DPI */
+  background-image: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">\
+<circle cx="10" cy="10" r="9" fill="%2328a745" opacity="0.9"/>\
+<path d="M6 10.5l2.5 2.5L14 7.5" fill="none" stroke="%23fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>\
+</svg>');
+}
+
+/* Nội dung chữ lùi sau icon */
+.message.info .alert.alert-success{
+  padding-left: 2.25rem;
+}
+
+/* Nút đóng (span[close-alert]) */
+.message.info .alert [close-alert]{
+  position: absolute;
+  right: .55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgba(0,0,0,.55);
+  transition: background .2s ease, color .2s ease, transform .18s ease;
+  user-select: none;
+}
+.message.info .alert [close-alert]:hover{
+  background: rgba(0,0,0,.06);
+  color: rgba(0,0,0,.85);
+  transform: translateY(-50%) scale(1.05);
+}
+.message.info .alert [close-alert]:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,215,0,.35);
+}
+
+/* Dark mode */
+[data-theme="dark"] .message.info .alert{
+  border-color: rgba(255,255,255,.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,.45);
+}
+[data-theme="dark"] .message.info .alert [close-alert]:hover{
+  background: rgba(255,255,255,.12);
+  color: #fff;
+}
+
+/* Hiệu ứng */
+@keyframes alertSlideIn{
+  from{ transform: translate3d(0,-8px,0); opacity: 0; }
+  to  { transform: none; opacity: 1; }
+}
+@keyframes alertPop{
+  0%{ filter: saturate(.9); }
+  100%{ filter: saturate(1); }
+}
+
+/* (Tuỳ chọn) trạng thái đóng mượt: thêm class .is-closing bằng JS trước khi remove */
+.message.info .alert.is-closing{
+  animation: alertSlideOut .22s ease-in forwards;
+}
+@keyframes alertSlideOut{
+  to { transform: translate3d(0,-6px,0); opacity: 0; }
+}
+
+/* Ẩn mượt khi thêm .alert-hidden */
+.message.info .alert.alert-hidden{
+  animation: alertSlideOut .22s ease-in forwards;
+}

@@ -1,6 +1,5 @@
 // controllers/admin/products.controller.ts
-import { Request, Response } from "express";
-import Product from "../../models/product.model";
+import { Request, Response } from "express";import Product from "../../models/product.model";
 import { makeFilterStatus, Status } from "../../helpers/filterStatus.helper";
 import { makeSearch } from "../../helpers/search.helper";
 import { makePagination } from "../../helpers/pagination.helper";
@@ -94,6 +93,7 @@ export const changeStatus = async (
   const id = req.params.id;
 
   await Product.updateOne({ _id: id }, { status: status });
+  req.flash("success", "Thay đổi trạng thái sản phẩm thành công!");
 
   res.redirect(req.headers.referer);
 };
@@ -119,6 +119,7 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           { $set: { status: "active" } }
         );
+        req.flash("success", `${idList.length} sản phẩm được cập nhật trạng thái thành công!`);
         break;
 
       case "inactive":
@@ -126,6 +127,7 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           { $set: { status: "inactive" } }
         );
+        req.flash("success", `${idList.length} sản phẩm được cập nhật trạng thái thành công!`);
         break;
 
       case "delete-all":
@@ -133,12 +135,14 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           { $set: { deleted: true, deletedAt: new Date() } }
         );
+        req.flash("success", `${idList.length} sản phẩm được xóa thành công!`);
         break;
 
       case "change-position":
         for (const item of idList) {
           const [id, position] = item.split("-");
           await Product.updateOne({ _id: id }, { position: parseInt(position) });
+          req.flash("success", `${idList.length} sản phẩm được đổi vị trí thành công!`);
         }
         break;
     }

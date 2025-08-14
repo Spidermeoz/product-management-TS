@@ -317,7 +317,6 @@ $(() => {
   });
 })();
 
-// Checkbox multi + Bulk UI + Submit (gộp, có confirm delete-all)
 (() => {
   const table = document.querySelector("table[checkbox-multi]");
   const formBulk = document.querySelector("[form-change-multi]");
@@ -415,4 +414,42 @@ $(() => {
   // Khởi tạo
   updateHeader();
   updateBulkUI();
+})();
+
+// Show alert (đa alert, auto-hide, pause on hover)
+(() => {
+  const alerts = document.querySelectorAll('[show-alert]');
+  if (!alerts.length) return;
+
+  alerts.forEach((alertEl) => {
+    const closeBtn = alertEl.querySelector('[close-alert]');
+
+    // thời gian từ data-time hoặc mặc định 4000ms
+    const raw = parseInt(alertEl.getAttribute('data-time') || '', 10);
+    const timeout = Number.isFinite(raw) && raw > 0 ? raw : 4000;
+
+    const hide = () => {
+      // Thêm class để chạy animation CSS rồi remove sau khi xong
+      alertEl.classList.add('alert-hidden');
+      alertEl.addEventListener('animationend', () => {
+        alertEl.remove();
+      }, { once: true });
+    };
+
+    // Tự ẩn sau timeout
+    let t = setTimeout(hide, timeout);
+
+    // Cho phép tạm dừng khi hover
+    alertEl.addEventListener('mouseenter', () => clearTimeout(t));
+    alertEl.addEventListener('mouseleave', () => {
+      // Cho 1 nhịp nhỏ để user rời chuột mượt
+      t = setTimeout(hide, 1200);
+    });
+
+    // Nút đóng thủ công
+    closeBtn && closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      hide();
+    });
+  });
 })();

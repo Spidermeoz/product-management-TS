@@ -3,8 +3,10 @@ include ../../mixins/filterStatus.pug
 include ../../mixins/search.pug
 include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
+include ../../mixins/alert.pug
 
 block main
+    +alert-success(5000)
     .col-lg-10
         .main-content#mainContent(role="main")
             section#products-section.content-section
