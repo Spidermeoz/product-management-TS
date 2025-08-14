@@ -185,3 +185,65 @@ $(() => {
     );
   });
 })();
+
+(() => {
+  const FORM_ID = 'searchForm';
+  const INPUT_NAME = 'q';
+  const INSTANT_ATTR = 'data-instant'; // bật tìm kiếm tức thì khi form có attr này
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+
+  const buildNextHref = (qValue) => {
+    const url = new URL(window.location.href);
+
+    // set / delete q
+    const q = (qValue || '').trim();
+    if (q) url.searchParams.set('q', q);
+    else url.searchParams.delete('q');
+
+    // giữ nguyên status hiện tại nếu có (đã nằm trong URL)
+    // nếu form có input hidden name="status", trình duyệt cũng sẽ gửi lên
+    // nhưng ta vẫn giữ ở URL để UX rõ ràng
+    // -> KHÔNG động vào 'status' ở đây
+
+    // reset phân trang nếu có
+    url.searchParams.delete('page');
+
+    return url.toString();
+  };
+
+  const initSearch = () => {
+    const form = document.getElementById(FORM_ID);
+    if (!form) return;
+
+    const input = $(`input[name="${INPUT_NAME}"]`, form);
+    if (!input) return;
+
+    // Submit chuẩn (Enter hoặc click nút "Tìm")
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nextHref = buildNextHref(input.value);
+      window.location.href = nextHref;
+    });
+
+    // Tìm kiếm tức thì (tuỳ chọn): thêm data-instant="true" vào #searchForm
+    if (form.hasAttribute(INSTANT_ATTR)) {
+      let timer;
+      input.addEventListener('input', (e) => {
+        clearTimeout(timer);
+        const val = e.currentTarget.value;
+        timer = setTimeout(() => {
+          const nextHref = buildNextHref(val);
+          window.location.href = nextHref;
+        }, 400); // debounce 400ms
+      });
+    }
+  };
+
+  // Khởi tạo khi DOM sẵn sàng
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearch, { once: true });
+  } else {
+    initSearch();
+  }
+})();

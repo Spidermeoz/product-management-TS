@@ -18,6 +18,7 @@ interface FilterStatusItem {
 interface ProductFind {
   deleted: boolean;
   status?: Status;
+  title?: string | { $regex: string; $options?: string };
 }
 
 // Type guard for status
@@ -50,6 +51,12 @@ export const index = async (
     find.status = req.query.status;
   }
 
+  let keyword = "";
+  if (req.query["keyword"]) {
+    keyword = req.query["keyword"];
+    find.title = { $regex: keyword, $options: "i" }; // Tìm kiếm không phân biệt chữ hoa chữ thường
+  }
+
   // Query products (use .lean() for performance if you render only)
   const productsData = await Product.find(find).lean();
 
@@ -57,6 +64,7 @@ export const index = async (
     pageTitle: "Danh sách sản phẩm",
     activePage: "products",
     products: productsData,
-    filterStatus: filterStatus
+    filterStatus: filterStatus,
+    keyword: keyword
   });
 };
