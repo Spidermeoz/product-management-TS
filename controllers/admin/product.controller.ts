@@ -176,11 +176,11 @@ export const changeMulti = async (
             { _id: id },
             { position: parseInt(position) }
           );
-          req.flash(
-            "success",
-            `${idList.length} sản phẩm được đổi vị trí thành công!`
-          );
         }
+        req.flash(
+          "success",
+          `${idList.length} sản phẩm được đổi vị trí thành công!`
+        );
         break;
     }
 
