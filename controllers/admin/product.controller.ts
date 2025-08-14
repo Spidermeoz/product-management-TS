@@ -219,42 +219,50 @@ export const createPost = async (
   res: Response
 ): Promise<void> => {
   try {
-    const body = req.body;
+    const { body } = req;
 
     const price = toInt(body.price, 0);
     const discountPercentage = toInt(body.discountPercentage, 0);
     const stock = toInt(body.stock, 0);
 
-    // position: nếu rỗng hoặc không có -> tự động tăng theo tổng số sản phẩm hiện có
-    let position = 0;
-    const posRaw = body.position;
+    // Multer: có thể undefined nếu không upload
+    const file = (req as any).file as Express.Multer.File | undefined;
+    // Nếu muốn placeholder, đổi dòng dưới thành: const thumbnail = file ? `/uploads/${file.filename}` : "/images/placeholder-product.png";
+    const thumbnail = file ? `/uploads/${file.filename}` : undefined;
+
+    // position auto tăng nếu bỏ trống
+    let position: number;
+    const rawPos = body.position;
     if (
-      posRaw === undefined ||
-      posRaw === null ||
-      String(posRaw).trim() === ""
+      rawPos === undefined ||
+      rawPos === null ||
+      String(rawPos).trim() === ""
     ) {
-      const countProducts = await Product.countDocuments();
-      position = countProducts + 1;
+      const count = await Product.countDocuments({ deleted: false });
+      position = count + 1;
     } else {
-      position = toInt(posRaw, 1);
+      position = toInt(rawPos, 1);
     }
 
-    const payload = {
-      ...body,
+    const payload: any = {
+      title: body.title,
+      description: body.description,
       price,
       discountPercentage,
       stock,
       position,
+      status: body.status ?? "active",
     };
+    if (thumbnail) payload.thumbnail = thumbnail; // chỉ set khi có file
 
     const product = new Product(payload);
     await product.save();
 
+    // req.flash?.("success", "Tạo sản phẩm thành công!");
     res.redirect(`/${systemConfig.prefixAdmin}/products`);
   } catch (err) {
     console.error("[createPost] error:", err);
-    // Có thể flash lỗi nếu bạn đã cấu hình connect-flash
-    // req.flash("error", "Tạo sản phẩm thất bại!");
-    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+    req.flash?.("error", "Tạo sản phẩm thất bại!");
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
 };

@@ -17,12 +17,14 @@
     "method-override": "^3.0.0",
     "mongoose": "^8.17.1",
     "mongoose-slug-updater": "^3.3.0",
+    "multer": "^2.0.2",
     "pug": "^3.0.3"
   },
   "devDependencies": {
     "@types/connect-flash": "^0.0.40",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.2.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",

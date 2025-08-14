@@ -14,7 +14,12 @@ block main
                             | Quay lại danh sách
 
                     .card-body
-                        form#form-create-product(action=`/${prefixAdmin}/products/create` method="POST" novalidate)
+                        form#form-create-product(
+                            action=`/${prefixAdmin}/products/create` 
+                            method="POST" 
+                            novalidate
+                            enctype="multipart/form-data"
+                        )
                             .form-row
                                 .col-md-8
                                     // Tiêu đề
@@ -110,16 +115,17 @@ block main
                                 .col-md-8
                                     // Ảnh (URL)
                                     .form-group
-                                        label(for="thumbnail") Ảnh (URL)
-                                        .input-with-icon
-                                            i.fas.fa-image.input-icon
-                                            input#thumbnail.form-control(
-                                                type="text"
+                                        label(for="thumbnail") Ảnh sản phẩm
+                                        .custom-file
+                                            input#thumbnail.custom-file-input(
+                                                type="file"
                                                 name="thumbnail"
-                                                placeholder="Dán URL ảnh sản phẩm"
+                                                accept="image/*"
                                                 aria-describedby="thumbHelp"
                                             )
-                                        small#thumbHelp.form-text.text-muted Dán URL ảnh để xem trước ở khung bên phải.
+                                            label.custom-file-label(for="thumbnail") Chọn ảnh...
+                                        small#thumbHelp.form-text.text-muted
+                                            | Chọn tệp ảnh (JPG, PNG, GIF) để xem trước ở khung bên phải
 
                                 .col-md-4
                                     // Vị trí
