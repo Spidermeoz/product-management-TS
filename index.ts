@@ -1,9 +1,11 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import * as database from "./config/database";
+import path from "path"
 import methodOverride from "method-override"
 import flash from "connect-flash"
 import session from "express-session"
+
+import * as database from "./config/database";
 
 import { systemConfig } from "./config/config";
 
@@ -21,6 +23,12 @@ app.use(express.static("public"));
 
 app.set("views", `./views`);
 app.set("view engine", "pug");
+
+// TinyMCE
+app.use(
+  "/tinymce",
+  express.static(path.join(__dirname, "node_modules", "tinymce"))
+);
 
 app.use(methodOverride('_method'));
 
