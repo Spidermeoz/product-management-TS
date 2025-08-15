@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import Product from "../../models/product.model";
-import { it } from "node:test";
+
+interface DetailParams {
+  slug: string;
+}
 
 // [GET] /products
 export const index = async (req: Request, res: Response) => {
@@ -21,3 +24,33 @@ export const index = async (req: Request, res: Response) => {
     products: newProducts
   });
 };
+
+// [GET] /products/:slug
+export const detail = async (
+  req: Request<DetailParams>,
+  res: Response
+): Promise<void> => {
+  try {
+    const product = await Product.findOne({
+      deleted: false,
+      slug: req.params.slug,
+      status: "active",
+    }).lean();
+
+    if (!product) {
+      req.flash?.("error", "Sản phẩm không tồn tại!");
+      res.redirect("/products");
+      return;
+    }
+
+    res.render("client/pages/products/detail", {
+      pageTitle: product.title || "Chi tiết sản phẩm",
+      product,
+    });
+  } catch (error) {
+    console.error("[client.products.detail] error:", error);
+    req.flash?.("error", "Sản phẩm không tồn tại!");
+    res.redirect("/products");
+  }
+};
+
