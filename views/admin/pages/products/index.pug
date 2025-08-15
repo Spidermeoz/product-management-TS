@@ -4,6 +4,7 @@ include ../../mixins/search.pug
 include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
+include ../../mixins/sort.pug
 
 block main
     .col-lg-10
@@ -23,6 +24,8 @@ block main
 
                         //- Tìm kiếm (GET). Giữ lại status hiện tại (nếu có).
                         +search(keyword)
+
+                        +sort(sort) 
                 .card
                     .card-header.d-flex.justify-content-between.align-items-center
                         h5.mb-0

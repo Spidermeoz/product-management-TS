@@ -7,10 +7,16 @@ import { makeSearch } from "../../helpers/search.helper";
 import { makePagination } from "../../helpers/pagination.helper";
 import { systemConfig } from "../../config/config";
 
+type SortKey = "position" | "price" | "title" | "createdAt";
+type SortDir = "asc" | "desc";
+
 interface ProductsQuery {
   page?: string;
   status?: Status | "";
   keyword?: string;
+  sort?: string; // dạng "price-desc"
+  sortKey?: SortKey; // dạng cũ
+  sortValue?: SortDir; // dạng cũ
 }
 
 interface ProductFind {
@@ -114,12 +120,54 @@ export const index = async (
     limit: 6, // hoặc lấy từ config .env
   });
 
+  // ===== Sort (an toàn & linh hoạt) =====
+  const ALLOWED_KEYS: SortKey[] = ["position", "price", "title", "createdAt"];
+  const isKey = (k: unknown): k is SortKey =>
+    typeof k === "string" && ALLOWED_KEYS.includes(k as SortKey);
+  const isDir = (d: unknown): d is SortDir => d === "asc" || d === "desc";
+
+  // sort object sạch (không prototype)
+  const sort: Record<string, 1 | -1> = Object.create(null);
+
+  // Ưu tiên kiểu cũ: ?sortKey=price&sortValue=desc
+  if (isKey(req.query.sortKey) && isDir(req.query.sortValue)) {
+    sort[req.query.sortKey] = req.query.sortValue === "asc" ? 1 : -1;
+  } else if (typeof req.query.sort === "string") {
+    // Hỗ trợ kiểu mới: ?sort=price-desc
+    const [k, d] = req.query.sort.split("-", 2);
+    if (isKey(k) && isDir(d)) {
+      sort[k] = d === "asc" ? 1 : -1;
+    }
+  }
+
+  // Fallback mặc định
+  if (!Object.keys(sort).length) {
+    sort.position = -1; // position desc
+  }
+  // Secondary key cho ổn định
+  if (!("createdAt" in sort)) {
+    sort.createdAt = -1;
+  }
+
+  // ===== Query + collation khi sort theo title =====
+  let query = Product.find(find);
+  if ("title" in sort) {
+    query = query.collation({ locale: "vi", strength: 1 }); // A–Z tiếng Việt
+  }
+
   // Lấy dữ liệu trang hiện tại
   const productsData = await Product.find(find)
-    .sort({ position: "desc" })
+    .sort(sort)
     .limit(pagination.limitItems)
     .skip(pagination.skip)
     .lean();
+
+  // (Tuỳ chọn) gửi selected để prefill client (nếu cần)
+  const primaryKey = (Object.keys(sort).find((k) => k !== "createdAt") ||
+    "position") as SortKey;
+  const selectedSort = `${primaryKey}-${
+    sort[primaryKey] === 1 ? "asc" : "desc"
+  }`;
 
   // Render
   res.render("admin/pages/products/index", {

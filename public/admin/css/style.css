@@ -1879,4 +1879,107 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
   .price-final { font-size: 1.55rem; }
 }
 
+/* === Sort box: fix "díu dít" === */
+.sort-box { max-width: 410px; }
+
+.sort-group.input-group.input-group-sm > .input-group-prepend .input-group-text,
+.sort-group.input-group.input-group-sm > .form-control,
+.sort-group.input-group.input-group-sm > .input-group-append .btn {
+  min-height: 36px;                 /* thoáng hơn input-group-sm mặc định */
+}
+
+/* Icon đầu (không dính vào select) */
+.sort-group .input-group-text {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: .5rem;
+  padding: .375rem .6rem;
+  margin-right: .5rem;               /* tạo khoảng hở với select */
+}
+
+/* Select có viền đầy đủ, caret gọn */
+.sort-group .form-control {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(0,0,0,.12); /* KHÔNG xóa viền phải nữa */
+  border-radius: .5rem;
+  padding-right: 2rem;
+  transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'>\
+<path d='M5 7l5 6 5-6' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>\
+</svg>");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+  background-position: right .55rem center;
+  text-align: center;              /* fallback chung */
+  text-align-last: center;         /* Chrome/Edge/IE mới */
+  -moz-text-align-last: center;    /* Firefox */
+  padding-left: 1rem;              /* cân padding 2 bên cho cảm giác cân giữa */
+  padding-right: 2rem;             /* chừa chỗ mũi tên bên phải */
+}
+.sort-group .form-control option {
+  text-align: left;
+}
+.sort-group .form-control option:first-child {
+  text-align: center;
+}
+.sort-group .form-control:focus {
+  outline: none;
+  border-color: rgba(0,123,255,.35);
+  box-shadow: 0 0 0 3px rgba(0,123,255,.18);
+}
+
+/* Tạo khoảng cách RÕ ràng giữa select và nút Clear */
+.sort-group .input-group-append { margin-left: .5rem; }
+
+/* Nút Clear: có viền riêng, không dính vào select */
+.sort-group .input-group-append .btn.btn-outline-danger {
+  border: 1px solid rgba(220,53,69,.45);  /* KHÔNG border-left:0 nữa */
+  color: #dc3545;
+  background: transparent;
+  border-radius: .5rem;
+  padding: .375rem .65rem;
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+}
+.sort-group .input-group-append .btn.btn-outline-danger:hover {
+  background: rgba(220,53,69,.08);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(220,53,69,.15);
+}
+.sort-group .input-group-append .btn.btn-outline-danger:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Dark mode */
+[data-theme="dark"] .sort-group .input-group-text,
+[data-theme="dark"] .sort-group .form-control {
+  border-color: rgba(255,255,255,.12);
+}
+[data-theme="dark"] .sort-group .form-control {
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'>\
+<path d='M5 7l5 6 5-6' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>\
+</svg>");
+}
+[data-theme="dark"] .sort-group .form-control:focus {
+  box-shadow: 0 0 0 3px rgba(13,110,253,.25);
+  border-color: rgba(13,110,253,.45);
+}
+
+/* Mobile full width */
+@media (max-width: 576px) {
+  .sort-box { max-width: 100%; }
+}
+
+/* Giảm chuyển động nếu người dùng yêu cầu */
+@media (prefers-reduced-motion: reduce) {
+  .sort-group .form-control,
+  .sort-group .input-group-text,
+  .sort-group .input-group-append .btn { transition: none !important; }
+}
+
 

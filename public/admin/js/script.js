@@ -453,3 +453,62 @@ $(() => {
     });
   });
 })();
+
+// Sort: set & clear (ổn định, có validate + disable Clear)
+(() => {
+  const sel = document.querySelector('[sort-select]');
+  const btnClear = document.querySelector('[sort-clear]');
+  if (!(sel instanceof HTMLSelectElement)) return;
+
+  // whitelist các giá trị sort hợp lệ (giữ trống '' cho "không sắp xếp")
+  const ALLOWED = new Set([
+    '', 'position-desc', 'position-asc',
+    'price-desc', 'price-asc',
+    'title-asc', 'title-desc'
+  ]);
+
+  const optionExists = (v) => [...sel.options].some(o => o.value === v);
+
+  const updateClearState = () => {
+    if (!btnClear) return;
+    const has = !!sel.value;
+    btnClear.toggleAttribute('disabled', !has);
+    btnClear.classList.toggle('disabled', !has); // nếu dùng Bootstrap
+    btnClear.style.pointerEvents = has ? '' : 'none'; // ngăn click khi disabled
+  };
+
+  const applySort = (val) => {
+    const u = new URL(window.location.href);
+    if (val && ALLOWED.has(val)) u.searchParams.set('sort', val);
+    else u.searchParams.delete('sort');
+    // đổi sort -> về trang 1
+    u.searchParams.set('page', '1');
+    window.location.href = u.href;
+  };
+
+  // Prefill từ query nếu chưa có value (hoặc value hiện tại không nằm trong option)
+  (() => {
+    const u = new URL(window.location.href);
+    const qSort = u.searchParams.get('sort') || '';
+    // chỉ set từ URL nếu select chưa có value hợp lệ do server set
+    if (!sel.value || !optionExists(sel.value)) {
+      sel.value = (qSort && ALLOWED.has(qSort) && optionExists(qSort)) ? qSort : '';
+    }
+    updateClearState();
+  })();
+
+  sel.addEventListener('change', () => {
+    const val = sel.value.trim();
+    if (!val || !ALLOWED.has(val)) applySort('');
+    else applySort(val);
+  });
+
+  if (btnClear) {
+    btnClear.addEventListener('click', () => {
+      if (btnClear.hasAttribute('disabled')) return; // guard
+      sel.value = '';
+      updateClearState();
+      applySort('');
+    });
+  }
+})();
