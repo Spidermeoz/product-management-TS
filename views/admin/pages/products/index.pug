@@ -116,7 +116,7 @@ block main
                                                     | Sửa
                                                 form.d-inline(method="POST", action=`/${prefixAdmin}/products/delete/${p._id}?_method=DELETE`)
                                                     button.btn.btn-danger.btn-sm.btn-glow(
-                                                        class="btn btn-danger btn-sm ml-1"
+                                                        type="button"
                                                         button-delete
                                                         aria-label=`Xóa sản phẩm ${p.title}`
                                                     )

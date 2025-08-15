@@ -20,31 +20,55 @@ if (buttonsChangeStatus.length > 0) {
   });
 }//End Change status
 
-// Delete product
-const buttonsDelete = document.querySelectorAll("[button-delete]");
-if(buttonsDelete.length > 0) {
-  const formDeleteItem = document.querySelector("#form-delete-item");
-  const path = formDeleteItem.getAttribute("data-path");
-  buttonsDelete.forEach((button) => {
-    button.addEventListener("click", () => {
-      isConfirm = confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?");
-      if (isConfirm) {
-        const id = button.getAttribute("data-id");
-        
-        const action = path + `/${id}?_method=DELETE`;
+// Xóa sản phẩm (ưu tiên submit form d-inline, fallback dùng form ẩn)
+(() => {
+  const buttonsDelete = document.querySelectorAll("[button-delete]");
+  if (!buttonsDelete.length) return;
 
-        formDeleteItem.action = action;
-        // Gửi form
-        formDeleteItem.submit();
-        if (!id) {
-          alert("Không tìm thấy ID sản phẩm!");
-          return;
-        }
+  const fallbackForm = document.querySelector("#form-delete-item");
+  const basePath = fallbackForm?.getAttribute("data-path") || "";
+
+  buttonsDelete.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const ok = confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?");
+      if (!ok) return;
+
+      // 1) Ưu tiên: submit form d-inline đang bọc nút (đã có action đúng)
+      const rowForm = btn.closest("form");
+      if (rowForm && rowForm.action) {
+        rowForm.submit();
+        return;
       }
+
+      // 2) Fallback: lấy id từ <tr data-id="..."> hoặc từ data-id trên nút
+      const tr = btn.closest("tr");
+      const id =
+        btn.getAttribute("data-id") ||
+        tr?.getAttribute("data-id") ||
+        "";
+
+      if (!id) {
+        alert("Không tìm thấy ID sản phẩm!");
+        return;
+      }
+
+      if (!fallbackForm || !basePath) {
+        alert("Thiếu form hoặc đường dẫn xóa!");
+        return;
+      }
+
+      // Đảm bảo có dấu "/" đầu để tránh relative path
+      const path =
+        basePath.startsWith("/") ? basePath : `/${basePath}`;
+
+      fallbackForm.action = `${path}/${id}?_method=DELETE`;
+      fallbackForm.submit();
     });
   });
-}
-// End delete product
+})();
 
 // Preview ảnh + cập nhật label cho custom-file
 (() => {

@@ -48,6 +48,7 @@ interface EditBody {
   price?: string | number;
   discountPercentage?: string | number;
   stock?: string | number;
+  thumbnail?: string;
   position?: string | number;
   status?: Status;
 }
@@ -249,11 +250,6 @@ export const createPost = async (
     const discountPercentage = toInt(body.discountPercentage, 0);
     const stock = toInt(body.stock, 0);
 
-    // Multer: có thể undefined nếu không upload
-    const file = (req as any).file as Express.Multer.File | undefined;
-    // Nếu muốn placeholder, đổi dòng dưới thành: const thumbnail = file ? `/uploads/${file.filename}` : "/images/placeholder-product.png";
-    const thumbnail = file ? `/uploads/${file.filename}` : undefined;
-
     // position auto tăng nếu bỏ trống
     let position: number;
     const rawPos = body.position;
@@ -268,6 +264,11 @@ export const createPost = async (
       position = toInt(rawPos, 1);
     }
 
+    const thumbnail =
+      typeof req.body.thumbnail === "string" && req.body.thumbnail.trim()
+        ? req.body.thumbnail.trim()
+        : undefined;
+
     const payload: any = {
       title: body.title,
       description: body.description,
@@ -276,8 +277,9 @@ export const createPost = async (
       stock,
       position,
       status: body.status ?? "active",
+      ...(thumbnail ? { thumbnail } : {}),
     };
-    if (thumbnail) payload.thumbnail = thumbnail; // chỉ set khi có file
+    // if (thumbnail) payload.thumbnail = thumbnail; // chỉ set khi có file
 
     const product = new Product(payload);
     await product.save();
@@ -353,10 +355,13 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
       update.status = req.body.status;
     }
 
-    // Tránh phụ thuộc vào Express.Multer type nếu bạn chưa cài @types/multer
-    const file = (req as any).file as { filename: string } | undefined;
-    if (file) {
-      update.thumbnail = `/uploads/${file.filename}`;
+    const cloudThumb =
+      typeof req.body.thumbnail === "string" && req.body.thumbnail.trim()
+        ? req.body.thumbnail.trim()
+        : "";
+
+    if (cloudThumb) {
+      update.thumbnail = cloudThumb; // <-- cập nhật link Cloudinary nếu có file mới
     }
 
     await Product.updateOne({ _id: id }, { $set: update });
