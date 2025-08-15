@@ -5,36 +5,39 @@ block main
     .col-lg-10
         .main-content#mainContent(role="main")
             +alert-error(5000)
-            section#product-create.content-section
+            +alert-success(5000)
+
+            section#product-edit.content-section
                 .card.form-card
                     .card-header.d-flex.justify-content-between.align-items-center
                         h5.mb-0
-                            i.fas.fa-plus-circle.mr-2
-                            | Thêm mới sản phẩm
+                            i.fas.fa-edit.mr-2
+                            | Chỉnh sửa sản phẩm
                         a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/products`)
                             i.fas.fa-arrow-left.mr-1
                             | Quay lại danh sách
 
                     .card-body
-                        form#form-create-product(
-                            action=`/${prefixAdmin}/products/create` 
-                            method="POST" 
-                            novalidate
+                        form#form-edit-product(
+                            action=`/${prefixAdmin}/products/edit/${product._id}?_method=PATCH`
+                            method="POST"
                             enctype="multipart/form-data"
+                            novalidate
                         )
                             .form-row
                                 .col-md-8
                                     // Tiêu đề
                                     .form-group
-                                        label(for="title") Tiêu đề<span class="text-danger">*</span>
+                                        label(for="title") Tiêu đề
                                         .input-with-icon
                                             i.fas.fa-heading.input-icon
                                             input#title.form-control(
                                                 type="text"
                                                 name="title"
-                                                placeholder="Nhập tiêu đề sản phẩm"
                                                 required
                                                 aria-required="true"
+                                                placeholder="Nhập tiêu đề sản phẩm"
+                                                value=product.title
                                             )
                                         .invalid-feedback Vui lòng nhập tiêu đề.
 
@@ -45,13 +48,17 @@ block main
                                             name="description"
                                             rows="6"
                                             placeholder="Mô tả ngắn gọn về sản phẩm"
-                                        )
+                                        ) #{product.description}
 
                                 .col-md-4
-                                    // Thumbnail preview box (hiển thị khi bạn thêm JS set src)
+                                    // Khung xem trước ảnh hiện tại
                                     .thumb-preview-wrap
-                                        .thumb-preview
-                                            img#thumbPreview(src="" alt="Xem trước ảnh" aria-hidden="true")
+                                        .thumb-preview.preview-contain.has-image
+                                            if product.thumbnail
+                                                span.thumb-badge Ảnh hiện tại
+                                                img#thumbPreview(src=product.thumbnail alt="Xem trước ảnh")
+                                            else
+                                                img#thumbPreview(src="" alt="Xem trước ảnh" aria-hidden="true")
 
                             .form-row
                                 .col-md-4
@@ -65,10 +72,9 @@ block main
                                             input#price.form-control(
                                                 type="number"
                                                 name="price"
-                                                value="0"
                                                 min="0"
                                                 step="1000"
-                                                placeholder="0"
+                                                value=product.price
                                                 aria-label="Giá VND"
                                             )
                                             .input-group-append
@@ -85,11 +91,10 @@ block main
                                             input#discount.form-control(
                                                 type="number"
                                                 name="discountPercentage"
-                                                value="0"
                                                 min="0"
                                                 max="100"
                                                 step="1"
-                                                placeholder="0"
+                                                value=product.discountPercentage
                                                 aria-label="Phần trăm giảm giá"
                                             )
                                             .input-group-append
@@ -106,18 +111,17 @@ block main
                                             input#stock.form-control(
                                                 type="number"
                                                 name="stock"
-                                                value="0"
                                                 min="0"
                                                 step="1"
-                                                placeholder="0"
+                                                value=product.stock
                                                 aria-label="Tồn kho"
                                             )
 
                             .form-row
                                 .col-md-8
-                                    // Ảnh (URL)
+                                    // Ảnh mới (upload)
                                     .form-group
-                                        label(for="thumbnail") Ảnh sản phẩm
+                                        label(for="thumbnail") Ảnh mới (tuỳ chọn)
                                         .custom-file
                                             input#thumbnail.custom-file-input(
                                                 type="file"
@@ -125,9 +129,9 @@ block main
                                                 accept="image/*"
                                                 aria-describedby="thumbHelp"
                                             )
-                                            label.custom-file-label(for="thumbnail") Chọn ảnh...
+                                            label.custom-file-label(for="thumbnail") Chọn ảnh mới...
                                         small#thumbHelp.form-text.text-muted
-                                            | Chọn tệp ảnh (JPG, PNG, GIF) để xem trước ở khung bên phải
+                                            | Để giữ nguyên ảnh cũ, hãy bỏ trống trường này.
 
                                 .col-md-4
                                     // Vị trí
@@ -143,6 +147,7 @@ block main
                                                 min="1"
                                                 step="1"
                                                 placeholder="Tự động tăng"
+                                                value=product.position
                                                 aria-label="Vị trí sắp xếp"
                                             )
 
@@ -151,12 +156,22 @@ block main
                                 label.d-block.mb-2 Trạng thái
                                 .custom-controls-wrap
                                     .custom-control.custom-radio.custom-control-inline
-                                        input#statusActive.custom-control-input(type="radio" name="status" value="active" checked)
+                                        input#statusActive.custom-control-input(
+                                            type="radio"
+                                            name="status"
+                                            value="active"
+                                            checked=(product.status === "active")
+                                        )
                                         label.custom-control-label(for="statusActive")
                                             i.fas.fa-check-circle.mr-1.text-success
                                             | Hoạt động
                                     .custom-control.custom-radio.custom-control-inline
-                                        input#statusInActive.custom-control-input(type="radio" name="status" value="inactive")
+                                        input#statusInActive.custom-control-input(
+                                            type="radio"
+                                            name="status"
+                                            value="inactive"
+                                            checked=(product.status === "inactive")
+                                        )
                                         label.custom-control-label(for="statusInActive")
                                             i.fas.fa-pause-circle.mr-1.text-muted
                                             | Dừng hoạt động
@@ -165,7 +180,5 @@ block main
                             .form-actions.d-flex.justify-content-end.mt-3
                                 button.btn.btn-primary.btn-glow(type="submit")
                                     i.fas.fa-save.mr-2
-                                    | Tạo mới
-
-                // (tuỳ chọn) script xử lý preview ảnh/validate bạn có thể thêm trong /admin/js/product.js
+                                    | Cập nhật
                 script(src="/admin/js/product.js")

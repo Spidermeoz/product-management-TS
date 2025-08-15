@@ -1,5 +1,6 @@
 // controllers/admin/products.controller.ts
 import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import Product from "../../models/product.model";
 import { makeFilterStatus, Status } from "../../helpers/filterStatus.helper";
 import { makeSearch } from "../../helpers/search.helper";
@@ -17,6 +18,10 @@ interface ProductFind {
   status?: Status;
   $or?: unknown[];
   [key: string]: unknown;
+}
+
+interface EditParams {
+  id: string;
 }
 
 type ChangeMultiType = "active" | "inactive" | "delete-all" | "change-position";
@@ -37,6 +42,16 @@ interface CreateProductBody {
   status?: Status;
 }
 
+interface EditBody {
+  title?: string;
+  description?: string;
+  price?: string | number;
+  discountPercentage?: string | number;
+  stock?: string | number;
+  position?: string | number;
+  status?: Status;
+}
+
 const toInt = (v: unknown, def = 0): number => {
   if (typeof v === "number" && Number.isFinite(v)) return v;
   if (typeof v === "string") {
@@ -44,6 +59,14 @@ const toInt = (v: unknown, def = 0): number => {
     return Number.isFinite(n) ? n : def;
   }
   return def;
+};
+
+const toOptInt = (v: unknown): number | undefined => {
+  if (v === undefined || v === null) return undefined;
+  const s = typeof v === "string" ? v.trim() : String(v);
+  if (s === "") return undefined;
+  const n = typeof v === "number" ? v : parseInt(s, 10);
+  return Number.isFinite(n) ? n : undefined;
 };
 
 const isChangeType = (t: unknown): t is ChangeMultiType =>
@@ -210,6 +233,7 @@ export const deleteItem = async (
 export const create = async (req: Request, res: Response): Promise<void> => {
   res.render("admin/pages/products/create", {
     pageTitle: "Danh sách sản phẩm",
+    activePage: "products",
   });
 };
 
@@ -265,4 +289,83 @@ export const createPost = async (
     req.flash?.("error", "Tạo sản phẩm thất bại!");
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
+};
+
+// [GET] /admin/products/edit/:id
+export const edit = async (
+  req: Request<EditParams>,
+  res: Response
+): Promise<void> => {
+  try {
+    const find = {
+      deleted: false,
+      _id: req.params.id,
+    };
+
+    const product = await Product.findOne(find).lean();
+
+    if (!product) {
+      req.flash?.("error", "Sản phẩm không tồn tại!");
+      res.redirect(`/${systemConfig.prefixAdmin}/products`);
+      return;
+    }
+
+    res.render("admin/pages/products/edit", {
+      pageTitle: "Chỉnh sửa sản phẩm",
+      activePage: "products",
+      product,
+    });
+  } catch (error) {
+    console.error("[products.edit] error:", error);
+    req.flash?.("error", "Sản phẩm không tồn tại!");
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+  }
+};
+
+// [PATCH] /admin/products/edit/:id
+export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
+  req,
+  res
+) => {
+  const { id } = req.params;
+  const referer = req.get("referer") || `/${systemConfig.prefixAdmin}/products`;
+
+  try {
+    const update: Record<string, unknown> = {};
+
+    if (req.body.title !== undefined) update.title = req.body.title;
+    if (req.body.description !== undefined)
+      update.description = req.body.description;
+
+    const price = toOptInt(req.body.price);
+    if (price !== undefined) update.price = price;
+
+    const discount = toOptInt(req.body.discountPercentage);
+    if (discount !== undefined) update.discountPercentage = discount;
+
+    const stock = toOptInt(req.body.stock);
+    if (stock !== undefined) update.stock = stock;
+
+    const position = toOptInt(req.body.position);
+    if (position !== undefined) update.position = position;
+
+    if (req.body.status === "active" || req.body.status === "inactive") {
+      update.status = req.body.status;
+    }
+
+    // Tránh phụ thuộc vào Express.Multer type nếu bạn chưa cài @types/multer
+    const file = (req as any).file as { filename: string } | undefined;
+    if (file) {
+      update.thumbnail = `/uploads/${file.filename}`;
+    }
+
+    await Product.updateOne({ _id: id }, { $set: update });
+
+    req.flash?.("success", "Cập nhật sản phẩm thành công!");
+  } catch (error) {
+    console.error("[editPatch] error:", error);
+    req.flash?.("error", "Cập nhật sản phẩm thất bại!");
+  }
+
+  res.redirect(referer);
 };

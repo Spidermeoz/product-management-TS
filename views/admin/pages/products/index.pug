@@ -6,9 +6,9 @@ include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 
 block main
-    +alert-success(5000)
     .col-lg-10
         .main-content#mainContent(role="main")
+            +alert-success(5000)
             section#products-section.content-section
                 .card.filter-card.mb-3
                     .card-header.d-flex.justify-content-between.align-items-center
@@ -139,4 +139,4 @@ block main
                             data-path = `${prefixAdmin}/products/delete`
                         ) 
 
-                        script(src="/admin/js/product.js")
+                script(src="/admin/js/product.js")

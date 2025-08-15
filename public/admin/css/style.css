@@ -1537,3 +1537,217 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
   .thumb-preview { height: 180px; }
 }
 
+/* =========================
+   Edit Product — small refinements
+   ========================= */
+
+/* Header nhẹ nhàng hơn một xíu (giữ tông đã có) */
+#product-edit .form-card .card-header {
+  background: linear-gradient(135deg, rgba(0,123,255,.06), rgba(0,123,255,.02));
+}
+
+/* Badge "Ảnh hiện tại" trong khung preview */
+.thumb-preview {
+  position: relative;
+}
+.thumb-badge {
+  position: absolute;
+  top: .5rem;
+  left: .5rem;
+  z-index: 2;
+  padding: .15rem .5rem;
+  border-radius: .35rem;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  color: #0c5460;
+  background: rgba(209,236,241,.95);
+  border: 1px solid rgba(12,84,96,.25);
+}
+[data-theme="dark"] .thumb-badge {
+  color: #d1f4ff;
+  background: rgba(22,40,48,.85);
+  border-color: rgba(173,216,230,.22);
+}
+
+/* Custom-file đồng bộ tông (nếu bạn chưa thêm ở create) */
+.custom-file-input:focus ~ .custom-file-label {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(255,215,0,.28);
+}
+.custom-file-label {
+  border: 2px solid rgba(0,0,0,.15);
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-radius: .5rem;
+  transition: border-color .2s ease, box-shadow .22s ease, background .2s ease, color .2s ease;
+}
+[data-theme="dark"] .custom-file-label {
+  background: #2a2f34;
+  border-color: rgba(255,255,255,.18);
+}
+.custom-file-label::after {
+  content: "Chọn tệp";
+  height: 100%;
+  border-left: 2px solid rgba(0,0,0,.08);
+}
+[data-theme="dark"] .custom-file-label::after {
+  border-left-color: rgba(255,255,255,.14);
+}
+
+/* Khung hiển thị ảnh */
+.thumb-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;                   /* Giữ tỷ lệ 4:3 cân đối */
+  max-height: 320px;                     /* Trần chiều cao để không “quá khổ” */
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.06)); /* nền nhạt */
+  border: 1px solid rgba(0,0,0,.08);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+/* Fallback nếu trình duyệt chưa hỗ trợ aspect-ratio */
+@supports not (aspect-ratio: 1 / 1) {
+  .thumb-preview { height: 260px; }
+}
+
+/* Ảnh bên trong: full khung, căn giữa, không méo */
+.thumb-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          /* mặc định: cắt cho đẹp */
+  object-position: center;    /* luôn căn giữa */
+  display: block;
+  transition: opacity .22s ease, transform .22s ease;
+  opacity: 1;
+  transform: none;
+}
+
+/* Mode “contain” nếu muốn thấy trọn ảnh (tuỳ chọn):
+   thêm class .preview-contain vào .thumb-preview */
+.thumb-preview.preview-contain img {
+  object-fit: contain;
+  background-color: #fff; /* nền trắng để ảnh không bị lẫn */
+}
+
+/* Khi chưa có ảnh (không có .has-image), làm mờ nhẹ */
+.thumb-preview:not(.has-image) img {
+  opacity: 0;
+  transform: scale(1.02);
+}
+
+/* Dark mode tinh chỉnh viền/nền */
+[data-theme="dark"] .thumb-preview {
+  background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 10px 28px rgba(0,0,0,.45);
+}
+
+/* Badge “Ảnh hiện tại” (nếu dùng) */
+.thumb-badge {
+  position: absolute;
+  top: .5rem;
+  left: .5rem;
+  z-index: 2;
+  padding: .15rem .5rem;
+  border-radius: .35rem;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  color: #0c5460;
+  background: rgba(209,236,241,.95);
+  border: 1px solid rgba(12,84,96,.25);
+}
+[data-theme="dark"] .thumb-badge {
+  color: #d1f4ff;
+  background: rgba(22,40,48,.85);
+  border-color: rgba(173,216,230,.22);
+}
+
+/* Mobile: hạ chiều cao cho cân bố cục */
+@media (max-width: 768px) {
+  .thumb-preview { max-height: 240px; }
+}
+
+/* =======================================
+   Alert Error (mixin alert-error)
+   ======================================= */
+:root{
+  --danger-color: #dc3545;
+}
+
+/* Khung & nền cho error */
+.message.info .alert.alert-danger{
+  border-color: rgba(220,53,69,.35);
+  box-shadow:
+    0 10px 24px rgba(220,53,69,.18),
+    inset 0 0 0 1px rgba(220,53,69,.10);
+  background:
+    linear-gradient(135deg, rgba(220,53,69,.10), rgba(220,53,69,.06)),
+    var(--card-bg);
+  padding-left: 2.25rem; /* chừa chỗ icon trái, giống success */
+}
+
+/* Icon vòng tròn + dấu X ở bên trái */
+.message.info .alert.alert-danger::before{
+  content: "";
+  position: absolute;
+  left: .75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  background-image: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">\
+<circle cx="10" cy="10" r="9" fill="%23dc3545" opacity="0.9"/>\
+<path d="M6.5 6.5 L13.5 13.5 M13.5 6.5 L6.5 13.5" stroke="%23fff" stroke-width="2.2" stroke-linecap="round"/>\
+</svg>');
+}
+
+/* Nút đóng trong error: tông đỏ hơn nhẹ */
+.message.info .alert.alert-danger [close-alert]{
+  color: rgba(220,53,69,.95);
+}
+.message.info .alert.alert-danger [close-alert]:hover{
+  background: rgba(220,53,69,.10);
+  color: rgba(220,53,69,1);
+}
+
+/* Dark mode tinh chỉnh */
+[data-theme="dark"] .message.info .alert.alert-danger{
+  border-color: rgba(220,53,69,.45);
+  box-shadow: 0 10px 24px rgba(0,0,0,.45);
+  background:
+    linear-gradient(135deg, rgba(220,53,69,.18), rgba(220,53,69,.08)),
+    var(--card-bg);
+}
+[data-theme="dark"] .message.info .alert.alert-danger [close-alert]:hover{
+  background: rgba(220,53,69,.22);
+  color: #fff;
+}
+
+/* Tuỳ chọn: dải nhấn cạnh trái (nếu muốn giống style trước) */
+.message.info .alert.alert-danger::after{
+  content:"";
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:4px;
+  border-radius:12px 0 0 12px;
+  background: linear-gradient(180deg, #ff8a9a, var(--danger-color));
+  box-shadow: 0 0 12px rgba(220,53,69,.25);
+}
+[data-theme="dark"] .message.info .alert.alert-danger::after{
+  background: linear-gradient(180deg, #ff9aa8, #ff6b81);
+  box-shadow: 0 0 14px rgba(255,107,129,.28);
+}
+
+
