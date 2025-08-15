@@ -102,6 +102,12 @@ block main
                                                         button-change-status
                                                     ) Dừng hoạt động
                                             td
+                                                a.btn.btn-secondary.btn-sm.btn-glow(
+                                                    href=`/${prefixAdmin}/products/detail/${p._id}`
+                                                    aria-label=`Xem chi tiết sản phẩm ${p.title}`
+                                                )
+                                                    i.fas.fa-eye.mr-1
+                                                    | Chi tiết
                                                 a.btn.btn-warning.btn-sm.btn-glow(
                                                 href=`/${prefixAdmin}/products/edit/${p._id}`
                                                 aria-label=`Sửa sản phẩm ${p.title}`

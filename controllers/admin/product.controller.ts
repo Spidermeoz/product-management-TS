@@ -369,3 +369,32 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
 
   res.redirect(referer);
 };
+
+// [GET] /admin/products/detail/:id
+export const detail = async (
+  req: Request<EditParams>,
+  res: Response
+): Promise<void> => {
+  try {
+    const product = await Product.findOne({
+      deleted: false,
+      _id: req.params.id,
+    }).lean();
+
+    if (!product) {
+      req.flash?.("error", "Sản phẩm không tồn tại!");
+      res.redirect(`/${systemConfig.prefixAdmin}/products`);
+      return;
+    }
+
+    res.render("admin/pages/products/detail", {
+      pageTitle: product.title || "Chi tiết sản phẩm",
+      product,
+      activePage: "products",
+    });
+  } catch (error) {
+    console.error("[products.detail] error:", error);
+    req.flash?.("error", "Sản phẩm không tồn tại!");
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+  }
+};
