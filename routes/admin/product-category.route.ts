@@ -20,4 +20,14 @@ router.post(
   controller.createPost
 );
 
+router.get("/edit/:id", controller.edit);
+
+router.patch<{ id: string }>(
+  "/edit/:id",
+  upload.single("thumbnail"),
+  uploadCloud.uploadSingle,
+  validate.validateCreatePost,
+  controller.editPatch
+);
+
 export const productCategoryRoutes : Router = router;
