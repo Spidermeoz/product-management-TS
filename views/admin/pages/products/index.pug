@@ -76,7 +76,7 @@ block main
                                                     name="ids"
                                                     value=p._id
                                                 )
-                                            td #{idx + 1}
+                                            td #{pagination.limitItems*(pagination.currentPage -1) + (idx + 1)}
                                             td
                                                 // Ảnh 60x60, object-fit: cover (dùng class, không inline style)
                                                 img.img-thumbnail.thumb-60-cover(src=p.thumbnail, alt=`${p.title} thumbnail 100x100 SEO`)
