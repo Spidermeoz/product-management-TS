@@ -1,0 +1,94 @@
+mixin table-tree(records, level = 1, parentId = "")
+    each record, idx in records
+        - const hasChildren = Array.isArray(record.children) && record.children.length > 0
+        //- dùng --level để CSS thụt lề (attr() không hỗ trợ tốt)
+        tr(
+            data-id=`${record._id}`
+            data-parent=`${parentId || ''}`
+            class= level > 1 ? "is-child" : "is-root"
+            data-level=level
+            style=`--level:${level}`
+        )
+            td
+                input(type="checkbox" name="ids" value=record._id)
+
+            td.stt-col
+                span.stt-badge #{idx + 1}
+
+            td
+                img.img-thumbnail.thumb-60-cover(
+                    src=record.thumbnail
+                    alt=`${record.title} thumbnail`
+                )
+
+            //- Cột tiêu đề: node tree + caret + slug + badge số con
+            td.title-cell
+                .tree-node.d-flex.align-items-center
+                    if hasChildren
+                        button.tree-toggle.btn.btn-link.p-0.mr-2(
+                            type="button"
+                            aria-expanded="false"
+                            title="Mở/đóng nhánh"
+                            data-id=record._id
+                        )
+                            i.fas.fa-caret-right
+                    else
+                        span.tree-spacer.mr-2
+
+                    //- if record.thumbnail
+                    //-     img.cat-thumb(src=record.thumbnail, alt=record.title)
+                    //- else
+                    //-     span.cat-thumb.cat-thumb--placeholder(aria-hidden="true")
+
+                    .titles
+                        strong.title= record.title
+                        if record.slug
+                            span.slug-badge= record.slug
+
+                    if hasChildren
+                        span.badge.badge-light.count-badge #{record.children.length}
+            td
+                input.form-control.form-control-sm(
+                    type="number"
+                    name="position"
+                    min="1"
+                    value=record.position
+                    aria-label="Vị trí sắp xếp"
+                    categories
+                )
+            td
+                if record.status === 'active'
+                    a.badge.badge-success.badge-pulse(
+                        data-status = record.status
+                        data-id = record._id 
+                        button-change-status
+                    ) Hoạt động
+                else
+                    a.badge.badge-danger.badge-pulse(
+                        data-status = record.status
+                        data-id = record._id 
+                        button-change-status
+                    ) Dừng hoạt động
+            td
+                a.btn.btn-secondary.btn-sm.btn-glow(
+                    href=`/${prefixAdmin}/products-category/detail/${record._id}`
+                    aria-label=`Xem chi tiết sản phẩm ${record.title}`
+                )
+                    i.fas.fa-eye.mr-1
+                    | Chi tiết
+                a.btn.btn-warning.btn-sm.btn-glow(
+                href=`/${prefixAdmin}/products-category/edit/${record._id}`
+                aria-label=`Sửa sản phẩm ${record.title}`
+                )
+                    i.fas.fa-edit.mr-1
+                    | Sửa
+                form.d-inline(method="POST", action=`/${prefixAdmin}/products-category/delete/${record._id}?_method=DELETE`)
+                    button.btn.btn-danger.btn-sm.btn-glow(
+                        type="button"
+                        button-delete
+                        aria-label=`Xóa sản phẩm ${record.title}`
+                    )
+                        i.fas.fa-trash.mr-1
+                        | Xóa
+        if record.children && record.children.length > 0
+            +table-tree(record.children, level + 1, `${record._id}`)

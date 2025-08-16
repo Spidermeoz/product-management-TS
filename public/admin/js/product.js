@@ -113,3 +113,71 @@ if (buttonsChangeStatus.length > 0) {
     setPreview(file);
   });
 })();
+
+// JS gập/mở nhánh
+(() => {
+  const tbody = document.querySelector('#productsTableBody');
+  if (!tbody) return;
+
+  // Ẩn toàn bộ con ngay khi load (nếu HTML chưa bị rule CSS ẩn sẵn)
+  // [...tbody.querySelectorAll('tr.is-child')].forEach(tr => tr.style.display = 'none');
+
+  // Helper: lấy tất cả con cháu của 1 id
+  const getDescendants = (parentId) => {
+    const all = [...tbody.querySelectorAll('tr[data-parent]')];
+    const out = [];
+    const stack = [parentId];
+
+    while (stack.length) {
+      const pid = stack.pop();
+      const children = all.filter(r => r.dataset.parent === String(pid));
+      children.forEach(ch => {
+        out.push(ch);
+        stack.push(ch.dataset.id);
+      });
+    }
+    return out;
+  };
+
+  // Toggle 1 node
+  const toggleNode = (btn) => {
+    const id = btn?.dataset?.id;
+    if (!id) return;
+
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    const next = !expanded;
+    btn.setAttribute('aria-expanded', String(next));
+
+    // Lấy toàn bộ con cháu
+    const descendants = getDescendants(id);
+
+    if (!next) {
+      // Đóng: ẩn tất cả con cháu, đồng thời reset caret của các nút con về false
+      descendants.forEach(tr => {
+        tr.style.display = 'none';
+        const subBtn = tr.querySelector('.tree-toggle[aria-expanded="true"]');
+        if (subBtn) subBtn.setAttribute('aria-expanded', 'false');
+      });
+    } else {
+      // Mở: chỉ hiện các con trực tiếp (không bung cả cháu)
+      const directChildren = descendants.filter(tr => tr.dataset.parent === String(id));
+      directChildren.forEach(tr => tr.style.display = 'table-row');
+    }
+  };
+
+  // Delegation: click vào nút caret
+  tbody.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tree-toggle');
+    if (!btn) return;
+    e.preventDefault();
+    toggleNode(btn);
+  });
+})();
+
+(() => {
+  const sel = document.getElementById('parent-id');
+  if (!sel) return;
+  const url = new URL(window.location.href);
+  const q = url.searchParams.get('parent_id');
+  if (q && !sel.value) sel.value = q;
+})();

@@ -997,7 +997,8 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
 
 /* Ô nhập vị trí */
 #productsTableBody td.position-col input[name="position"],
-#productsTableBody td:nth-child(6) input[name="position"] {
+#productsTableBody td:nth-child(6) input[name="position"],
+#productsTableBody td:nth-child(5) input[categories] {
   max-width: 84px;        /* khống chế độ rộng */
   height: 34px;
   padding: 0 .5rem;
@@ -1013,13 +1014,15 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
 
 /* Hover/Focus: nổi nhẹ + ring đẹp */
 #productsTableBody td.position-col input[name="position"]:hover,
-#productsTableBody td:nth-child(6) input[name="position"]:hover {
+#productsTableBody td:nth-child(6) input[name="position"]:hover,
+#productsTableBody td:nth-child(5) input[categories]:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(0,0,0,.08);
   border-color: var(--secondary-color);
 }
 #productsTableBody td.position-col input[name="position"]:focus,
-#productsTableBody td:nth-child(6) input[name="position"]:focus {
+#productsTableBody td:nth-child(6) input[name="position"]:focus,
+#productsTableBody td:nth-child(5) input[categories]:focus {
   outline: none;
   border-color: var(--secondary-color);
   box-shadow: 0 0 0 3px rgba(255,215,0,.28);
@@ -1029,26 +1032,30 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
 #productsTableBody td.position-col input[name="position"]::-webkit-outer-spin-button,
 #productsTableBody td.position-col input[name="position"]::-webkit-inner-spin-button,
 #productsTableBody td:nth-child(6) input[name="position"]::-webkit-outer-spin-button,
-#productsTableBody td:nth-child(6) input[name="position"]::-webkit-inner-spin-button {
+#productsTableBody td:nth-child(6) input[name="position"]::-webkit-inner-spin-button,
+#productsTableBody td:nth-child(5) input[categories]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 /* Firefox */
 #productsTableBody td.position-col input[name="position"],
-#productsTableBody td:nth-child(6) input[name="position"] {
+#productsTableBody td:nth-child(6) input[name="position"],
+#productsTableBody td:nth-child(5) input[categories] {
   -moz-appearance: textfield;
 }
 
 /* Trạng thái lỗi (nếu bạn thêm class .is-invalid bằng JS) */
 #productsTableBody td.position-col input[name="position"].is-invalid,
-#productsTableBody td:nth-child(6) input[name="position"].is-invalid {
+#productsTableBody td:nth-child(6) input[name="position"].is-invalid,
+#productsTableBody td:nth-child(5) input[categories].is-invalid {
   border-color: #dc3545;
   box-shadow: 0 0 0 3px rgba(220,53,69,.18);
 }
 
 /* Dark mode */
 [data-theme="dark"] #productsTableBody td.position-col input[name="position"],
-[data-theme="dark"] #productsTableBody td:nth-child(6) input[name="position"] {
+[data-theme="dark"] #productsTableBody td:nth-child(6) input[name="position"],
+[data-theme="dark"] #productsTableBody td:nth-child(5) input[categories] {
   background: #2a2f34;
   border-color: rgba(255,255,255,.18);
   color: var(--text-color);
@@ -1056,7 +1063,8 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
 
 /* Bảng .table-sm: thu gọn hơn */
 .table-sm #productsTableBody td.position-col input[name="position"],
-.table-sm #productsTableBody td:nth-child(6) input[name="position"] {
+.table-sm #productsTableBody td:nth-child(6) input[name="position"],
+.table-sm #productsTableBody td:nth-child(5) input[categories]{
   height: 30px;
   max-width: 76px;
   font-size: .95rem;
@@ -1982,4 +1990,330 @@ table.table-sm[checkbox-multi] input[type="checkbox"]::after {
   .sort-group .input-group-append .btn { transition: none !important; }
 }
 
+/* hiển thị nhánh dạng tiền tố và thụt lề mềm */
+td.title-cell .tree-prefix {
+  color: #adb5bd;
+  margin-right: .35rem;
+  white-space: pre;       /* giữ nguyên dấu "-- " */
+  letter-spacing: .25px;
+}
+tbody tr[data-level] td.title-cell {
+  /* thụt lề nhẹ theo level (level 1 = 0) */
+  padding-left: calc((attr(data-level number) - 1) * 10px);
+}
 
+/* ===== Tree-table đẹp hơn ===== */
+
+/* Thụt lề theo cấp: dùng biến --level để tính */
+tbody tr td.title-cell {
+  padding-left: calc((var(--level, 1) - 1) * 16px);
+}
+
+/* Layout node: caret + thumb + texts + badge */
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 32px;
+}
+
+/* Nút caret gập/mở */
+.tree-toggle {
+  width: 24px; height: 24px;
+  display: inline-grid; place-items: center;
+  border: 0; outline: none; cursor: pointer;
+  background: transparent; border-radius: .35rem;
+  transition: background .15s ease, transform .15s ease;
+}
+.tree-toggle:hover { background: rgba(0,0,0,.06); }
+[data-theme="dark"] .tree-toggle:hover { background: rgba(255,255,255,.10); }
+
+.tree-spacer { width: 24px; height: 24px; display: inline-block; }
+
+/* Thumbnail nhỏ cho danh mục trong cột tiêu đề (khác thumb-60-cover của cột ảnh) */
+.cat-thumb {
+  width: 28px; height: 28px; object-fit: cover;
+  border-radius: .5rem; background: #f1f3f5;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06) inset;
+}
+.cat-thumb--placeholder {
+  display: inline-block;
+  width: 28px; height: 28px; border-radius: .5rem;
+  background: linear-gradient(135deg, #eef1f4, #e9ecef);
+}
+
+/* Tiêu đề + slug */
+.titles { display: flex; align-items: baseline; gap: .5rem; }
+.titles .title { font-weight: 600; }
+.slug-badge {
+  font-size: .75rem;
+  padding: .15rem .4rem;
+  border-radius: .35rem;
+  background: rgba(0,0,0,.06);
+  color: #6c757d;
+}
+[data-theme="dark"] .slug-badge {
+  background: rgba(255,255,255,.08);
+  color: #ced4da;
+}
+
+/* Số lượng con */
+.count-badge {
+  margin-left: .25rem;
+  font-weight: 600;
+  background: rgba(0,0,0,.06);
+  color: #495057;
+}
+[data-theme="dark"] .count-badge {
+  background: rgba(255,255,255,.08);
+  color: #e9ecef;
+}
+
+/* Ẩn khi gập */
+tr.is-hidden { display: none; }
+
+/* Nhẹ nhàng phân tầng bằng màu title */
+tbody tr[style*="--level:2"] .titles .title { color: #0d6efd; }
+tbody tr[style*="--level:3"] .titles .title { color: #198754; }
+tbody tr[style*="--level:4"] .titles .title { color: #6f42c1; }
+
+/* Căn giữa cột Hành động (giữ consistency) */
+td.actions-cell,
+tbody tr td:last-child {
+  vertical-align: middle;
+  display: flex; align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+  text-align: left;
+}
+@supports not (gap: .5rem) {
+  td.actions-cell > * { margin-right: .5rem; }
+  td.actions-cell > *:last-child { margin-right: 0; }
+}
+
+/* Ẩn hàng con mặc định */
+.is-hidden { display: none !important; }
+
+/* khoảng đệm cho node lá (để canh với caret) */
+.tree-spacer { display:inline-block; width: 16px; }
+
+/* Thụt lề theo level */
+td .tree-indent { display:inline-block; width: calc(attr(data-level number) * 16px); }
+
+/* Nút caret */
+.tree-toggle i { width: 14px; }
+
+/* Đường dẫn nhánh (simple) */
+td .branch-line {
+  position: relative;
+  padding-left: 14px;
+}
+td .branch-line::before{
+  content:"";
+  position:absolute; left:0; top:.6em;
+  width:10px; height:0; border-top:1px solid rgba(0,0,0,.15);
+}
+[data-theme="dark"] td .branch-line::before{ border-color: rgba(255,255,255,.18); }
+
+/* ===== Tree table: level-based styles ===== */
+
+/* STT badge base */
+.tree-table .stt-col { width: 64px; }
+.tree-table .stt-badge{
+  display:inline-block;
+  min-width:36px;
+  text-align:center;
+  font-weight:700;
+  padding:.25rem .5rem;
+  border-radius:.5rem;
+  color:#fff;
+  line-height:1.2;
+}
+
+/* Màu theo cấp (cùng cấp = cùng màu) */
+.tree-table tbody tr[data-level="1"] .stt-badge{ background:#0d6efd; } /* xanh dương */
+.tree-table tbody tr[data-level="2"] .stt-badge{ background:#198754; } /* xanh lá */
+.tree-table tbody tr[data-level="3"] .stt-badge{ background:#fd7e14; } /* cam */
+.tree-table tbody tr[data-level="4"] .stt-badge{ background:#6f42c1; } /* tím */
+.tree-table tbody tr[data-level="5"] .stt-badge{ background:#20c997; } /* teal */
+.tree-table tbody tr[data-level="6"] .stt-badge{ background:#dc3545; } /* đỏ */
+/* Fallback cho cấp sâu hơn */
+.tree-table tbody tr:not([data-level]) .stt-badge,
+.tree-table tbody tr[data-level]:not([data-level="1"]):not([data-level="2"]):not([data-level="3"]):not([data-level="4"]):not([data-level="5"]):not([data-level="6"]) .stt-badge{
+  background:#6c757d;
+}
+
+/* Indent nhánh theo --level (level 1 = 0 indent) */
+.tree-table td.title-cell .tree-node{
+  /* nếu --level chưa set, coi như 1 => indent 0 */
+  padding-left: calc( ( (var(--level,1) - 1) ) * 18px );
+  position: relative;
+}
+
+/* Căn giữa dọc toàn hàng (kể cả cột hành động) */
+.tree-table tbody td { vertical-align: middle; }
+
+/* Cột hành động: đảm bảo các nút nằm cùng hàng, gap đều */
+.tree-table tbody td:last-child{
+  white-space: nowrap;
+}
+.tree-table tbody td:last-child .btn{ margin:0 .25rem 0 0; }
+.tree-table tbody td:last-child .btn:last-child{ margin-right:0; }
+
+/* (Tùy chọn) viền trái nhẹ theo cấp — giúp mắt bám theo group cấp */
+.tree-table tbody tr[data-level="2"] td.title-cell{ border-left: 3px solid rgba(25,135,84,.25); }
+.tree-table tbody tr[data-level="3"] td.title-cell{ border-left: 3px solid rgba(253,126,20,.25); }
+.tree-table tbody tr[data-level="4"] td.title-cell{ border-left: 3px solid rgba(111,66,193,.25); }
+.tree-table tbody tr[data-level="5"] td.title-cell{ border-left: 3px solid rgba(32,201,151,.25); }
+.tree-table tbody tr[data-level="6"] td.title-cell{ border-left: 3px solid rgba(220,53,69,.25); }
+
+/* Dark mode friendly (giữ màu badge, chỉ tinh chỉnh viền) */
+[data-theme="dark"] .tree-table tbody tr[data-level="2"] td.title-cell{ border-left-color: rgba(25,135,84,.35); }
+[data-theme="dark"] .tree-table tbody tr[data-level="3"] td.title-cell{ border-left-color: rgba(253,126,20,.35); }
+[data-theme="dark"] .tree-table tbody tr[data-level="4"] td.title-cell{ border-left-color: rgba(111,66,193,.35); }
+[data-theme="dark"] .tree-table tbody tr[data-level="5"] td.title-cell{ border-left-color: rgba(32,201,151,.35); }
+[data-theme="dark"] .tree-table tbody tr[data-level="6"] td.title-cell{ border-left-color: rgba(220,53,69,.35); }
+
+/* ===== Tree table: TITLE by level ===== */
+.tree-table td.title-cell .titles { display:inline-flex; align-items:center; gap:.4rem; min-width:0; }
+.tree-table td.title-cell .title{
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .18s ease, text-shadow .18s ease;
+}
+
+/* Màu tiêu đề theo cấp (match STT) */
+.tree-table tbody tr[data-level="1"] td.title-cell .title{ color:#0d6efd; } /* blue */
+.tree-table tbody tr[data-level="2"] td.title-cell .title{ color:#198754; } /* green */
+.tree-table tbody tr[data-level="3"] td.title-cell .title{ color:#fd7e14; } /* orange */
+.tree-table tbody tr[data-level="4"] td.title-cell .title{ color:#6f42c1; } /* purple */
+.tree-table tbody tr[data-level="5"] td.title-cell .title{ color:#20c997; } /* teal */
+.tree-table tbody tr[data-level="6"] td.title-cell .title{ color:#dc3545; } /* red */
+/* Fallback cấp sâu hơn */
+.tree-table tbody tr:not([data-level]) td.title-cell .title,
+.tree-table tbody tr[data-level]:not([data-level="1"]):not([data-level="2"]):not([data-level="3"]):not([data-level="4"]):not([data-level="5"]):not([data-level="6"]) td.title-cell .title{
+  color:#6c757d;
+}
+
+/* Hover nhẹ để dễ quét mắt */
+.tree-table tbody tr:hover td.title-cell .title{
+  text-shadow: 0 0 .01px currentColor; /* sharpen text a bit */
+}
+
+/* Slug “phụ đề” nhỏ gọn ngay sau title */
+.tree-table td.title-cell .slug-badge{
+  display:inline-block;
+  font-size: .75rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: .5rem;
+  color: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.06);
+}
+[data-theme="dark"] .tree-table td.title-cell .slug-badge{
+  color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.12);
+}
+
+/* Badge số lượng con */
+.tree-table td.title-cell .count-badge{
+  display:inline-block;
+  margin-left:.25rem;
+  padding: .1rem .4rem;
+  font-size: .72rem;
+  font-weight: 700;
+  border-radius: .5rem;
+  color:#495057;
+  background: rgba(0,0,0,.06);
+}
+[data-theme="dark"] .tree-table td.title-cell .count-badge{
+  color:#e9ecef;
+  background: rgba(255,255,255,.12);
+}
+
+/* Nút caret toggle: xoay khi mở */
+.tree-table .tree-toggle{ line-height:1; }
+.tree-table .tree-toggle .fa-caret-right{
+  transition: transform .18s ease;
+  transform-origin: center;
+}
+.tree-table .tree-toggle[aria-expanded="true"] .fa-caret-right{
+  transform: rotate(90deg);
+}
+
+/* Indent theo --level vẫn giữ như trước */
+.tree-table td.title-cell .tree-node{
+  padding-left: calc( ( (var(--level,1) - 1) ) * 18px );
+}
+
+/* Dark mode tinh chỉnh viền trái theo cấp (nếu đang dùng) – giữ nguyên các rule đã có */
+/* ... (các rule viền trái level 2..6 bạn đã thêm vẫn dùng chung) */
+
+/* ===== Danh mục cha (select-parent) ===== */
+.select-parent{ max-width: 520px; }
+
+/* Icon đầu: đồng bộ nền/viền của card */
+.select-parent .input-group-text{
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: .625rem;          /* ~10px */
+  padding: .4rem .6rem;
+  margin-right: .5rem;             /* tách khỏi select */
+}
+
+/* Select: chiều cao thoáng, caret riêng, viền mềm */
+.select-parent .form-control{
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: .625rem;
+  min-height: 40px;
+  padding-right: 2rem;
+  transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
+  /* caret xuống */
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'>\
+<path d='M5 7l5 6 5-6' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>\
+</svg>");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+  background-position: right .6rem center;
+}
+.select-parent .form-control:focus{
+  outline: none;
+  border-color: rgba(0,123,255,.35);
+  box-shadow: 0 0 0 3px rgba(0,123,255,.18);
+}
+
+/* Option: placeholder nhạt/italic, các cấp có prefix “— ” từ mixin */
+.select-parent select option{ font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Inter, Arial; }
+.select-parent select option[value=""]{ color: rgba(0,0,0,.55); font-style: italic; }
+.select-parent select option:disabled{ color: rgba(0,0,0,.35); }
+
+/* Dark mode */
+[data-theme="dark"] .select-parent .input-group-text,
+[data-theme="dark"] .select-parent .form-control{ border-color: rgba(255,255,255,.12); }
+[data-theme="dark"] .select-parent .form-control{
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'>\
+<path d='M5 7l5 6 5-6' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>\
+</svg>");
+}
+[data-theme="dark"] .select-parent select option[value=""]{ color: rgba(255,255,255,.65); }
+
+/* Mobile */
+@media (max-width:576px){
+  .select-parent{ max-width:100%; }
+  .select-parent .form-control{ min-height: 38px; }
+}
+
+/* Giảm chuyển động */
+@media (prefers-reduced-motion:reduce){
+  .select-parent .form-control,
+  .select-parent .input-group-text{ transition:none !important; }
+}
