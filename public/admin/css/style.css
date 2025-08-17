@@ -2383,3 +2383,100 @@ td .branch-line::before{
 @media (prefers-reduced-motion: reduce){
   .category-breadcrumb li{ box-shadow: none; }
 }
+
+/* ===== Permission Matrix ===== */
+.perm-card .card-header {
+  background: var(--card-bg);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+[data-theme="dark"] .perm-card .card-header {
+  border-color: rgba(255,255,255,.08);
+}
+
+.perm-toolbar .btn {
+  padding: .4rem .85rem;
+  border-radius: .5rem;
+}
+
+/* Bảng */
+.perm-table {
+  background: var(--card-bg);
+  border-radius: .8rem;
+  overflow: hidden;
+}
+.perm-table thead th {
+  vertical-align: middle;
+  white-space: nowrap;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.perm-table .thead-sticky th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--card-bg);
+  box-shadow: 0 2px 0 rgba(0,0,0,.06);
+}
+.perm-table tbody td {
+  vertical-align: middle;
+}
+
+.feature-col {
+  min-width: 180px;
+  width: 220px;
+}
+.feature-name {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Hàng nhóm (section) */
+.perm-table .group-row td {
+  background:
+    linear-gradient(135deg, rgba(0,123,255,.08), rgba(0,123,255,.04)),
+    var(--card-bg);
+  border-top: 1px solid rgba(0,0,0,.06);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  font-weight: 700;
+  color: var(--text-color);
+}
+[data-theme="dark"] .perm-table .group-row td {
+  border-color: rgba(255,255,255,.12);
+  background:
+    linear-gradient(135deg, rgba(13,110,253,.12), rgba(13,110,253,.08)),
+    var(--card-bg);
+}
+
+/* Role title */
+.role-title {
+  display: inline-block;
+  padding: .35rem .55rem;
+  border-radius: .5rem;
+  background: rgba(0,0,0,.035);
+}
+[data-theme="dark"] .role-title {
+  background: rgba(255,255,255,.06);
+}
+
+/* Checkbox to */
+.perm-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  transform: translateY(1px);
+  cursor: pointer;
+}
+
+/* Hover hàng */
+.perm-table tbody tr:not(.group-row):hover {
+  background: rgba(0,123,255,.045);
+}
+
+/* Empty state */
+.empty-state i { color: rgba(0,0,0,.25); }
+[data-theme="dark"] .empty-state i { color: rgba(255,255,255,.25); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .feature-col { min-width: 160px; width: 180px; }
+  .perm-toolbar span { display: none; }
+}

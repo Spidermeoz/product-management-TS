@@ -1,0 +1,162 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            +alert-success(5000)
+            +alert-error(5000)
+
+            section#permissions.content-section
+                .card.perm-card
+                    .card-header.d-flex.justify-content-between.align-items-center
+                        h5.mb-0
+                            i.fas.fa-user-shield.mr-2
+                            | Phân quyền
+                        .perm-toolbar.d-flex.align-items-center
+                            span.text-muted.small.mr-3
+                                i.fas.fa-info-circle.mr-1
+                                | Tick để cấp quyền cho từng nhóm (vai trò).
+                            button.btn.btn-primary.btn-glow(
+                                type="button"
+                                button-submit
+                                aria-label="Cập nhật phân quyền"
+                            )
+                                i.fas.fa-save.mr-2
+                                | Cập nhật
+
+                    .card-body
+                        if records && records.length
+                            - const colSpan = records.length + 1
+                            // Lưu raw records nếu roles.js cần đọc
+                            div(data-record=records style="display:none")
+
+                            .table-responsive
+                                table.table.table-hover.table-sm.perm-table(table-permissions aria-describedby="Bảng phân quyền theo vai trò")
+                                    thead.thead-sticky
+                                        tr
+                                            th.feature-col(scope="col") Tính năng
+                                                each item, idx in records
+                                                    th.text-center(scope="col")
+                                                        span.role-title= item.title
+
+                                    tbody
+                                        // Hàng chứa ID nhóm (ẩn) — roles.js có thể đọc
+                                        tr(data-name="id" class="d-none")
+                                            td
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="text" value=(item._id || item.id) readonly)
+
+                                        // ====== Nhóm: Danh mục sản phẩm ======
+                                        tr.group-row
+                                            td(colspan=colSpan)
+                                                i.fas.fa-folder-open.mr-2
+                                                b Danh mục sản phẩm
+
+                                        tr(data-name="products-category_view")
+                                            td.feature-name Xem
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Xem danh mục sản phẩm`)
+
+                                        tr(data-name="products-category_create")
+                                            td.feature-name Thêm mới
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Thêm danh mục sản phẩm`)
+
+                                        tr(data-name="products-category_edit")
+                                            td.feature-name Chỉnh sửa
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Sửa danh mục sản phẩm`)
+
+                                        tr(data-name="products-category_delete")
+                                            td.feature-name Xóa
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Xóa danh mục sản phẩm`)
+
+                                        // ====== Nhóm: Sản phẩm ======
+                                        tr.group-row
+                                            td(colspan=colSpan)
+                                                i.fas.fa-box-open.mr-2
+                                                b Sản phẩm
+
+                                        tr(data-name="products_view")
+                                            td.feature-name Xem
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Xem sản phẩm`)
+
+                                        tr(data-name="products_create")
+                                            td.feature-name Thêm mới
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Thêm sản phẩm`)
+
+                                        tr(data-name="products_edit")
+                                            td.feature-name Chỉnh sửa
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Sửa sản phẩm`)
+
+                                        tr(data-name="products_delete")
+                                            td.feature-name Xóa
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Xóa sản phẩm`)
+
+                                        // ====== Nhóm: Nhóm quyền ======
+                                        tr.group-row
+                                            td(colspan=colSpan)
+                                                i.fas.fa-users-cog.mr-2
+                                                b Nhóm quyền
+
+                                        tr(data-name="roles_view")
+                                            td.feature-name Xem
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Xem nhóm quyền`)
+
+                                        tr(data-name="roles_create")
+                                            td.feature-name Thêm mới
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Thêm nhóm quyền`)
+
+                                        tr(data-name="roles_edit")
+                                            td.feature-name Chỉnh sửa
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Sửa nhóm quyền`)
+
+                                        tr(data-name="roles_delete")
+                                            td.feature-name Xóa
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Xóa nhóm quyền`)
+
+                                        tr(data-name="roles_permissions")
+                                            td.feature-name Phân quyền
+                                                each item in records
+                                                    td.text-center
+                                                        input(type="checkbox" aria-label=`${item.title}: Phân quyền cho vai trò`)
+
+                        else
+                            .empty-state.text-center.py-5
+                                i.far.fa-folder-open.fa-3x.mb-3.d-block
+                                p.mb-1 Chưa có vai trò nào để phân quyền.
+                                p.text-muted Thêm mới vai trò trước khi cấu hình phân quyền.
+
+            // Hidden submit form roles.js sẽ serialize & submit JSON
+            form#form-change-permissions.d-none(
+                method="POST"
+                action=`/${prefixAdmin}/roles/permissions?_method=PATCH`
+            )
+                .form-group
+                    input.form-control(type="text" name="permissions")
+
+            // JS xử lý (đã có sẵn theo bạn)
+            script(src="/admin/js/roles.js")

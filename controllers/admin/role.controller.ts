@@ -2,6 +2,13 @@ import { Request, Response, RequestHandler } from "express";
 import { systemConfig } from "../../config/config";
 import Role from "../../models/role.model";
 
+type PermissionMatrix = Record<string, boolean>;
+
+interface PermissionItem {
+  id: string;                    // _id của role
+  permissions: PermissionMatrix; // ví dụ: { "products_view": true, "roles_edit": false, ... }
+}
+
 interface RoleFind {
   deleted: boolean;
   $or?: unknown[];
@@ -23,17 +30,12 @@ interface EditBody {
 }
 
 // [GET] /admin/roles
-export const index = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-
+export const index = async (req: Request, res: Response): Promise<void> => {
   // Điều kiện Mongo
   const find: RoleFind = { deleted: false };
 
   // Lấy dữ liệu trang hiện tại
-  const roles = await Role.find(find)
-    .lean();
+  const roles = await Role.find(find).lean();
 
   // Render
   res.render("admin/pages/roles/index", {
@@ -45,9 +47,10 @@ export const index = async (
 
 // [GET] /admin/roles/create
 export const create = async (req: Request, res: Response): Promise<void> => {
-  try {res.render("admin/pages/roles/create", {
+  try {
+    res.render("admin/pages/roles/create", {
       pageTitle: "Tạo mới danh mục sản phẩm",
-      activePage: "roles"
+      activePage: "roles",
     });
   } catch (error) {
     console.error("[roles.create] error:", error);
@@ -71,7 +74,7 @@ export const createPost = async (
 
     const role = new Role(payload);
     await role.save();
-    
+
     req.flash?.("success", "Tạo nhóm quyền mới thành công!");
     res.redirect(`/${systemConfig.prefixAdmin}/roles`);
   } catch (err) {
@@ -82,12 +85,9 @@ export const createPost = async (
 };
 
 // [GET] /admin/roles/detail/:id
-export const detail = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const detail = async (req: Request, res: Response): Promise<void> => {
   try {
-    const findData: RoleFind = { deleted: false, _id: req.params.id};
+    const findData: RoleFind = { deleted: false, _id: req.params.id };
     const role = await Role.findOne(findData).lean();
 
     if (!role) {
@@ -114,8 +114,8 @@ export const edit = async (
   res: Response
 ): Promise<void> => {
   try {
-    const findData: RoleFind = { deleted: false, _id: req.params.id};
-    const role = await Role.findOne(findData)
+    const findData: RoleFind = { deleted: false, _id: req.params.id };
+    const role = await Role.findOne(findData);
 
     if (!role) {
       req.flash?.("error", "Nhóm quyền không tồn tại!");
@@ -167,12 +167,88 @@ export const deleteItem = async (
 ): Promise<void> => {
   const id = req.params.id;
 
-  await Role.updateOne(
-    { _id: id },
-    { deleted: true, deletedAt: new Date() }
-  );
+  await Role.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
 
   req.flash("success", "Xóa nhóm quyền thành công!");
 
   res.redirect(req.headers.referer);
+};
+
+// [GET] /admin/roles/permissions
+export const permissions = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  // Điều kiện Mongo
+  const find: RoleFind = { deleted: false };
+
+  // Lấy dữ liệu trang hiện tại
+  const records = await Role.find(find).lean();
+
+  // Render
+  res.render("admin/pages/roles/permissions", {
+    pageTitle: "Phân quyền",
+    activePage: "rolePermissions",
+    records,
+  });
+};
+
+// // [PATCH] /admin/roles/permissions
+export const permissionsPatch = async (req: Request, res: Response): Promise<void> => {
+  const referer = req.get("referer") || "/admin/roles/permissions";
+
+  try {
+    const raw = req.body?.permissions;
+    if (!raw) {
+      req.flash?.("error", "Thiếu dữ liệu phân quyền.");
+      res.redirect(referer);
+      return;
+    }
+
+    let payload: PermissionItem[];
+    try {
+      payload = JSON.parse(raw) as PermissionItem[];
+    } catch {
+      req.flash?.("error", "Dữ liệu phân quyền không hợp lệ.");
+      res.redirect(referer);
+      return;
+    }
+
+    if (!Array.isArray(payload) || payload.length === 0) {
+      req.flash?.("error", "Không có thay đổi nào để cập nhật.");
+      res.redirect(referer);
+      return;
+    }
+
+    // Lọc phần tử hợp lệ và chuẩn bị các promise update
+    const updates = payload
+      .filter(
+        (it) =>
+          typeof it?.id === "string" &&
+          it.id.trim() !== "" &&
+          it.permissions &&
+          typeof it.permissions === "object"
+      )
+      .map((it) =>
+        Role.updateOne(
+          { _id: it.id },
+          { $set: { permissions: it.permissions } }
+        )
+      );
+
+    if (updates.length === 0) {
+      req.flash?.("error", "Không có dữ liệu hợp lệ để cập nhật.");
+      res.redirect(referer);
+      return;
+    }
+
+    await Promise.all(updates);
+
+    req.flash?.("success", "Phân quyền thành công!");
+    res.redirect(referer);
+  } catch (err) {
+    console.error("[roles.permissionsPatch] error:", err);
+    req.flash?.("error", "Có lỗi khi lưu phân quyền.");
+    res.redirect(referer);
+  }
 };

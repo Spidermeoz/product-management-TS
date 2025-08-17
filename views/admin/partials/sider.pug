@@ -31,3 +31,10 @@
                     )
                         i.fa-solid.fa-user-secret.mr-2
                         | Nhóm quyền
+                li.nav-item
+                    a.nav-link(
+                        href=`/${prefixAdmin}/roles/permissions`
+                        class=(activePage==='rolePermissions' ? 'active' : '')
+                    )
+                        i.fa-solid.fa-fingerprint.mr-2
+                        | Phân quyền
