@@ -8,6 +8,13 @@ import { buildCategoryTree } from "../../helpers/createTree.helper";
 type SortKey = "position" | "title" | "createdAt";
 type SortDir = "asc" | "desc";
 
+type ChangeMultiType = "active" | "inactive" | "delete-all" | "change-position";
+
+interface ChangeMultiBody {
+  type?: ChangeMultiType;
+  ids?: string | string[]; // "id1,id2" hoặc ["id1","id2"]
+}
+
 interface CategoryFind {
   id?: string;
   deleted: boolean;
@@ -60,6 +67,18 @@ const toOptInt = (v: unknown): number | undefined => {
   if (s === "") return undefined;
   const n = typeof v === "number" ? v : parseInt(s, 10);
   return Number.isFinite(n) ? n : undefined;
+};
+
+const isChangeType = (t: unknown): t is ChangeMultiType =>
+  t === "active" ||
+  t === "inactive" ||
+  t === "delete-all" ||
+  t === "change-position";
+
+const toIdList = (ids: string | string[] | undefined): string[] => {
+  if (!ids) return [];
+  const raw = Array.isArray(ids) ? ids : ids.split(",");
+  return raw.map((s) => String(s).trim()).filter(Boolean);
 };
 
 // [GET] /admin/products-category
@@ -240,3 +259,87 @@ export const changeStatus = async (
   res.redirect(req.headers.referer);
 };
 
+// [PATCH] /admin/products/change-multi
+export const changeMulti = async (
+  req: Request<unknown, unknown, ChangeMultiBody>,
+  res: Response
+): Promise<void> => {
+  const referer = req.get("referer") || "/admin/products-category";
+
+  try {
+    const { type } = req.body;
+    const idList = toIdList(req.body.ids);
+
+    if (!isChangeType(type) || idList.length === 0) {
+      return res.redirect(referer);
+    }
+
+    switch (type) {
+      case "active":
+        await ProductCategory.updateMany(
+          { _id: { $in: idList } },
+          { $set: { status: "active" } }
+        );
+        req.flash(
+          "success",
+          `${idList.length} sản phẩm được cập nhật trạng thái thành công!`
+        );
+        break;
+
+      case "inactive":
+        await ProductCategory.updateMany(
+          { _id: { $in: idList } },
+          { $set: { status: "inactive" } }
+        );
+        req.flash(
+          "success",
+          `${idList.length} sản phẩm được cập nhật trạng thái thành công!`
+        );
+        break;
+
+      case "delete-all":
+        await ProductCategory.updateMany(
+          { _id: { $in: idList } },
+          { $set: { deleted: true, deletedAt: new Date() } }
+        );
+        req.flash("success", `${idList.length} sản phẩm được xóa thành công!`);
+        break;
+
+      case "change-position":
+        for (const item of idList) {
+          const [id, position] = item.split("-");
+          await ProductCategory.updateOne(
+            { _id: id },
+            { position: parseInt(position) }
+          );
+        }
+        req.flash(
+          "success",
+          `${idList.length} danh mục sản phẩm được đổi vị trí thành công!`
+        );
+        break;
+    }
+
+    return res.redirect(referer);
+  } catch (err) {
+    console.error("[changeMulti] error:", err);
+    return res.redirect(referer);
+  }
+};
+
+// [DELETE] /admin/products/delete/:id
+export const deleteItem = async (
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> => {
+  const id = req.params.id;
+
+  await ProductCategory.updateOne(
+    { _id: id },
+    { deleted: true, deletedAt: new Date() }
+  );
+
+  req.flash("success", "Xóa danh mục sản phẩm thành công!");
+
+  res.redirect(req.headers.referer);
+};
