@@ -22,5 +22,12 @@
                         href=`/${prefixAdmin}/products-category`
                         class=(activePage==='products-category' ? 'active' : '')
                     )
-                        i.fas.fa-tags.mr-2
+                        i.fa-solid.fa-layer-group.mr-2
                         | Danh mục sản phẩm
+                li.nav-item
+                    a.nav-link(
+                        href=`/${prefixAdmin}/roles`
+                        class=(activePage==='roles' ? 'active' : '')
+                    )
+                        i.fa-solid.fa-user-secret.mr-2
+                        | Nhóm quyền
