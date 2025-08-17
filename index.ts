@@ -37,9 +37,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Flash
 app.use(session({
-  secret: process.env.SESSION_SECRET || "secret",
-  resave: false,
-  saveUninitialized: false,
+  cookie: { maxAge: 60000, secure: false }, // Tuỳ chọn (đặt true nếu dùng HTTPS)
+  secret: 'your-secret-key', // Bắt buộc phải có
+  resave: false,             // Chọn false để tránh lưu lại session không thay đổi
+  saveUninitialized: false,  // Chọn false để tránh tạo session cho những request không cần
 }));
 
 app.use(flash());
