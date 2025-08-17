@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
 
 block main
     .col-lg-10
@@ -37,6 +38,20 @@ block main
                                                 aria-required="true"
                                             )
                                         .invalid-feedback Vui lòng nhập tiêu đề.
+
+                                    .form-group
+                                        label(for="product_category_id") Danh mục sản phẩm
+                                        .input-group.select-parent
+                                            .input-group-prepend
+                                                span.input-group-text
+                                                    i.fas.fa-sitemap
+                                            select#product_category_id.form-control(
+                                                name="product_category_id"
+                                                aria-label="Chọn danh mục cha"
+                                            )
+                                                option(value="") -- Chọn danh mục --
+                                                if records
+                                                    +select-tree(records)
 
                                     // Mô tả
                                     .form-group

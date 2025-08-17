@@ -6,6 +6,8 @@ import { makeFilterStatus, Status } from "../../helpers/filterStatus.helper";
 import { makeSearch } from "../../helpers/search.helper";
 import { makePagination } from "../../helpers/pagination.helper";
 import { systemConfig } from "../../config/config";
+import { buildCategoryTree } from "../../helpers/createTree.helper";
+import ProductCategory from "../../models/product-category.model";
 
 type SortKey = "position" | "price" | "title" | "createdAt";
 type SortDir = "asc" | "desc";
@@ -26,6 +28,12 @@ interface ProductFind {
   [key: string]: unknown;
 }
 
+interface CategoryFind {
+  id?: string;
+  deleted: boolean;
+  [key: string]: unknown;
+}
+
 interface EditParams {
   id: string;
 }
@@ -39,6 +47,7 @@ interface ChangeMultiBody {
 
 interface CreateProductBody {
   title: string;
+  product_category_id: string;
   description?: string;
   price: string | number;
   discountPercentage?: string | number;
@@ -49,6 +58,7 @@ interface CreateProductBody {
 }
 
 interface EditBody {
+  product_category_id: any;
   title?: string;
   description?: string;
   price?: string | number;
@@ -280,9 +290,13 @@ export const deleteItem = async (
 
 // [GET] /admin/products/create
 export const create = async (req: Request, res: Response): Promise<void> => {
+  const find: ProductFind = { deleted: false };
+  const records = await ProductCategory.find(find).lean();
+  const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
   res.render("admin/pages/products/create", {
     pageTitle: "Danh sách sản phẩm",
     activePage: "products",
+    records: tree,
   });
 };
 
@@ -319,6 +333,7 @@ export const createPost = async (
 
     const payload: any = {
       title: body.title,
+      product_category_id: body.product_category_id,
       description: body.description,
       price,
       discountPercentage,
@@ -347,12 +362,12 @@ export const edit = async (
   res: Response
 ): Promise<void> => {
   try {
-    const find = {
-      deleted: false,
-      _id: req.params.id,
-    };
+    const find: CategoryFind = { deleted: false };
+    const records = await ProductCategory.find(find).lean();
+    const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
 
-    const product = await Product.findOne(find).lean();
+    const findData: ProductFind = { deleted: false, _id: req.params.id};
+    const product = await Product.findOne(findData).lean();
 
     if (!product) {
       req.flash?.("error", "Sản phẩm không tồn tại!");
@@ -364,6 +379,7 @@ export const edit = async (
       pageTitle: "Chỉnh sửa sản phẩm",
       activePage: "products",
       product,
+      records: tree
     });
   } catch (error) {
     console.error("[products.edit] error:", error);
@@ -384,6 +400,9 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
     const update: Record<string, unknown> = {};
 
     if (req.body.title !== undefined) update.title = req.body.title;
+    if (req.body.product_category_id !== undefined) {
+      update.product_category_id = req.body.product_category_id;
+    }
     if (req.body.description !== undefined)
       update.description = req.body.description;
 

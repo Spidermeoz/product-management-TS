@@ -9,6 +9,12 @@ export const validateCreatePost: RequestHandler = (req, res, next) => {
     return res.redirect(req.headers.referer); // dựa vào Referer; nếu không có sẽ fallback về "/"
   }
 
+  if (!req.body.product_category_id) {
+    // Nếu đã khai báo connect-flash typings thì có thể bỏ optional chaining
+    req.flash?.("error", "Vui lòng chọn danh mục");
+    return res.redirect(req.headers.referer); // dựa vào Referer; nếu không có sẽ fallback về "/"
+  }
+
   return next();
 };
 

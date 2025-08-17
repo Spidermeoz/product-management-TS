@@ -151,7 +151,7 @@ export const edit = async (
     const findData: CategoryFind = { deleted: false, _id: req.params.id};
     const data = await ProductCategory.findOne(findData)
 
-    if (!records) {
+    if (!data) {
       req.flash?.("error", "Danh mục sản phẩm không tồn tại!");
       res.redirect(`/${systemConfig.prefixAdmin}/products-category`);
       return;
