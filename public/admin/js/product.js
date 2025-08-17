@@ -72,7 +72,7 @@ if (buttonsChangeStatus.length > 0) {
 
 // Preview ảnh + cập nhật label cho custom-file
 (() => {
-  const input = document.getElementById('thumbnail');
+  const input = document.getElementById('avatar');
   const label = document.querySelector('label.custom-file-label[for="thumbnail"]');
   const previewImg = document.getElementById('thumbPreview');
   const previewBox = previewImg ? previewImg.closest('.thumb-preview') : null;
@@ -180,4 +180,48 @@ if (buttonsChangeStatus.length > 0) {
   const url = new URL(window.location.href);
   const q = url.searchParams.get('parent_id');
   if (q && !sel.value) sel.value = q;
+})();
+
+// Preview ảnh + cập nhật label cho custom-file (account with avatar)
+(() => {
+  const input = document.getElementById('avatar');
+  const label = document.querySelector('label.custom-file-label[for="avatar"]');
+  const previewImg = document.getElementById('thumbPreview');
+  const previewBox = previewImg ? previewImg.closest('.thumb-preview') : null;
+
+  if (!input || !label || !previewImg || !previewBox) return;
+
+  const setPreview = (file) => {
+    const isImage = file && file.type && file.type.startsWith('image/');
+    if (!isImage) {
+      // reset preview
+      previewImg.removeAttribute('src');
+      previewBox.classList.remove('has-image');
+      label.textContent = 'Chọn ảnh...';
+      return;
+    }
+    // Đổi text label
+    label.textContent = file.name;
+
+    // Preview
+    const reader = new FileReader();
+    reader.onload = e => {
+      previewImg.src = String(e.target.result || '');
+      previewBox.classList.add('has-image');
+      previewImg.setAttribute('aria-hidden', 'false');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    if (!file) {
+      // không có file
+      previewImg.removeAttribute('src');
+      previewBox.classList.remove('has-image');
+      label.textContent = 'Chọn ảnh...';
+      return;
+    }
+    setPreview(file);
+  });
 })();

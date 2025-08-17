@@ -4,6 +4,7 @@ import { systemConfig } from "../../config/config";
 import { productRoutes } from "./product.route";
 import { productCategoryRoutes } from "./product-category.route";
 import { roleRoutes } from "./role.route";
+import { accountRoutes } from "./account.route";
 
 const adminRoutes = (app: Express): void => {
   const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -15,6 +16,8 @@ const adminRoutes = (app: Express): void => {
   app.use(`/${PATH_ADMIN}/products-category`, productCategoryRoutes);
 
   app.use(`/${PATH_ADMIN}/roles`, roleRoutes);
+
+  app.use(`/${PATH_ADMIN}/accounts`, accountRoutes);
 };
 
 export default adminRoutes;

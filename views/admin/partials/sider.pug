@@ -38,3 +38,10 @@
                     )
                         i.fa-solid.fa-fingerprint.mr-2
                         | Phân quyền
+                li.nav-item
+                    a.nav-link(
+                        href=`/${prefixAdmin}/accounts`
+                        class=(activePage==='accounts' ? 'active' : '')
+                    )
+                        i.fa-solid.fa-elevator.mr-2
+                        | Danh sách tài khoản
