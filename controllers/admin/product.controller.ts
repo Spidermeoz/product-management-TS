@@ -448,10 +448,12 @@ export const detail = async (
   res: Response
 ): Promise<void> => {
   try {
-    const product = await Product.findOne({
-      deleted: false,
-      _id: req.params.id,
-    }).lean();
+    const find: CategoryFind = { deleted: false };
+    const records = await ProductCategory.find(find).lean();
+    const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
+
+    const findData: ProductFind = { deleted: false, _id: req.params.id};
+    const product = await Product.findOne(findData).lean();
 
     if (!product) {
       req.flash?.("error", "Sản phẩm không tồn tại!");
@@ -462,6 +464,7 @@ export const detail = async (
     res.render("admin/pages/products/detail", {
       pageTitle: product.title || "Chi tiết sản phẩm",
       product,
+      records: tree,
       activePage: "products",
     });
   } catch (error) {

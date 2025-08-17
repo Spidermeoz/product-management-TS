@@ -60,18 +60,50 @@ block main
 
                                 // Meta: kho, vị trí
                                 .detail-meta.mt-3
-                                if typeof product.stock !== 'undefined'
-                                    .meta-item(title="Tồn kho")
-                                        i.fas.fa-boxes.mr-2
-                                        span
-                                            | Còn lại: 
-                                            b= product.stock
-                                if typeof product.position !== 'undefined'
-                                    .meta-item(title="Vị trí sắp xếp")
-                                        i.fas.fa-sort-numeric-down.mr-2
-                                        span
-                                            | Vị trí: 
-                                            b= product.position
+                                    if typeof product.stock !== 'undefined'
+                                        .meta-item(title="Tồn kho")
+                                            i.fas.fa-boxes.mr-2
+                                            span
+                                                | Còn lại: 
+                                                b= product.stock
+                                    if typeof product.position !== 'undefined'
+                                        .meta-item(title="Vị trí sắp xếp")
+                                            i.fas.fa-sort-numeric-down.mr-2
+                                            span
+                                                | Vị trí: 
+                                                b= product.position
+
+                                - const toStr = (v) => (v === undefined || v === null) ? '' : String(v)
+                                - const catId = toStr(product.product_category_id || '')
+                                - function findPath(nodes, id, path){
+                                -   path = path || []
+                                -   if (!Array.isArray(nodes) || !id) return null
+                                -   for (var i = 0; i < nodes.length; i++){
+                                -     var n = nodes[i]
+                                -     var curId = toStr(n.id || n._id || '')
+                                -     var curPath = path.concat([n])
+                                -     if (curId === id) return curPath
+                                -     if (n.children && n.children.length){
+                                -       var r = findPath(n.children, id, curPath)
+                                -       if (r) return r
+                                -     }
+                                -   }
+                                -   return null
+                                - }
+                                - const catPath = catId ? findPath(records || [], catId) : null
+
+                                .detail-category.mt-3
+                                    h6.mb-2
+                                        i.fas.fa-sitemap.mr-1
+                                        | Danh mục
+                                    if !catId
+                                        span.badge.badge-secondary Chưa gán danh mục
+                                    else if (catPath && catPath.length)
+                                        ul.category-breadcrumb
+                                            each node, i in catPath
+                                                li= node.title
+                                    else
+                                        span.badge.badge-warning Không tìm thấy danh mục tương ứng
 
                             // Mô tả
                             if product.description

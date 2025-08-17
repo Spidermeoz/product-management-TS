@@ -2317,3 +2317,69 @@ td .branch-line::before{
   .select-parent .form-control,
   .select-parent .input-group-text{ transition:none !important; }
 }
+
+/* ===== Product detail: category breadcrumb ===== */
+.detail-category h6{
+  font-weight: 700;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+}
+.detail-category h6 i{ opacity: .9; }
+
+/* List breadcrumb dạng chip + mũi tên giữa các cấp */
+.category-breadcrumb{
+  list-style: none;
+  margin: .25rem 0 0;
+  padding: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  vertical-align: middle;
+}
+.category-breadcrumb li{
+  position: relative;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: .35rem .6rem;
+  border-radius: .6rem;
+  background:
+    linear-gradient(135deg, rgba(0,123,255,.08), rgba(0,123,255,.04)),
+    var(--card-bg);
+  border: 1px solid rgba(0,0,0,.08);
+  color: var(--text-color);
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.category-breadcrumb li + li{
+  margin-left: .2rem; /* khoảng nhỏ trước mũi tên */
+}
+.category-breadcrumb li + li::before{
+  content: "\f105"; /* Font Awesome chevron-right */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: .25rem;
+  color: rgba(0,0,0,.45);
+}
+
+/* Dark mode điều chỉnh màu viền/nền */
+[data-theme="dark"] .category-breadcrumb li{
+  border-color: rgba(255,255,255,.12);
+  background:
+    linear-gradient(135deg, rgba(13,110,253,.12), rgba(13,110,253,.08)),
+    var(--card-bg);
+}
+[data-theme="dark"] .category-breadcrumb li + li::before{
+  color: rgba(255,255,255,.45);
+}
+
+/* Badge “Chưa gán / Không tìm thấy” trông cân hơn */
+.detail-category .badge{
+  font-weight: 600;
+  padding: .45rem .6rem;
+  border-radius: .5rem;
+}
+
+/* Giảm chuyển động nếu người dùng yêu cầu */
+@media (prefers-reduced-motion: reduce){
+  .category-breadcrumb li{ box-shadow: none; }
+}
