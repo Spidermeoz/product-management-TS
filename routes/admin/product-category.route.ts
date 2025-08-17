@@ -30,4 +30,6 @@ router.patch<{ id: string }>(
   controller.editPatch
 );
 
+router.patch("/change-status/:status/:id", controller.changeStatus);
+
 export const productCategoryRoutes : Router = router;

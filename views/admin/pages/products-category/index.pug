@@ -1,10 +1,6 @@
 extends ../../layouts/default.pug
-//- include ../../mixins/filterStatus.pug
-//- include ../../mixins/search.pug
-//- include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
-//- include ../../mixins/sort.pug
 include ../../mixins/table-tree.pug
 
 block main
@@ -12,21 +8,6 @@ block main
         .main-content#mainContent(role="main")
             +alert-success(5000)
             section#products-section.content-section
-                //- .card.filter-card.mb-3
-                //-     .card-header.d-flex.justify-content-between.align-items-center
-                //-         h5.mb-0
-                //-             i.fas.fa-filter.mr-2
-                //-             | Bộ lọc & Tìm kiếm
-                    //- .card-body
-                    //-     .d-flex.flex-wrap.align-items-center.w-100
-                    //-         //- Nhóm nút lọc trạng thái
-                    //-         .btn-group.btn-group-sm(role="group" aria-label="Lọc theo trạng thái")
-                    //-             +filter-status(filterStatus)
-
-                        //- Tìm kiếm (GET). Giữ lại status hiện tại (nếu có).
-                        +search(keyword)
-
-                        +sort(sort) 
                 .card
                     .card-header.d-flex.justify-content-between.align-items-center
                         h5.mb-0
@@ -42,7 +23,6 @@ block main
                 .card
                     .card-body
                         .table-responsive
-                            //- table#productsTable.table.table-hover(aria-describedby="Danh sách sản phẩm")
                             +form-change-multi(
                                 `/${prefixAdmin}/products-category/change-multi?_method=PATCH`
                             )

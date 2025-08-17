@@ -5,6 +5,9 @@ import { systemConfig } from "../../config/config";
 import { Status } from "../../helpers/filterStatus.helper";
 import { buildCategoryTree } from "../../helpers/createTree.helper";
 
+type SortKey = "position" | "title" | "createdAt";
+type SortDir = "asc" | "desc";
+
 interface CategoryFind {
   id?: string;
   deleted: boolean;
@@ -31,6 +34,15 @@ interface EditBody {
   thumbnail?: string;
   position?: string | number;
   status?: Status;
+}
+
+interface ProductsCategoryQuery {
+  page?: string;
+  status?: Status | "";
+  keyword?: string;
+  sort?: string; // dạng "price-desc"
+  sortKey?: SortKey; // dạng cũ
+  sortValue?: SortDir; // dạng cũ
 }
 
 const toInt = (v: unknown, def = 0): number => {
@@ -212,5 +224,19 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
   }
 
   res.redirect(referer);
+};
+
+// [PATCH] /admin/products-category/change-status/:status/:id
+export const changeStatus = async (
+  req: Request<{ status: string; id: string }, unknown, unknown, ProductsCategoryQuery>,
+  res: Response
+): Promise<void> => {
+  const status = req.params.status;
+  const id = req.params.id;
+
+  await ProductCategory.updateOne({ _id: id }, { status: status });
+  req.flash("success", "Thay đổi trạng thái danh mục sản phẩm thành công!");
+
+  res.redirect(req.headers.referer);
 };
 
