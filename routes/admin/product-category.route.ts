@@ -36,4 +36,6 @@ router.patch("/change-multi", controller.changeMulti);
 
 router.delete("/delete/:id", controller.deleteItem);
 
+router.get("/detail/:id", controller.detail);
+
 export const productCategoryRoutes : Router = router;

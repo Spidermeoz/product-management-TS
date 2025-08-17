@@ -343,3 +343,35 @@ export const deleteItem = async (
 
   res.redirect(req.headers.referer);
 };
+
+// [GET] /admin/products-category/detail/:id
+export const detail = async (
+  req: Request<EditParams>,
+  res: Response
+): Promise<void> => {
+  try {
+    const find: CategoryFind = { deleted: false };
+    const records = await ProductCategory.find(find).lean();
+    const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
+
+    const findData: CategoryFind = { deleted: false, _id: req.params.id};
+    const productCategory = await ProductCategory.findOne(findData).lean();
+
+    if (!productCategory) {
+      req.flash?.("error", "Danh mục không tồn tại!");
+      res.redirect(`/${systemConfig.prefixAdmin}/products-category`);
+      return;
+    }
+
+    res.render("admin/pages/products-category/detail", {
+      pageTitle: productCategory.title || "Chi tiết danh mục sản phẩm",
+      productCategory,
+      records: tree,
+      activePage: "products-category",
+    });
+  } catch (error) {
+    console.error("[products-category.detail] error:", error);
+    req.flash?.("error", "Danh mục không tồn tại!");
+    res.redirect(`/${systemConfig.prefixAdmin}/products-category`);
+  }
+};
