@@ -2480,3 +2480,212 @@ td .branch-line::before{
   .feature-col { min-width: 160px; width: 180px; }
   .perm-toolbar span { display: none; }
 }
+
+/* ===============================
+   Auth Page — Glassmorphism
+   =============================== */
+
+:root{
+  --auth-bg1: #2b1055;
+  --auth-bg2: #7597de;
+  --auth-card: rgba(255,255,255,.14);
+  --auth-border: rgba(255,255,255,.28);
+  --auth-text: #f5f6fb;
+  --auth-muted: rgba(245,246,251,.75);
+  --auth-focus: rgba(13,110,253,.35);
+}
+
+/* Nền gradient + cầu sáng mờ */
+.auth-wrap{
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: radial-gradient(1200px 600px at 10% -10%, #6a11cb22, transparent 60%),
+              radial-gradient(1000px 500px at 110% 0%, #2575fc22, transparent 55%),
+              linear-gradient(135deg, var(--auth-bg1), var(--auth-bg2));
+  overflow: hidden;
+}
+.auth-wrap::before,
+.auth-wrap::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  filter: blur(40px);
+  opacity: .35;
+  pointer-events: none;
+}
+.auth-wrap::before{
+  width: 420px; height: 420px;
+  background: #ff8a00;
+  top: -120px; left: -120px;
+}
+.auth-wrap::after{
+  width: 520px; height: 520px;
+  background: #1cefff;
+  bottom: -160px; right: -160px;
+}
+
+/* Card kính mờ */
+.auth-card{
+  border: 1px solid var(--auth-border);
+  background: var(--auth-card);
+  color: var(--auth-text);
+  border-radius: 18px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.12);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  overflow: hidden;
+}
+.auth-card .card-body{
+  padding: 28px 26px;
+}
+
+.text-muted{ color: var(--auth-muted) !important; }
+
+/* Input với icon */
+.input-with-icon{
+  position: relative;
+}
+.input-with-icon .input-icon{
+  position: absolute;
+  left: .75rem; top: 50%;
+  transform: translateY(-50%);
+  opacity: .85;
+  pointer-events: none;
+}
+.input-with-icon.has-action .type-toggle{
+  position: absolute;
+  right: .5rem; top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--auth-text);
+  opacity: .85;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  transition: background .18s ease, transform .12s ease, opacity .18s ease;
+}
+.input-with-icon.has-action .type-toggle:hover{
+  background: rgba(255,255,255,.12);
+  transform: translateY(-50%) translateY(-1px);
+}
+
+/* Form control */
+.auth-card .form-control{
+  color: var(--auth-text);
+  background: rgba(255,255,255,.08);
+  border: 1px solid var(--auth-border);
+  padding-left: 2.1rem; /* chừa chỗ icon */
+  border-radius: 12px;
+  transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+.auth-card .form-control::placeholder{ color: rgba(255,255,255,.55); }
+.auth-card .form-control:focus{
+  background: rgba(255,255,255,.12);
+  border-color: var(--auth-border);
+  box-shadow: 0 0 0 4px var(--auth-focus);
+  outline: none;
+}
+
+/* Bootstrap invalid */
+.auth-card .is-invalid,
+.auth-card.was-validated .form-control:invalid{
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 3px rgba(255,107,107,.25);
+}
+.auth-card .invalid-feedback{
+  display: block;
+  color: #ffd2d2;
+  min-height: 1.15rem;
+}
+
+/* Button */
+.btn-glow{
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.25);
+  transition: transform .12s ease, box-shadow .22s ease, filter .18s ease, background .18s ease;
+}
+.btn-glow:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+  filter: brightness(1.05);
+}
+
+/* Liên kết phụ */
+.auth-links{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+}
+.auth-links .link-register{
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.12);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
+  backdrop-filter: blur(8px) saturate(130%);
+  transition: transform .12s ease, background .18s ease, box-shadow .22s ease;
+}
+.auth-links .link-register:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.18);
+  box-shadow: 0 12px 28px rgba(0,0,0,.25);
+}
+.link-forgot{
+  text-decoration: none;
+  color: var(--auth-muted);
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background .18s ease, color .18s ease, transform .12s ease;
+}
+.link-forgot:hover{
+  color: #fff;
+  background: rgba(255,255,255,.12);
+  transform: translateY(-1px);
+}
+
+/* Divider (nếu dùng) */
+.divider{
+  position: relative;
+  text-align: center;
+}
+.divider::before{
+  content:"";
+  position: absolute; top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+}
+
+/* Mobile */
+@media (max-width: 576px){
+  .auth-card .card-body{ padding: 22px 18px; }
+}
+
+/* Ẩn mặc định, chỉ hiện khi .form-group.has-error */
+.auth-card .invalid-feedback{
+  display: none;
+  color: #ffd2d2;
+  min-height: 1.15rem;
+  margin-top: .25rem;
+}
+
+/* Khi form-group có has-error (do JS thêm), hiện lỗi */
+.auth-card .form-group.has-error .invalid-feedback{
+  display: block;
+}
+
+/* Viền/đổ bóng khi invalid */
+.auth-card .form-control.is-invalid{
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 3px rgba(255,107,107,.25);
+}
+
