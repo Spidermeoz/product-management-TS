@@ -236,7 +236,7 @@ export const detail = async (
   try {
     const find: AccountFind = { deleted: false, _id: req.params.id };
     const data = await Account.findOne(find);
-    
+
     if (!data) {
       req.flash?.("error", "Tài khoản không tồn tại!");
       res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
@@ -257,4 +257,21 @@ export const detail = async (
     req.flash?.("error", "Tài khoản không tồn tại!");
     res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
   }
+};
+
+// [DELETE] /admin/accounts/delete/:id
+export const deleteItem = async (
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> => {
+  const id = req.params.id;
+
+  await Account.updateOne(
+    { _id: id },
+    { deleted: true, deletedAt: new Date() }
+  );
+
+  req.flash("success", "Xóa tài khoản thành công!");
+
+  res.redirect(req.headers.referer);
 };

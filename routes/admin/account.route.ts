@@ -32,4 +32,6 @@ router.patch<{ id: string }>(
 
 router.get("/detail/:id", controller.detail);
 
+router.delete("/delete/:id", controller.deleteItem);
+
 export const accountRoutes: Router = router;
