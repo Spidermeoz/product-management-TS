@@ -30,4 +30,6 @@ router.patch<{ id: string }>(
   controller.editPatch
 );
 
+router.get("/detail/:id", controller.detail);
+
 export const accountRoutes: Router = router;

@@ -1,0 +1,60 @@
+extends ../../layouts/default.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            section#product-detail.content-section
+                .card.detail-card
+                    .card-header.d-flex.justify-content-between.align-items-center
+                        h5.mb-0
+                            i.fas.fa-info-circle.mr-2
+                            | #{pageTitle}
+                        .d-flex.align-items-center
+                            a.btn.btn-outline-secondary.btn-sm.mr-2(href=`/${prefixAdmin}/accounts`, aria-label="Quay lại danh sách")
+                                i.fas.fa-arrow-left.mr-1
+                                | Quay lại
+                            a.btn.btn-warning.btn-sm.btn-glow(href=`/${prefixAdmin}/accounts/edit/${data._id}`, aria-label="Chỉnh sửa sản phẩm")
+                                i.fas.fa-edit.mr-1
+                                | Chỉnh sửa
+
+                    .card-body
+                        .row
+                            // Ảnh lớn
+                            .col-md-5.mb-3.mb-md-0
+                                .detail-thumb.preview-contain
+                                    if data.avatar
+                                        img#thumbLarge(src=data.avatar alt=`Avatar ${data.fullName}`)
+                                    else
+                                        .detail-thumb-empty Chưa có ảnh
+
+                            // Thông tin
+                            .col-md-7
+                                // Tiêu đề + badge trạng thái
+                                .d-flex.align-items-start.justify-content-between.flex-wrap
+                                    h3.detail-title.mb-2= data.fullName
+                                    if data.status
+                                        if data.status === 'active'
+                                            span.badge.badge-success.badge-pulse.ml-md-2.mb-2 Hoạt động
+                                        else
+                                            span.badge.badge-danger.badge-pulse.ml-md-2.mb-2 Dừng hoạt động
+
+                                // Meta: email, sdt
+                                .detail-meta.mt-3
+                                    if typeof data.email !== 'undefined'
+                                        .meta-item(title="Email")
+                                            i.fa-solid.fa-envelope.mr-2
+                                            span
+                                                | Email: 
+                                                b= data.email
+                                    if typeof data.phone !== 'undefined'
+                                        .meta-item(title="SDT")
+                                            i.fas.fa-solid.fa-phone.mr-2
+                                            span
+                                                |SĐT: 
+                                                b= data.phone
+                                    if typeof data.role_id !== 'undefined'
+                                        .meta-item(title="SDT")
+                                            i.fas.fa-user-secret.fa-phone.mr-2
+                                            span
+                                                |Quyền: 
+                                                b= role.title

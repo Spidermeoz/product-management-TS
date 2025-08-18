@@ -227,3 +227,34 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
 
   res.redirect(referer);
 };
+
+// [GET] /admin/accounts/detail/:id
+export const detail = async (
+  req: Request<EditParams>,
+  res: Response
+): Promise<void> => {
+  try {
+    const find: AccountFind = { deleted: false, _id: req.params.id };
+    const data = await Account.findOne(find);
+    
+    if (!data) {
+      req.flash?.("error", "Tài khoản không tồn tại!");
+      res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
+      return;
+    }
+
+    const findData: RoleFind = { deleted: false , _id: data.role_id};
+    const role = await Role.findOne(findData);
+
+    res.render("admin/pages/accounts/detail", {
+      pageTitle: "Chi tiết tài khoản",
+      activePage: "accounts",
+      data,
+      role,
+    });
+  } catch (error) {
+    console.error("[accounts.detail] error:", error);
+    req.flash?.("error", "Tài khoản không tồn tại!");
+    res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
+  }
+};
