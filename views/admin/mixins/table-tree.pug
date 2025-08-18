@@ -57,38 +57,53 @@ mixin table-tree(records, level = 1, parentId = "")
                     categories
                 )
             td
-                if record.status === 'active'
-                    a.badge.badge-success.badge-pulse(
-                        data-status = record.status
-                        data-id = record._id 
-                        button-change-status
-                    ) Hoạt động
+                if(authRole.permissions.includes('products-category_edit'))
+                    if record.status === 'active'
+                        a.badge.badge-success.badge-pulse(
+                            data-status = record.status
+                            data-id = record._id 
+                            button-change-status
+                        ) Hoạt động
+                    else
+                        a.badge.badge-danger.badge-pulse(
+                            data-status = record.status
+                            data-id = record._id 
+                            button-change-status
+                        ) Dừng hoạt động
                 else
-                    a.badge.badge-danger.badge-pulse(
-                        data-status = record.status
-                        data-id = record._id 
-                        button-change-status
-                    ) Dừng hoạt động
-            td
-                a.btn.btn-secondary.btn-sm.btn-glow(
-                    href=`/${prefixAdmin}/products-category/detail/${record._id}`
-                    aria-label=`Xem chi tiết sản phẩm ${record.title}`
-                )
-                    i.fas.fa-eye.mr-1
-                    | Chi tiết
-                a.btn.btn-warning.btn-sm.btn-glow(
-                href=`/${prefixAdmin}/products-category/edit/${record._id}`
-                aria-label=`Sửa sản phẩm ${record.title}`
-                )
-                    i.fas.fa-edit.mr-1
-                    | Sửa
-                form.d-inline(method="POST", action=`/${prefixAdmin}/products-category/delete/${record._id}?_method=DELETE`)
-                    button.btn.btn-danger.btn-sm.btn-glow(
-                        type="button"
-                        button-delete
-                        aria-label=`Xóa sản phẩm ${record.title}`
+                    if record.status === 'active'
+                        span.badge.badge-success.badge-pulse(
+                            data-status = record.status
+                            data-id = record._id 
+                        ) Hoạt động
+                    else
+                        span.badge.badge-danger.badge-pulse(
+                            data-status = record.status
+                            data-id = record._id 
+                        ) Dừng hoạt động
+            td  
+                if(authRole.permissions.includes('products-category_view'))
+                    a.btn.btn-secondary.btn-sm.btn-glow(
+                        href=`/${prefixAdmin}/products-category/detail/${record._id}`
+                        aria-label=`Xem chi tiết sản phẩm ${record.title}`
                     )
-                        i.fas.fa-trash.mr-1
-                        | Xóa
+                        i.fas.fa-eye.mr-1
+                        | Chi tiết
+                if(authRole.permissions.includes('products-category_edit'))
+                    a.btn.btn-warning.btn-sm.btn-glow(
+                    href=`/${prefixAdmin}/products-category/edit/${record._id}`
+                    aria-label=`Sửa sản phẩm ${record.title}`
+                    )
+                        i.fas.fa-edit.mr-1
+                        | Sửa
+                if(authRole.permissions.includes('products-category_delete'))
+                    form.d-inline(method="POST", action=`/${prefixAdmin}/products-category/delete/${record._id}?_method=DELETE`)
+                        button.btn.btn-danger.btn-sm.btn-glow(
+                            type="button"
+                            button-delete
+                            aria-label=`Xóa sản phẩm ${record.title}`
+                        )
+                            i.fas.fa-trash.mr-1
+                            | Xóa
         if record.children && record.children.length > 0
             +table-tree(record.children, level + 1, `${record._id}`)

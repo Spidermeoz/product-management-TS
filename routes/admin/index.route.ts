@@ -7,18 +7,20 @@ import { roleRoutes } from "./role.route";
 import { accountRoutes } from "./account.route";
 import { authRoutes } from "./auth.route";
 
+import * as authMiddleware from "../../middlewares/admin/auth.middleware"
+
 const adminRoutes = (app: Express): void => {
   const PATH_ADMIN = systemConfig.prefixAdmin;
 
-  app.use(`/${PATH_ADMIN}/dashboard`, dashboardRoutes);
+  app.use(`/${PATH_ADMIN}/dashboard`, authMiddleware.requireAuth, dashboardRoutes);
 
-  app.use(`/${PATH_ADMIN}/products`, productRoutes);
+  app.use(`/${PATH_ADMIN}/products`, authMiddleware.requireAuth, productRoutes);
 
-  app.use(`/${PATH_ADMIN}/products-category`, productCategoryRoutes);
+  app.use(`/${PATH_ADMIN}/products-category`, authMiddleware.requireAuth, productCategoryRoutes);
 
-  app.use(`/${PATH_ADMIN}/roles`, roleRoutes);
+  app.use(`/${PATH_ADMIN}/roles`, authMiddleware.requireAuth, roleRoutes);
 
-  app.use(`/${PATH_ADMIN}/accounts`, accountRoutes);
+  app.use(`/${PATH_ADMIN}/accounts`, authMiddleware.requireAuth, accountRoutes);
 
   app.use(`/${PATH_ADMIN}/auth`, authRoutes);
 };

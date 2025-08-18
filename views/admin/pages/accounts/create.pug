@@ -1,137 +1,141 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/deny-access.pug
 
 block main
     .col-lg-10
         .main-content#mainContent(role="main")
-            +alert-error(5000)
-            section#product-create.content-section
-                .card.form-card
-                    .card-header.d-flex.justify-content-between.align-items-center
-                        h5.mb-0
-                            i.fas.fa-plus-circle.mr-2
-                            | #{pageTitle}
-                        a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/accounts`)
-                            i.fas.fa-arrow-left.mr-1
-                            | Quay lại danh sách
+            if(authRole.permissions.includes('accounts_create'))
+                +alert-error(5000)
+                section#product-create.content-section
+                    .card.form-card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-plus-circle.mr-2
+                                | #{pageTitle}
+                            a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/accounts`)
+                                i.fas.fa-arrow-left.mr-1
+                                | Quay lại danh sách
 
-                    .card-body
-                        form#form-create-product(
-                            action=`/${prefixAdmin}/accounts/create` 
-                            method="POST" 
-                            novalidate
-                            enctype="multipart/form-data"
-                        )
-                            .form-row
-                                .col-md-8
-                                    .form-group
-                                        label(for="fullName") Họ tên<span class="text-danger">*</span>
-                                        .input-with-icon
-                                            i.fas.fa-heading.input-icon
-                                            input#fullName.form-control(
-                                                type="text"
-                                                name="fullName"
-                                                placeholder="Nhập họ tên"
-                                                required
-                                                aria-required="true"
-                                            )
-                                        .invalid-feedback Vui lòng nhập họ tên.
+                        .card-body
+                            form#form-create-product(
+                                action=`/${prefixAdmin}/accounts/create` 
+                                method="POST" 
+                                novalidate
+                                enctype="multipart/form-data"
+                            )
+                                .form-row
+                                    .col-md-8
+                                        .form-group
+                                            label(for="fullName") Họ tên<span class="text-danger">*</span>
+                                            .input-with-icon
+                                                i.fas.fa-heading.input-icon
+                                                input#fullName.form-control(
+                                                    type="text"
+                                                    name="fullName"
+                                                    placeholder="Nhập họ tên"
+                                                    required
+                                                    aria-required="true"
+                                                )
+                                            .invalid-feedback Vui lòng nhập họ tên.
 
-                                    .form-group
-                                        label(for="email") Email<span class="text-danger">*</span>
-                                        .input-with-icon
-                                            i.fa-solid.fa-at.input-icon
-                                            input#email.form-control(
-                                                type="text"
-                                                name="email"
-                                                placeholder="Nhập email"
-                                                required
-                                                aria-required="true"
-                                            )
-                                        .invalid-feedback Vui lòng nhập email.
+                                        .form-group
+                                            label(for="email") Email<span class="text-danger">*</span>
+                                            .input-with-icon
+                                                i.fa-solid.fa-at.input-icon
+                                                input#email.form-control(
+                                                    type="text"
+                                                    name="email"
+                                                    placeholder="Nhập email"
+                                                    required
+                                                    aria-required="true"
+                                                )
+                                            .invalid-feedback Vui lòng nhập email.
 
-                                    .form-group
-                                        label(for="password") Mật khẩu<span class="text-danger">*</span>
-                                        .input-with-icon
-                                            i.fa-solid.fa-key.input-icon
-                                            input#password.form-control(
-                                                type="text"
-                                                name="password"
-                                                placeholder="Nhập password"
-                                                required
-                                                aria-required="true"
-                                            )
-                                        .invalid-feedback Vui lòng nhập mật khẩu.
+                                        .form-group
+                                            label(for="password") Mật khẩu<span class="text-danger">*</span>
+                                            .input-with-icon
+                                                i.fa-solid.fa-key.input-icon
+                                                input#password.form-control(
+                                                    type="text"
+                                                    name="password"
+                                                    placeholder="Nhập password"
+                                                    required
+                                                    aria-required="true"
+                                                )
+                                            .invalid-feedback Vui lòng nhập mật khẩu.
 
-                                    .form-group
-                                        label(for="phone") Số điện thoại
-                                        .input-with-icon
-                                            i.fa-solid.fa-phone.input-icon
-                                            input#phone.form-control(
-                                                type="text"
-                                                name="phone"
-                                                placeholder="Nhập số điện thoại"
-                                            )
-                            .form-row
-                                .col-md-8
-                                    // Ảnh (URL)
-                                    .form-group
-                                        label(for="avatar") Avatar
-                                        .custom-file
-                                            input#avatar.custom-file-input(
-                                                type="file"
-                                                name="avatar"
-                                                accept="image/*"
-                                                aria-describedby="thumbHelp"
-                                            )
-                                            label.custom-file-label(for="avatar") Chọn avatar...
-                                        small#thumbHelp.form-text.text-muted
-                                            | Chọn tệp ảnh (JPG, PNG, GIF) để xem trước ở khung bên phải
-                                
-                                .col-md-4
-                                    // Thumbnail preview box (hiển thị khi bạn thêm JS set src)
-                                    .thumb-preview-wrap
-                                        .thumb-preview
-                                            img#thumbPreview(src="" alt="Xem trước avatar" aria-hidden="true")
+                                        .form-group
+                                            label(for="phone") Số điện thoại
+                                            .input-with-icon
+                                                i.fa-solid.fa-phone.input-icon
+                                                input#phone.form-control(
+                                                    type="text"
+                                                    name="phone"
+                                                    placeholder="Nhập số điện thoại"
+                                                )
+                                .form-row
+                                    .col-md-8
+                                        // Ảnh (URL)
+                                        .form-group
+                                            label(for="avatar") Avatar
+                                            .custom-file
+                                                input#avatar.custom-file-input(
+                                                    type="file"
+                                                    name="avatar"
+                                                    accept="image/*"
+                                                    aria-describedby="thumbHelp"
+                                                )
+                                                label.custom-file-label(for="avatar") Chọn avatar...
+                                            small#thumbHelp.form-text.text-muted
+                                                | Chọn tệp ảnh (JPG, PNG, GIF) để xem trước ở khung bên phải
+                                    
+                                    .col-md-4
+                                        // Thumbnail preview box (hiển thị khi bạn thêm JS set src)
+                                        .thumb-preview-wrap
+                                            .thumb-preview
+                                                img#thumbPreview(src="" alt="Xem trước avatar" aria-hidden="true")
 
-                                .col-md-4
-                                    .form-group
-                                        label(for="role_id") Phân quyền
-                                        .input-group.select-role
-                                            .input-group-prepend
-                                                span.input-group-text
-                                                    i.fa-solid.fa-street-view
-                                            select#role_id.form-control(
-                                                name="role_id"
-                                                aria-label="Chọn quyền"
-                                            )
-                                                option(value="") -- Chọn quyền --
-                                                if roles
-                                                    each role in roles
-                                                        option(
-                                                            value=role._id
-                                                        ) #{role.title}
+                                    .col-md-4
+                                        .form-group
+                                            label(for="role_id") Phân quyền
+                                            .input-group.select-role
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fa-solid.fa-street-view
+                                                select#role_id.form-control(
+                                                    name="role_id"
+                                                    aria-label="Chọn quyền"
+                                                )
+                                                    option(value="") -- Chọn quyền --
+                                                    if roles
+                                                        each role in roles
+                                                            option(
+                                                                value=role._id
+                                                            ) #{role.title}
 
-                            // Trạng thái
-                            .form-group.mt-2
-                                label.d-block.mb-2 Trạng thái
-                                .custom-controls-wrap
-                                    .custom-control.custom-radio.custom-control-inline
-                                        input#statusActive.custom-control-input(type="radio" name="status" value="active" checked)
-                                        label.custom-control-label(for="statusActive")
-                                            i.fas.fa-check-circle.mr-1.text-success
-                                            | Hoạt động
-                                    .custom-control.custom-radio.custom-control-inline
-                                        input#statusInActive.custom-control-input(type="radio" name="status" value="inactive")
-                                        label.custom-control-label(for="statusInActive")
-                                            i.fas.fa-pause-circle.mr-1.text-muted
-                                            | Dừng hoạt động
+                                // Trạng thái
+                                .form-group.mt-2
+                                    label.d-block.mb-2 Trạng thái
+                                    .custom-controls-wrap
+                                        .custom-control.custom-radio.custom-control-inline
+                                            input#statusActive.custom-control-input(type="radio" name="status" value="active" checked)
+                                            label.custom-control-label(for="statusActive")
+                                                i.fas.fa-check-circle.mr-1.text-success
+                                                | Hoạt động
+                                        .custom-control.custom-radio.custom-control-inline
+                                            input#statusInActive.custom-control-input(type="radio" name="status" value="inactive")
+                                            label.custom-control-label(for="statusInActive")
+                                                i.fas.fa-pause-circle.mr-1.text-muted
+                                                | Dừng hoạt động
 
-                            // Actions
-                            .form-actions.d-flex.justify-content-end.mt-3
-                                button.btn.btn-primary.btn-glow(type="submit")
-                                    i.fas.fa-save.mr-2
-                                    | Tạo mới
+                                // Actions
+                                .form-actions.d-flex.justify-content-end.mt-3
+                                    button.btn.btn-primary.btn-glow(type="submit")
+                                        i.fas.fa-save.mr-2
+                                        | Tạo mới
 
-                // (tuỳ chọn) script xử lý preview ảnh/validate bạn có thể thêm trong /admin/js/product.js
-                script(src="/admin/js/product.js")
+                    // (tuỳ chọn) script xử lý preview ảnh/validate bạn có thể thêm trong /admin/js/product.js
+                    script(src="/admin/js/product.js")
+            else 
+                +deny-access()

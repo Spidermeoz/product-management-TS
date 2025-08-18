@@ -1,92 +1,95 @@
 extends ../../layouts/default.pug
+include ../../mixins/deny-access.pug
 
 block main
     .col-lg-10
         .main-content#mainContent(role="main")
-            section#product-detail.content-section
-                .card.detail-card
-                    .card-header.d-flex.justify-content-between.align-items-center
-                        h5.mb-0
-                            i.fas.fa-info-circle.mr-2
-                            | #{pageTitle}
-                        .d-flex.align-items-center
-                            a.btn.btn-outline-secondary.btn-sm.mr-2(href=`/${prefixAdmin}/products-category`, aria-label="Quay lại danh sách")
-                                i.fas.fa-arrow-left.mr-1
-                                | Quay lại
-                            a.btn.btn-warning.btn-sm.btn-glow(href=`/${prefixAdmin}/products-category/edit/${productCategory._id}`, aria-label="Chỉnh sửa danh mục sản phẩm")
-                                i.fas.fa-edit.mr-1
-                                | Chỉnh sửa
+            if(authRole.permissions.includes('products-category_view'))
+                section#product-detail.content-section
+                    .card.detail-card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-info-circle.mr-2
+                                | #{pageTitle}
+                            .d-flex.align-items-center
+                                a.btn.btn-outline-secondary.btn-sm.mr-2(href=`/${prefixAdmin}/products-category`, aria-label="Quay lại danh sách")
+                                    i.fas.fa-arrow-left.mr-1
+                                    | Quay lại
+                                if(authRole.permissions.includes('products-category_edit'))
+                                    a.btn.btn-warning.btn-sm.btn-glow(href=`/${prefixAdmin}/products-category/edit/${productCategory._id}`, aria-label="Chỉnh sửa danh mục sản phẩm")
+                                        i.fas.fa-edit.mr-1
+                                        | Chỉnh sửa
 
-                    .card-body
-                        .row
-                            // Ảnh lớn
-                            .col-md-5.mb-3.mb-md-0
-                                .detail-thumb.preview-contain
-                                    if productCategory.thumbnail
-                                        img#thumbLarge(src=productCategory.thumbnail alt=`Ảnh ${productCategory.title}`)
-                                    else
-                                        .detail-thumb-empty Chưa có ảnh
-
-                            // Thông tin
-                            .col-md-7
-                                // Tiêu đề + badge trạng thái
-                                .d-flex.align-items-start.justify-content-between.flex-wrap
-                                    h3.detail-title.mb-2= productCategory.title
-                                    if productCategory.status
-                                        if productCategory.status === 'active'
-                                            span.badge.badge-success.badge-pulse.ml-md-2.mb-2 Hoạt động
+                        .card-body
+                            .row
+                                // Ảnh lớn
+                                .col-md-5.mb-3.mb-md-0
+                                    .detail-thumb.preview-contain
+                                        if productCategory.thumbnail
+                                            img#thumbLarge(src=productCategory.thumbnail alt=`Ảnh ${productCategory.title}`)
                                         else
-                                            span.badge.badge-danger.badge-pulse.ml-md-2.mb-2 Dừng hoạt động
+                                            .detail-thumb-empty Chưa có ảnh
 
-                                // Meta: vị trí
-                                .detail-meta.mt-3
-                                    if typeof productCategory.position !== 'undefined'
-                                        .meta-item(title="Vị trí sắp xếp")
-                                            i.fas.fa-sort-numeric-down.mr-2
-                                            span
-                                                | Vị trí: 
-                                                b= productCategory.position
+                                // Thông tin
+                                .col-md-7
+                                    // Tiêu đề + badge trạng thái
+                                    .d-flex.align-items-start.justify-content-between.flex-wrap
+                                        h3.detail-title.mb-2= productCategory.title
+                                        if productCategory.status
+                                            if productCategory.status === 'active'
+                                                span.badge.badge-success.badge-pulse.ml-md-2.mb-2 Hoạt động
+                                            else
+                                                span.badge.badge-danger.badge-pulse.ml-md-2.mb-2 Dừng hoạt động
 
-                                // Mô tả
-                                if productCategory.description
-                                    .detail-desc.mt-3
+                                    // Meta: vị trí
+                                    .detail-meta.mt-3
+                                        if typeof productCategory.position !== 'undefined'
+                                            .meta-item(title="Vị trí sắp xếp")
+                                                i.fas.fa-sort-numeric-down.mr-2
+                                                span
+                                                    | Vị trí: 
+                                                    b= productCategory.position
+
+                                    // Mô tả
+                                    if productCategory.description
+                                        .detail-desc.mt-3
+                                            h6.mb-2
+                                                i.fas.fa-align-left.mr-1
+                                                | Mô tả
+                                            p.lead-desc !{productCategory.description}
+
+                                    // === Danh mục cha ===
+                                    - const toStr = (v) => (v === undefined || v === null) ? '' : String(v)
+                                    - const curId = toStr(productCategory._id || productCategory.id || '')
+                                    - function findPath(nodes, id, path){
+                                    -   path = path || []
+                                    -   if (!Array.isArray(nodes) || !id) return null
+                                    -   for (var i = 0; i < nodes.length; i++){
+                                    -     var n = nodes[i]
+                                    -     var nid = toStr(n._id || n.id || '')
+                                    -     var curPath = path.concat([n])
+                                    -     if (nid === id) return curPath
+                                    -     if (n.children && n.children.length){
+                                    -       var r = findPath(n.children, id, curPath)
+                                    -       if (r) return r
+                                    -     }
+                                    -   }
+                                    -   return null
+                                    - }
+                                    // path đến chính danh mục hiện tại
+                                    - const fullPath = findPath(records || [], curId)
+                                    // tổ tiên = bỏ phần tử cuối (chính nó)
+                                    - const parents = fullPath && fullPath.length ? fullPath.slice(0, -1) : []
+
+                                    .detail-parent.mt-3
                                         h6.mb-2
-                                            i.fas.fa-align-left.mr-1
-                                            | Mô tả
-                                        p.lead-desc !{productCategory.description}
-
-                                // === Danh mục cha ===
-                                - const toStr = (v) => (v === undefined || v === null) ? '' : String(v)
-                                - const curId = toStr(productCategory._id || productCategory.id || '')
-                                - function findPath(nodes, id, path){
-                                -   path = path || []
-                                -   if (!Array.isArray(nodes) || !id) return null
-                                -   for (var i = 0; i < nodes.length; i++){
-                                -     var n = nodes[i]
-                                -     var nid = toStr(n._id || n.id || '')
-                                -     var curPath = path.concat([n])
-                                -     if (nid === id) return curPath
-                                -     if (n.children && n.children.length){
-                                -       var r = findPath(n.children, id, curPath)
-                                -       if (r) return r
-                                -     }
-                                -   }
-                                -   return null
-                                - }
-                                // path đến chính danh mục hiện tại
-                                - const fullPath = findPath(records || [], curId)
-                                // tổ tiên = bỏ phần tử cuối (chính nó)
-                                - const parents = fullPath && fullPath.length ? fullPath.slice(0, -1) : []
-
-                                .detail-parent.mt-3
-                                    h6.mb-2
-                                        i.fas.fa-sitemap.mr-1
-                                        | Danh mục cha
-                                    if !parents || parents.length === 0
-                                        span.badge.badge-secondary Danh mục gốc (không có danh mục cha)
-                                    else
-                                        ul.category-breadcrumb
-                                            each node, i in parents
-                                                li= node.title
-
-                //- script(src="/admin/js/product.js")
+                                            i.fas.fa-sitemap.mr-1
+                                            | Danh mục cha
+                                        if !parents || parents.length === 0
+                                            span.badge.badge-secondary Danh mục gốc (không có danh mục cha)
+                                        else
+                                            ul.category-breadcrumb
+                                                each node, i in parents
+                                                    li= node.title 
+            else
+                +deny-access()

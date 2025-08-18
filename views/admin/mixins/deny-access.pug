@@ -1,0 +1,25 @@
+mixin deny-access()
+    .deny-access-wrap
+        .container
+            .row.justify-content-center
+                .col-12.col-md-10.col-lg-8.col-xl-6
+                    .deny-access-card
+                        .deny-access-badge(aria-hidden="true")
+                            i.fas.fa-shield-alt
+                        h3.deny-title Bạn không có quyền truy cập trang này
+                        p.deny-desc
+                            | Có vẻ tài khoản hiện tại chưa được cấp quyền để mở trang này. 
+                            | Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp, 
+                            | hoặc đăng nhập bằng tài khoản khác.
+
+                        //- Gợi ý hành động
+                        .deny-actions.mt-3
+                            a.btn.btn-primary.btn-glow(href=`/${prefixAdmin}/dashboard`)
+                                i.fas.fa-home.mr-2
+                                | Về trang chính
+                            a.btn.btn-outline-secondary.ml-2(href=`/${prefixAdmin}/auth/logout`)
+                                i.fas.fa-sign-in-alt.mr-2
+                                | Đăng nhập khác
+                            a.btn.btn-link.ml-2(href="javascript:history.back()")
+                                i.fas.fa-arrow-left.mr-1
+                                | Quay lại

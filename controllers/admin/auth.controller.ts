@@ -21,10 +21,12 @@ interface LoginBody {
 
 // [GET] /auth/login
 export const index = async (req: Request, res: Response): Promise<void> => {
-  // Render
-  res.render("admin/pages/auth/login", {
-    pageTitle: "Đăng nhập",
-  });
+  const token = req.cookies?.token as string | undefined; // an toàn hơn
+  if (token) {
+    res.redirect(`/${systemConfig.prefixAdmin}/dashboard`);
+    return;
+  }
+  res.render("admin/pages/auth/login", { pageTitle: "Đăng nhập" });
 };
 
 // [POST] /auth/login
@@ -38,28 +40,38 @@ export const loginPost = async (
 
     if (!email || !password) {
       req.flash?.("error", "Vui lòng nhập email và mật khẩu!");
-      res.redirect(req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`);
+      res.redirect(
+        req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`
+      );
       return;
     }
 
-    const user = await Account.findOne({ email, deleted: false })
-      .lean<AccountLean>();
+    const user = await Account.findOne({
+      email,
+      deleted: false,
+    }).lean<AccountLean>();
 
     if (!user) {
       req.flash?.("error", "Email không tồn tại!");
-      res.redirect(req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`);
+      res.redirect(
+        req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`
+      );
       return;
     }
 
     if (md5(password) !== user.password) {
       req.flash?.("error", "Mật khẩu không chính xác!");
-      res.redirect(req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`);
+      res.redirect(
+        req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`
+      );
       return;
     }
 
     if (user.status === "inactive") {
       req.flash?.("error", "Tài khoản đã bị khóa!");
-      res.redirect(req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`);
+      res.redirect(
+        req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`
+      );
       return;
     }
 
@@ -75,7 +87,9 @@ export const loginPost = async (
   } catch (err) {
     console.error("[auth.loginPost] error:", err);
     req.flash?.("error", "Đăng nhập thất bại, vui lòng thử lại!");
-    res.redirect(req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`);
+    res.redirect(
+      req.get("referer") || `/${systemConfig.prefixAdmin}/auth/login`
+    );
   }
 };
 

@@ -1,56 +1,60 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/deny-access.pug
 
 block main
     .col-lg-10
         .main-content#mainContent(role="main")
-            +alert-error(5000)
-            section#product-create.content-section
-                .card.form-card
-                    .card-header.d-flex.justify-content-between.align-items-center
-                        h5.mb-0
-                            i.fas.fa-plus-circle.mr-2
-                            | #{pageTitle}
-                        a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/roles`)
-                            i.fas.fa-arrow-left.mr-1
-                            | Quay lại danh sách
+            if(authRole.permissions.includes('roles_create'))
+                +alert-error(5000)
+                section#product-create.content-section
+                    .card.form-card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-plus-circle.mr-2
+                                | #{pageTitle}
+                            a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/roles`)
+                                i.fas.fa-arrow-left.mr-1
+                                | Quay lại danh sách
 
-                    .card-body
-                        form#form-create-product(
-                            action=`/${prefixAdmin}/roles/create` 
-                            method="POST" 
-                            novalidate
-                        )
-                            .form-row
-                                .col-md-8
-                                    // Tiêu đề
-                                    .form-group
-                                        label(for="title") Tiêu đề<span class="text-danger">*</span>
-                                        .input-with-icon
-                                            i.fas.fa-heading.input-icon
-                                            input#title.form-control(
-                                                type="text"
-                                                name="title"
-                                                placeholder="Nhập tiêu đề sản phẩm"
-                                                required
-                                                aria-required="true"
+                        .card-body
+                            form#form-create-product(
+                                action=`/${prefixAdmin}/roles/create` 
+                                method="POST" 
+                                novalidate
+                            )
+                                .form-row
+                                    .col-md-8
+                                        // Tiêu đề
+                                        .form-group
+                                            label(for="title") Tiêu đề<span class="text-danger">*</span>
+                                            .input-with-icon
+                                                i.fas.fa-heading.input-icon
+                                                input#title.form-control(
+                                                    type="text"
+                                                    name="title"
+                                                    placeholder="Nhập tiêu đề sản phẩm"
+                                                    required
+                                                    aria-required="true"
+                                                )
+                                            .invalid-feedback Vui lòng nhập tiêu đề.
+
+                                        // Mô tả
+                                        .form-group
+                                            label(for="desc") Mô tả
+                                            textarea.textarea-mce#desc.form-control(
+                                                name="description"
+                                                rows="6"
+                                                placeholder="Mô tả ngắn gọn về nhóm quyền"
                                             )
-                                        .invalid-feedback Vui lòng nhập tiêu đề.
 
-                                    // Mô tả
-                                    .form-group
-                                        label(for="desc") Mô tả
-                                        textarea.textarea-mce#desc.form-control(
-                                            name="description"
-                                            rows="6"
-                                            placeholder="Mô tả ngắn gọn về nhóm quyền"
-                                        )
+                                // Actions
+                                .form-actions.d-flex.justify-content-end.mt-3
+                                    button.btn.btn-primary.btn-glow(type="submit")
+                                        i.fas.fa-save.mr-2
+                                        | Tạo mới
 
-                            // Actions
-                            .form-actions.d-flex.justify-content-end.mt-3
-                                button.btn.btn-primary.btn-glow(type="submit")
-                                    i.fas.fa-save.mr-2
-                                    | Tạo mới
-
-                // (tuỳ chọn) script xử lý preview ảnh/validate bạn có thể thêm trong /admin/js/product.js
-                script(src="/admin/js/product.js")
+                    // (tuỳ chọn) script xử lý preview ảnh/validate bạn có thể thêm trong /admin/js/product.js
+                    script(src="/admin/js/product.js")
+            else 
+                +deny-access()

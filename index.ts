@@ -4,6 +4,7 @@ import path from "path"
 import methodOverride from "method-override"
 import flash from "connect-flash"
 import session from "express-session"
+import cookieParser from "cookie-parser";
 
 import * as database from "./config/database";
 
@@ -31,6 +32,8 @@ app.use(
 );
 
 app.use(methodOverride('_method'));
+
+app.use(cookieParser(process.env.COOKIE_SECRET || undefined));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

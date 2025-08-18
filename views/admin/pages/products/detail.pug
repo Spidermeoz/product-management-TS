@@ -1,116 +1,119 @@
 extends ../../layouts/default.pug
+include ../../mixins/deny-access.pug
 
 block main
     .col-lg-10
         .main-content#mainContent(role="main")
-            section#product-detail.content-section
-                .card.detail-card
-                    .card-header.d-flex.justify-content-between.align-items-center
-                        h5.mb-0
-                            i.fas.fa-info-circle.mr-2
-                            | Chi tiết sản phẩm
-                        .d-flex.align-items-center
-                            a.btn.btn-outline-secondary.btn-sm.mr-2(href=`/${prefixAdmin}/products`, aria-label="Quay lại danh sách")
-                                i.fas.fa-arrow-left.mr-1
-                                | Quay lại
-                            a.btn.btn-warning.btn-sm.btn-glow(href=`/${prefixAdmin}/products/edit/${product._id}`, aria-label="Chỉnh sửa sản phẩm")
-                                i.fas.fa-edit.mr-1
-                                | Chỉnh sửa
+            if(authRole.permissions.includes('products_view'))
+                section#product-detail.content-section
+                    .card.detail-card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-info-circle.mr-2
+                                | Chi tiết sản phẩm
+                            .d-flex.align-items-center
+                                a.btn.btn-outline-secondary.btn-sm.mr-2(href=`/${prefixAdmin}/products`, aria-label="Quay lại danh sách")
+                                    i.fas.fa-arrow-left.mr-1
+                                    | Quay lại
+                                if(authRole.permissions.includes('products_edit'))
+                                    a.btn.btn-warning.btn-sm.btn-glow(href=`/${prefixAdmin}/products/edit/${product._id}`, aria-label="Chỉnh sửa sản phẩm")
+                                        i.fas.fa-edit.mr-1
+                                        | Chỉnh sửa
 
-                    .card-body
-                        //- Tính toán giá/giảm giá để hiển thị
-                        - const moneyFmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(n||0));
-                        - const basePrice = Number(product.price || 0);
-                        - const discount = Number(product.discountPercentage || 0);
-                        - const hasDiscount = discount > 0;
-                        - const finalPrice = hasDiscount ? Math.round(basePrice * (1 - discount/100)) : basePrice;
+                        .card-body
+                            //- Tính toán giá/giảm giá để hiển thị
+                            - const moneyFmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(n||0));
+                            - const basePrice = Number(product.price || 0);
+                            - const discount = Number(product.discountPercentage || 0);
+                            - const hasDiscount = discount > 0;
+                            - const finalPrice = hasDiscount ? Math.round(basePrice * (1 - discount/100)) : basePrice;
 
-                        .row
-                            // Ảnh lớn
-                            .col-md-5.mb-3.mb-md-0
-                                .detail-thumb.preview-contain
-                                    if product.thumbnail
-                                        img#thumbLarge(src=product.thumbnail alt=`Ảnh ${product.title}`)
-                                    else
-                                        .detail-thumb-empty Chưa có ảnh
-
-                            // Thông tin
-                            .col-md-7
-                                // Tiêu đề + badge trạng thái
-                                .d-flex.align-items-start.justify-content-between.flex-wrap
-                                    h3.detail-title.mb-2= product.title
-                                    if product.status
-                                        if product.status === 'active'
-                                            span.badge.badge-success.badge-pulse.ml-md-2.mb-2 Hoạt động
+                            .row
+                                // Ảnh lớn
+                                .col-md-5.mb-3.mb-md-0
+                                    .detail-thumb.preview-contain
+                                        if product.thumbnail
+                                            img#thumbLarge(src=product.thumbnail alt=`Ảnh ${product.title}`)
                                         else
-                                            span.badge.badge-danger.badge-pulse.ml-md-2.mb-2 Dừng hoạt động
+                                            .detail-thumb-empty Chưa có ảnh
 
-                                // Giá & giảm giá
-                                .price-block.mt-1
-                                    if hasDiscount
-                                        div.price-line
-                                            span.price-final= moneyFmt(finalPrice)
-                                            span.price-original= moneyFmt(basePrice)
-                                        div.discount-chip
-                                            i.fas.fa-bolt.mr-1
-                                            | Giảm #{discount}%
-                                    else
-                                        div.price-line
-                                            span.price-final= moneyFmt(basePrice)
+                                // Thông tin
+                                .col-md-7
+                                    // Tiêu đề + badge trạng thái
+                                    .d-flex.align-items-start.justify-content-between.flex-wrap
+                                        h3.detail-title.mb-2= product.title
+                                        if product.status
+                                            if product.status === 'active'
+                                                span.badge.badge-success.badge-pulse.ml-md-2.mb-2 Hoạt động
+                                            else
+                                                span.badge.badge-danger.badge-pulse.ml-md-2.mb-2 Dừng hoạt động
 
-                                // Meta: kho, vị trí
-                                .detail-meta.mt-3
-                                    if typeof product.stock !== 'undefined'
-                                        .meta-item(title="Tồn kho")
-                                            i.fas.fa-boxes.mr-2
-                                            span
-                                                | Còn lại: 
-                                                b= product.stock
-                                    if typeof product.position !== 'undefined'
-                                        .meta-item(title="Vị trí sắp xếp")
-                                            i.fas.fa-sort-numeric-down.mr-2
-                                            span
-                                                | Vị trí: 
-                                                b= product.position
+                                    // Giá & giảm giá
+                                    .price-block.mt-1
+                                        if hasDiscount
+                                            div.price-line
+                                                span.price-final= moneyFmt(finalPrice)
+                                                span.price-original= moneyFmt(basePrice)
+                                            div.discount-chip
+                                                i.fas.fa-bolt.mr-1
+                                                | Giảm #{discount}%
+                                        else
+                                            div.price-line
+                                                span.price-final= moneyFmt(basePrice)
 
-                                - const toStr = (v) => (v === undefined || v === null) ? '' : String(v)
-                                - const catId = toStr(product.product_category_id || '')
-                                - function findPath(nodes, id, path){
-                                -   path = path || []
-                                -   if (!Array.isArray(nodes) || !id) return null
-                                -   for (var i = 0; i < nodes.length; i++){
-                                -     var n = nodes[i]
-                                -     var curId = toStr(n.id || n._id || '')
-                                -     var curPath = path.concat([n])
-                                -     if (curId === id) return curPath
-                                -     if (n.children && n.children.length){
-                                -       var r = findPath(n.children, id, curPath)
-                                -       if (r) return r
-                                -     }
-                                -   }
-                                -   return null
-                                - }
-                                - const catPath = catId ? findPath(records || [], catId) : null
+                                    // Meta: kho, vị trí
+                                    .detail-meta.mt-3
+                                        if typeof product.stock !== 'undefined'
+                                            .meta-item(title="Tồn kho")
+                                                i.fas.fa-boxes.mr-2
+                                                span
+                                                    | Còn lại: 
+                                                    b= product.stock
+                                        if typeof product.position !== 'undefined'
+                                            .meta-item(title="Vị trí sắp xếp")
+                                                i.fas.fa-sort-numeric-down.mr-2
+                                                span
+                                                    | Vị trí: 
+                                                    b= product.position
 
-                                .detail-category.mt-3
-                                    h6.mb-2
-                                        i.fas.fa-sitemap.mr-1
-                                        | Danh mục
-                                    if !catId
-                                        span.badge.badge-secondary Chưa gán danh mục
-                                    else if (catPath && catPath.length)
-                                        ul.category-breadcrumb
-                                            each node, i in catPath
-                                                li= node.title
-                                    else
-                                        span.badge.badge-warning Không tìm thấy danh mục tương ứng
+                                    - const toStr = (v) => (v === undefined || v === null) ? '' : String(v)
+                                    - const catId = toStr(product.product_category_id || '')
+                                    - function findPath(nodes, id, path){
+                                    -   path = path || []
+                                    -   if (!Array.isArray(nodes) || !id) return null
+                                    -   for (var i = 0; i < nodes.length; i++){
+                                    -     var n = nodes[i]
+                                    -     var curId = toStr(n.id || n._id || '')
+                                    -     var curPath = path.concat([n])
+                                    -     if (curId === id) return curPath
+                                    -     if (n.children && n.children.length){
+                                    -       var r = findPath(n.children, id, curPath)
+                                    -       if (r) return r
+                                    -     }
+                                    -   }
+                                    -   return null
+                                    - }
+                                    - const catPath = catId ? findPath(records || [], catId) : null
 
-                            // Mô tả
-                            if product.description
-                                .detail-desc.mt-3
-                                    h6.mb-2
-                                        i.fas.fa-align-left.mr-1
-                                        | Mô tả
-                                    p.lead-desc !{product.description}
+                                    .detail-category.mt-3
+                                        h6.mb-2
+                                            i.fas.fa-sitemap.mr-1
+                                            | Danh mục
+                                        if !catId
+                                            span.badge.badge-secondary Chưa gán danh mục
+                                        else if (catPath && catPath.length)
+                                            ul.category-breadcrumb
+                                                each node, i in catPath
+                                                    li= node.title
+                                        else
+                                            span.badge.badge-warning Không tìm thấy danh mục tương ứng
 
-                //- script(src="/admin/js/product.js")
+                                // Mô tả
+                                if product.description
+                                    .detail-desc.mt-3
+                                        h6.mb-2
+                                            i.fas.fa-align-left.mr-1
+                                            | Mô tả
+                                        p.lead-desc !{product.description}
+            else 
+                +deny-access()
