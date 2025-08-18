@@ -32,3 +32,28 @@ export const validateCreateAccount = (
 
   next();
 };
+
+export const validateEditAccount = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const referer = req.get("referer") || "/";
+
+  const fullName = String(req.body?.fullName ?? "").trim();
+  const email = String(req.body?.email ?? "").trim();
+
+  if (!fullName) {
+    req.flash?.("error", "Vui lòng nhập họ tên!");
+    res.redirect(referer);
+    return;
+  }
+
+  if (!email) {
+    req.flash?.("error", "Vui lòng nhập email!");
+    res.redirect(referer);
+    return;
+  }
+
+  next();
+};

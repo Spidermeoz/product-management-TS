@@ -20,4 +20,14 @@ router.post(
   controller.createPost
 );
 
+router.get("/edit/:id", controller.edit);
+
+router.patch<{ id: string }>(
+  "/edit/:id",
+  upload.single("avatar"),
+  uploadCloud.uploadSingle,
+  validate.validateEditAccount,
+  controller.editPatch
+);
+
 export const accountRoutes: Router = router;
