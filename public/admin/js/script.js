@@ -143,11 +143,16 @@ $(() => {
   });
 
   // Logout
-  $("#logoutBtn").on("click", (e) => {
+  $("#logoutBtn").on("click", function (e) {
     e.preventDefault();
+    const href = this.getAttribute("href") || "/";
     if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
-      showToast("Đăng xuất", "Đang đăng xuất...", "info");
-      setTimeout(() => alert("Đã đăng xuất thành công!"), 800);
+      try {
+        showToast?.("Đăng xuất", "Đang đăng xuất...", "info");
+      } catch {}
+      setTimeout(() => {
+        window.location.assign(href);
+      }, 600);
     }
   });
 
@@ -418,97 +423,107 @@ $(() => {
 
 // Show alert (đa alert, auto-hide, pause on hover)
 (() => {
-  const alerts = document.querySelectorAll('[show-alert]');
+  const alerts = document.querySelectorAll("[show-alert]");
   if (!alerts.length) return;
 
   alerts.forEach((alertEl) => {
-    const closeBtn = alertEl.querySelector('[close-alert]');
+    const closeBtn = alertEl.querySelector("[close-alert]");
 
     // thời gian từ data-time hoặc mặc định 4000ms
-    const raw = parseInt(alertEl.getAttribute('data-time') || '', 10);
+    const raw = parseInt(alertEl.getAttribute("data-time") || "", 10);
     const timeout = Number.isFinite(raw) && raw > 0 ? raw : 4000;
 
     const hide = () => {
       // Thêm class để chạy animation CSS rồi remove sau khi xong
-      alertEl.classList.add('alert-hidden');
-      alertEl.addEventListener('animationend', () => {
-        alertEl.remove();
-      }, { once: true });
+      alertEl.classList.add("alert-hidden");
+      alertEl.addEventListener(
+        "animationend",
+        () => {
+          alertEl.remove();
+        },
+        { once: true }
+      );
     };
 
     // Tự ẩn sau timeout
     let t = setTimeout(hide, timeout);
 
     // Cho phép tạm dừng khi hover
-    alertEl.addEventListener('mouseenter', () => clearTimeout(t));
-    alertEl.addEventListener('mouseleave', () => {
+    alertEl.addEventListener("mouseenter", () => clearTimeout(t));
+    alertEl.addEventListener("mouseleave", () => {
       // Cho 1 nhịp nhỏ để user rời chuột mượt
       t = setTimeout(hide, 1200);
     });
 
     // Nút đóng thủ công
-    closeBtn && closeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      hide();
-    });
+    closeBtn &&
+      closeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        hide();
+      });
   });
 })();
 
 // Sort: set & clear (ổn định, có validate + disable Clear)
 (() => {
-  const sel = document.querySelector('[sort-select]');
-  const btnClear = document.querySelector('[sort-clear]');
+  const sel = document.querySelector("[sort-select]");
+  const btnClear = document.querySelector("[sort-clear]");
   if (!(sel instanceof HTMLSelectElement)) return;
 
   // whitelist các giá trị sort hợp lệ (giữ trống '' cho "không sắp xếp")
   const ALLOWED = new Set([
-    '', 'position-desc', 'position-asc',
-    'price-desc', 'price-asc',
-    'title-asc', 'title-desc'
+    "",
+    "position-desc",
+    "position-asc",
+    "price-desc",
+    "price-asc",
+    "title-asc",
+    "title-desc",
   ]);
 
-  const optionExists = (v) => [...sel.options].some(o => o.value === v);
+  const optionExists = (v) => [...sel.options].some((o) => o.value === v);
 
   const updateClearState = () => {
     if (!btnClear) return;
     const has = !!sel.value;
-    btnClear.toggleAttribute('disabled', !has);
-    btnClear.classList.toggle('disabled', !has); // nếu dùng Bootstrap
-    btnClear.style.pointerEvents = has ? '' : 'none'; // ngăn click khi disabled
+    btnClear.toggleAttribute("disabled", !has);
+    btnClear.classList.toggle("disabled", !has); // nếu dùng Bootstrap
+    btnClear.style.pointerEvents = has ? "" : "none"; // ngăn click khi disabled
   };
 
   const applySort = (val) => {
     const u = new URL(window.location.href);
-    if (val && ALLOWED.has(val)) u.searchParams.set('sort', val);
-    else u.searchParams.delete('sort');
+    if (val && ALLOWED.has(val)) u.searchParams.set("sort", val);
+    else u.searchParams.delete("sort");
     // đổi sort -> về trang 1
-    u.searchParams.set('page', '1');
+    u.searchParams.set("page", "1");
     window.location.href = u.href;
   };
 
   // Prefill từ query nếu chưa có value (hoặc value hiện tại không nằm trong option)
   (() => {
     const u = new URL(window.location.href);
-    const qSort = u.searchParams.get('sort') || '';
+    const qSort = u.searchParams.get("sort") || "";
     // chỉ set từ URL nếu select chưa có value hợp lệ do server set
     if (!sel.value || !optionExists(sel.value)) {
-      sel.value = (qSort && ALLOWED.has(qSort) && optionExists(qSort)) ? qSort : '';
+      sel.value =
+        qSort && ALLOWED.has(qSort) && optionExists(qSort) ? qSort : "";
     }
     updateClearState();
   })();
 
-  sel.addEventListener('change', () => {
+  sel.addEventListener("change", () => {
     const val = sel.value.trim();
-    if (!val || !ALLOWED.has(val)) applySort('');
+    if (!val || !ALLOWED.has(val)) applySort("");
     else applySort(val);
   });
 
   if (btnClear) {
-    btnClear.addEventListener('click', () => {
-      if (btnClear.hasAttribute('disabled')) return; // guard
-      sel.value = '';
+    btnClear.addEventListener("click", () => {
+      if (btnClear.hasAttribute("disabled")) return; // guard
+      sel.value = "";
       updateClearState();
-      applySort('');
+      applySort("");
     });
   }
 })();

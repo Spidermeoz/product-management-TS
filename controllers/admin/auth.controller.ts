@@ -79,3 +79,22 @@ export const loginPost = async (
   }
 };
 
+// [GET] /admin/auth/logout
+export const logout = (req: Request, res: Response): void => {
+  // Xóa cookie "token".
+  // LƯU Ý: nếu lúc set cookie bạn có dùng path/domain/sameSite/secure,
+  // hãy truyền lại đúng các option đó để đảm bảo xóa được.
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "lax",
+      // secure: process.env.NODE_ENV === "production",
+      // path: "/",           // đảm bảo khớp với lúc set
+      // domain: "your.domain"// nếu có
+    });
+  } catch {
+    // ignore
+  } finally {
+    res.redirect(`/${systemConfig.prefixAdmin}/auth/login`);
+  }
+};

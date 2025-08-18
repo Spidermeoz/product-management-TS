@@ -13,4 +13,6 @@ router.post(
     controller.loginPost
 );
 
+router.get("/logout", controller.logout);
+
 export const authRoutes: Router = router;
