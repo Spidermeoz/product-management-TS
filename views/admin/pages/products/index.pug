@@ -6,6 +6,7 @@ include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/sort.pug
 include ../../mixins/deny-access.pug
+include ../../mixins/moment.pug
 
 block main
     .col-lg-10
@@ -69,6 +70,7 @@ block main
                                                 i.fas.fa-sort.ml-1
                                             th vị trí
                                             th Trạng thái
+                                            th Người tạo
                                             th Hành động
                                     tbody#productsTableBody
                                         each p, idx in products
@@ -119,6 +121,16 @@ block main
                                                                 data-status = p.status
                                                                 data-id = p._id 
                                                             ) Dừng hoạt động
+
+                                                td
+                                                    if p.accountFullName
+                                                        p= p.accountFullName
+                                                    if p.createdBy && p.createdBy.createdAt
+                                                        +formatDate(p.createdBy.createdAt)
+                                                    else if p.createdAt
+                                                        +formatDate(p.createdAt)
+                                                    else
+                                                        span.text-muted Chưa có
                                                 td
                                                     if(authRole.permissions.includes('products_view'))
                                                         a.btn.btn-secondary.btn-sm.btn-glow(

@@ -5,6 +5,7 @@ import methodOverride from "method-override"
 import flash from "connect-flash"
 import session from "express-session"
 import cookieParser from "cookie-parser";
+import moment from "moment";
 
 import * as database from "./config/database";
 
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 
 // App Local Variables
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+app.locals.moment = moment;
 
 clientRoutes(app);
 
