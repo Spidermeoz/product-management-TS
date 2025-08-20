@@ -4,6 +4,7 @@ import ProductCategory from "../../models/product-category.model";
 import { systemConfig } from "../../config/config";
 import { Status } from "../../helpers/filterStatus.helper";
 import { buildCategoryTree } from "../../helpers/createTree.helper";
+import Account from "../../models/account.model";
 
 type SortKey = "position" | "title" | "createdAt";
 type SortDir = "asc" | "desc";
@@ -22,6 +23,7 @@ interface CategoryFind {
 }
 
 interface CreateProductCategoryBody {
+  createdBy: { account_id: any; };
   parent_id: any;
   title: string;
   description?: string;
@@ -86,6 +88,18 @@ export const index = async (req: Request, res: Response): Promise<void> => {
   try {
     const find: CategoryFind = { deleted: false };
     const records = await ProductCategory.find(find).lean();
+
+    for (const productCategory of records) {
+      if (productCategory.createdBy && productCategory.createdBy.account_id) {
+        const user = await Account.findOne({
+          _id: productCategory.createdBy.account_id,
+        }).lean();
+        if (user) {
+          productCategory["accountFullName"] = user.fullName;
+        }
+      }
+    }
+
     const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
 
     res.render("admin/pages/products-category/index", {
@@ -111,7 +125,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
     res.render("admin/pages/products-category/create", {
       pageTitle: "Tạo mới danh mục sản phẩm",
       activePage: "products-category",
-      records: tree
+      records: tree,
     });
   } catch (error) {
     console.error("[products-category.create] error:", error);
@@ -148,6 +162,12 @@ export const createPost = async (
         ? req.body.thumbnail.trim()
         : undefined;
 
+    body.createdBy = {
+      account_id: res.locals.authUser._id || "",
+    };
+
+    const createdBy = body.createdBy;
+
     const payload: any = {
       title: body.title,
       description: body.description,
@@ -155,6 +175,7 @@ export const createPost = async (
       parent_id: body.parent_id,
       status: body.status ?? "active",
       ...(thumbnail ? { thumbnail } : {}),
+      createdBy,
     };
 
     const productCategory = new ProductCategory(payload);
@@ -179,8 +200,8 @@ export const edit = async (
     const records = await ProductCategory.find(find).lean();
     const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
 
-    const findData: CategoryFind = { deleted: false, _id: req.params.id};
-    const data = await ProductCategory.findOne(findData)
+    const findData: CategoryFind = { deleted: false, _id: req.params.id };
+    const data = await ProductCategory.findOne(findData);
 
     if (!data) {
       req.flash?.("error", "Danh mục sản phẩm không tồn tại!");
@@ -247,7 +268,12 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
 
 // [PATCH] /admin/products-category/change-status/:status/:id
 export const changeStatus = async (
-  req: Request<{ status: string; id: string }, unknown, unknown, ProductsCategoryQuery>,
+  req: Request<
+    { status: string; id: string },
+    unknown,
+    unknown,
+    ProductsCategoryQuery
+  >,
   res: Response
 ): Promise<void> => {
   const status = req.params.status;
@@ -354,7 +380,7 @@ export const detail = async (
     const records = await ProductCategory.find(find).lean();
     const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
 
-    const findData: CategoryFind = { deleted: false, _id: req.params.id};
+    const findData: CategoryFind = { deleted: false, _id: req.params.id };
     const productCategory = await ProductCategory.findOne(findData).lean();
 
     if (!productCategory) {

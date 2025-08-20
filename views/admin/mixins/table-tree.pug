@@ -1,3 +1,5 @@
+include ../mixins/moment.pug
+
 mixin table-tree(records, level = 1, parentId = "")
     each record, idx in records
         - const hasChildren = Array.isArray(record.children) && record.children.length > 0
@@ -81,6 +83,15 @@ mixin table-tree(records, level = 1, parentId = "")
                             data-status = record.status
                             data-id = record._id 
                         ) Dừng hoạt động
+            td
+                if record.accountFullName
+                    p #{record.accountFullName}
+                if record.createdBy && record.createdBy.createdAt
+                    +formatDate(record.createdBy.createdAt)
+                else if record.createdAt
+                    +formatDate(record.createdAt)
+                else
+                    span.text-muted Chưa có
             td  
                 if(authRole.permissions.includes('products-category_view'))
                     a.btn.btn-secondary.btn-sm.btn-glow(
