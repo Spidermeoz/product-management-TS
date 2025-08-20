@@ -1,6 +1,7 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 include ../../mixins/deny-access.pug
+include ../../mixins/moment.pug
 
 block main
     .col-lg-10
@@ -33,6 +34,7 @@ block main
                                         tr
                                             th STT
                                             th Nhóm quyền
+                                            th Người tạo
                                             th Hành động
                                     tbody#productsTableBody
                                         each item, idx in roles
@@ -40,6 +42,15 @@ block main
                                                 td #{idx + 1}
                                                 td
                                                     strong= item.title
+                                                td
+                                                    if item.accountFullName
+                                                        p= item.accountFullName
+                                                    if item.createdBy && item.createdBy.createdAt
+                                                        +formatDate(item.createdBy.createdAt)
+                                                    else if item.createdAt
+                                                        +formatDate(item.createdAt)
+                                                    else
+                                                        span.text-muted Chưa có
                                                 td
                                                     if(authRole.permissions.includes('roles_view'))
                                                         a.btn.btn-secondary.btn-sm.btn-glow(

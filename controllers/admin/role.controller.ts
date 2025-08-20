@@ -1,11 +1,12 @@
 import { Request, Response, RequestHandler } from "express";
 import { systemConfig } from "../../config/config";
 import Role from "../../models/role.model";
+import Account from "../../models/account.model";
 
 type PermissionMatrix = Record<string, boolean>;
 
 interface PermissionItem {
-  id: string;                    // _id của role
+  id: string; // _id của role
   permissions: PermissionMatrix; // ví dụ: { "products_view": true, "roles_edit": false, ... }
 }
 
@@ -18,6 +19,10 @@ interface RoleFind {
 interface CreateRoleBody {
   title: string;
   description?: string;
+  createdBy?: {
+    account_id: string;
+    createdAt?: Date;
+  };
 }
 
 interface EditParams {
@@ -36,6 +41,17 @@ export const index = async (req: Request, res: Response): Promise<void> => {
 
   // Lấy dữ liệu trang hiện tại
   const roles = await Role.find(find).lean();
+
+  for (const role of roles) {
+    if (role.createdBy && role.createdBy.account_id) {
+      const user = await Account.findOne({
+        _id: role.createdBy.account_id,
+      }).lean();
+      if (user) {
+        role["accountFullName"] = user.fullName;
+      }
+    }
+  }
 
   // Render
   res.render("admin/pages/roles/index", {
@@ -67,9 +83,17 @@ export const createPost = async (
 ): Promise<void> => {
   try {
     const { body } = req;
+
+    body.createdBy = {
+      account_id: res.locals.authUser._id || "",
+    };
+
+    const createdBy = body.createdBy;
+    
     const payload: any = {
       title: body.title,
       description: body.description,
+      createdBy
     };
 
     const role = new Role(payload);
@@ -194,7 +218,10 @@ export const permissions = async (
 };
 
 // // [PATCH] /admin/roles/permissions
-export const permissionsPatch = async (req: Request, res: Response): Promise<void> => {
+export const permissionsPatch = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const referer = req.get("referer") || "/admin/roles/permissions";
 
   try {
