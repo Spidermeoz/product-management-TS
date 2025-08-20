@@ -89,11 +89,11 @@ export const createPost = async (
     };
 
     const createdBy = body.createdBy;
-    
+
     const payload: any = {
       title: body.title,
       description: body.description,
-      createdBy
+      createdBy,
     };
 
     const role = new Role(payload);
@@ -191,7 +191,16 @@ export const deleteItem = async (
 ): Promise<void> => {
   const id = req.params.id;
 
-  await Role.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+  await Role.updateOne(
+    { _id: id },
+    {
+      deleted: true,
+      deletedBy: {
+        account_id: res.locals.authUser._id,
+        deletedAt: new Date(),
+      },
+    }
+  );
 
   req.flash("success", "Xóa nhóm quyền thành công!");
 
