@@ -23,7 +23,7 @@ interface CategoryFind {
 }
 
 interface CreateProductCategoryBody {
-  createdBy: { account_id: any; };
+  createdBy: { account_id: any };
   parent_id: any;
   title: string;
   description?: string;
@@ -326,7 +326,15 @@ export const changeMulti = async (
       case "delete-all":
         await ProductCategory.updateMany(
           { _id: { $in: idList } },
-          { $set: { deleted: true, deletedAt: new Date() } }
+          {
+            $set: {
+              deleted: true,
+              deletedBy: {
+                account_id: res.locals.authUser._id,
+                deletedAt: new Date(),
+              },
+            },
+          }
         );
         req.flash("success", `${idList.length} sản phẩm được xóa thành công!`);
         break;
@@ -362,7 +370,13 @@ export const deleteItem = async (
 
   await ProductCategory.updateOne(
     { _id: id },
-    { deleted: true, deletedAt: new Date() }
+    {
+      deleted: true,
+      deletedBy: {
+        account_id: res.locals.authUser._id,
+        deletedAt: new Date(),
+      },
+    }
   );
 
   req.flash("success", "Xóa danh mục sản phẩm thành công!");
