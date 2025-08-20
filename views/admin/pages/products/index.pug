@@ -71,6 +71,7 @@ block main
                                             th vị trí
                                             th Trạng thái
                                             th Người tạo
+                                            th Người cập nhật
                                             th Hành động
                                     tbody#productsTableBody
                                         each p, idx in products
@@ -124,13 +125,19 @@ block main
 
                                                 td
                                                     if p.accountFullName
-                                                        p= p.accountFullName
+                                                        p #{p.accountFullName}
                                                     if p.createdBy && p.createdBy.createdAt
                                                         +formatDate(p.createdBy.createdAt)
                                                     else if p.createdAt
                                                         +formatDate(p.createdAt)
                                                     else
                                                         span.text-muted Chưa có
+                                                td
+                                                    - const updatedBy = p.updatedBy.slice(-1)[0];
+                                                    if(updatedBy)
+                                                        p #{updatedBy.accountFullName || 'N/A'}
+                                                        p
+                                                            +formatDate(updatedBy.updatedAt)
                                                 td
                                                     if(authRole.permissions.includes('products_view'))
                                                         a.btn.btn-secondary.btn-sm.btn-glow(
