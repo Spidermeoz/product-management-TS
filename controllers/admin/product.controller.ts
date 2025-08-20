@@ -262,7 +262,15 @@ export const changeMulti = async (
       case "delete-all":
         await Product.updateMany(
           { _id: { $in: idList } },
-          { $set: { deleted: true, deletedAt: new Date() } }
+          {
+            $set: {
+              deleted: true,
+              deletedBy: {
+                account_id: res.locals.authUser._id,
+                deletedAt: new Date(),
+              },
+            },
+          }
         );
         req.flash("success", `${idList.length} sản phẩm được xóa thành công!`);
         break;
@@ -298,7 +306,13 @@ export const deleteItem = async (
 
   await Product.updateOne(
     { _id: id },
-    { deleted: true, deletedAt: new Date() }
+    {
+      deleted: true,
+      deletedBy: {
+        account_id: res.locals.user.id,
+        deletedAt: new Date(),
+      },
+    }
   );
 
   res.redirect(req.headers.referer);
