@@ -26,7 +26,7 @@ router.patch<{ id: string }>(
   "/edit/:id",
   upload.single("thumbnail"),
   uploadCloud.uploadSingle,
-  validate.validateCreatePost,
+  validate.validateCreateProductCategory,
   controller.editPatch
 );
 

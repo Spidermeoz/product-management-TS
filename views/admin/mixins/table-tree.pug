@@ -92,6 +92,12 @@ mixin table-tree(records, level = 1, parentId = "")
                     +formatDate(record.createdAt)
                 else
                     span.text-muted Chưa có
+            td
+                - const updatedBy = Array.isArray(record.updatedBy) ? record.updatedBy.slice(-1)[0] : null;
+                if(updatedBy)
+                    p #{updatedBy.accountFullName || 'N/A'}
+                    p
+                        +formatDate(updatedBy.updatedAt)
             td  
                 if(authRole.permissions.includes('products-category_view'))
                     a.btn.btn-secondary.btn-sm.btn-glow(

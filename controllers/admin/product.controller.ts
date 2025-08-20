@@ -294,7 +294,7 @@ export const changeMulti = async (
           { _id: { $in: idList } },
           {
             $set: {
-              status: "active",
+              status: "inactive",
               $push: {
                 updatedBy: updatedBy,
               },

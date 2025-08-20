@@ -98,6 +98,22 @@ export const index = async (req: Request, res: Response): Promise<void> => {
           productCategory["accountFullName"] = user.fullName;
         }
       }
+
+      // Lấy thông tin người cập nhật cuối cùng
+      let updatedBy = null;
+      let userUpdated = null;
+      if (productCategory.updatedBy && productCategory.updatedBy.length > 0) {
+        updatedBy = productCategory.updatedBy.slice(-1)[0];
+        if (updatedBy.account_id) {
+          userUpdated = await Account.findOne({
+            _id: updatedBy.account_id,
+          }).lean();
+        }
+      }
+
+      if (userUpdated) {
+        updatedBy["accountFullName"] = userUpdated.fullName;
+      }
     }
 
     const tree = buildCategoryTree(records, { sortBy: "position", dir: 1 });
@@ -255,7 +271,20 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
       update.thumbnail = cloudThumb; // <-- cập nhật link Cloudinary nếu có file mới
     }
 
-    await ProductCategory.updateOne({ _id: id }, { $set: update });
+    const updatedBy = {
+      account_id: res.locals.authUser._id,
+      updatedAt: new Date(),
+    };
+
+    await ProductCategory.updateOne(
+      { _id: id },
+      {
+        $set: update,
+        $push: {
+          updatedBy: updatedBy,
+        },
+      }
+    );
 
     req.flash?.("success", "Cập nhật danh mục sản phẩm thành công!");
   } catch (error) {
@@ -279,7 +308,21 @@ export const changeStatus = async (
   const status = req.params.status;
   const id = req.params.id;
 
-  await ProductCategory.updateOne({ _id: id }, { status: status });
+  const updatedBy = {
+    account_id: res.locals.authUser._id,
+    updatedAt: new Date(),
+  };
+
+  await ProductCategory.updateOne(
+    { _id: id },
+    {
+      status: status,
+      $push: {
+        updatedBy: updatedBy,
+      },
+    }
+  );
+
   req.flash("success", "Thay đổi trạng thái danh mục sản phẩm thành công!");
 
   res.redirect(req.headers.referer);
@@ -295,6 +338,10 @@ export const changeMulti = async (
   try {
     const { type } = req.body;
     const idList = toIdList(req.body.ids);
+    const updatedBy = {
+      account_id: res.locals.authUser._id,
+      updatedAt: new Date(),
+    };
 
     if (!isChangeType(type) || idList.length === 0) {
       return res.redirect(referer);
@@ -304,7 +351,14 @@ export const changeMulti = async (
       case "active":
         await ProductCategory.updateMany(
           { _id: { $in: idList } },
-          { $set: { status: "active" } }
+          {
+            $set: {
+              status: "active",
+              $push: {
+                updatedBy: updatedBy,
+              },
+            },
+          }
         );
         req.flash(
           "success",
@@ -315,7 +369,14 @@ export const changeMulti = async (
       case "inactive":
         await ProductCategory.updateMany(
           { _id: { $in: idList } },
-          { $set: { status: "inactive" } }
+          {
+            $set: {
+              status: "inactive",
+              $push: {
+                updatedBy: updatedBy,
+              },
+            },
+          }
         );
         req.flash(
           "success",
@@ -344,7 +405,12 @@ export const changeMulti = async (
           const [id, position] = item.split("-");
           await ProductCategory.updateOne(
             { _id: id },
-            { position: parseInt(position) }
+            {
+              position: parseInt(position),
+              $push: {
+                updatedBy: updatedBy,
+              },
+            }
           );
         }
         req.flash(
