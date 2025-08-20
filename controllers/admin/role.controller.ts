@@ -51,6 +51,22 @@ export const index = async (req: Request, res: Response): Promise<void> => {
         role["accountFullName"] = user.fullName;
       }
     }
+
+    // Lấy thông tin người cập nhật cuối cùng
+    let updatedBy = null;
+    let userUpdated = null;
+    if (role.updatedBy && role.updatedBy.length > 0) {
+      updatedBy = role.updatedBy.slice(-1)[0];
+      if (updatedBy.account_id) {
+        userUpdated = await Account.findOne({
+          _id: updatedBy.account_id,
+        }).lean();
+      }
+    }
+
+    if (userUpdated) {
+      updatedBy["accountFullName"] = userUpdated.fullName;
+    }
   }
 
   // Render
@@ -173,7 +189,20 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
     if (req.body.description !== undefined)
       update.description = req.body.description;
 
-    await Role.updateOne({ _id: id }, { $set: update });
+    const updatedBy = {
+      account_id: res.locals.authUser._id,
+      updatedAt: new Date(),
+    };
+
+    await Role.updateOne(
+      { _id: id },
+      {
+        $set: update,
+        $push: {
+          updatedBy: updatedBy,
+        },
+      }
+    );
 
     req.flash?.("success", "Cập nhật nhóm quyền thành công!");
   } catch (error) {
