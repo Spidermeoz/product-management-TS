@@ -5,6 +5,9 @@ import Role from "../../models/role.model";
 import md5 from "md5";
 import { Status } from "cloudinary";
 
+type SortKey = "position" | "price" | "title" | "createdAt";
+type SortDir = "asc" | "desc";
+
 interface AccountFind {
   deleted: boolean;
   _id?: string | Record<string, unknown>;
@@ -15,6 +18,15 @@ interface AccountFind {
   };
   $or?: unknown[];
   [key: string]: unknown;
+}
+
+interface AccountQuery {
+  page?: string;
+  status?: Status | "";
+  keyword?: string;
+  sort?: string; // dạng "price-desc"
+  sortKey?: SortKey; // dạng cũ
+  sortValue?: SortDir; // dạng cũ
 }
 
 interface RoleFind {
@@ -61,6 +73,22 @@ export const index = async (req: Request, res: Response): Promise<void> => {
       if (user) {
         account["accountFullName"] = user.fullName;
       }
+    }
+
+    // Lấy thông tin người cập nhật cuối cùng
+    let updatedBy = null;
+    let userUpdated = null;
+    if (account.updatedBy && account.updatedBy.length > 0) {
+      updatedBy = account.updatedBy.slice(-1)[0];
+      if (updatedBy.account_id) {
+        userUpdated = await Account.findOne({
+          _id: updatedBy.account_id,
+        }).lean();
+      }
+    }
+
+    if (userUpdated) {
+      updatedBy["accountFullName"] = userUpdated.fullName;
     }
   }
 
@@ -158,6 +186,33 @@ export const createPost = async (
   }
 };
 
+// [PATCH] /admin/products/change-status/:status/:id
+export const changeStatus = async (
+  req: Request<{ status: string; id: string }, unknown, unknown, AccountQuery>,
+  res: Response
+): Promise<void> => {
+  const status = req.params.status;
+  const id = req.params.id;
+
+  const updatedBy = {
+    account_id: res.locals.authUser._id,
+    updatedAt: new Date(),
+  };
+
+  await Account.updateOne(
+    { _id: id },
+    {
+      status: status,
+      $push: {
+        updatedBy: updatedBy,
+      },
+    }
+  );
+  req.flash("success", "Thay đổi trạng thái tài khoản thành công!");
+
+  res.redirect(req.headers.referer);
+};
+
 // [GET] /admin/accounts/edit/:id
 export const edit = async (
   req: Request<EditParams>,
@@ -235,7 +290,20 @@ export const editPatch: RequestHandler<EditParams, any, EditBody> = async (
         update.avatar = cloudThumb; // <-- cập nhật link Cloudinary nếu có file mới
       }
 
-      await Account.updateOne({ _id: id }, { $set: update });
+      const updatedBy = {
+        account_id: res.locals.authUser._id,
+        updatedAt: new Date(),
+      };
+
+      await Account.updateOne(
+        { _id: id },
+        {
+          $set: update,
+          $push: {
+            updatedBy: updatedBy,
+          },
+        }
+      );
 
       req.flash?.("success", "Cập nhật tài khoản thành công!");
     }

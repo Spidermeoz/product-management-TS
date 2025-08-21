@@ -20,6 +20,8 @@ router.post(
   controller.createPost
 );
 
+router.patch("/change-status/:status/:id", controller.changeStatus);
+
 router.get("/edit/:id", controller.edit);
 
 router.patch<{ id: string }>(
