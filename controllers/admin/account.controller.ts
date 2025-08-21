@@ -9,6 +9,10 @@ interface AccountFind {
   deleted: boolean;
   _id?: string | Record<string, unknown>;
   email?: string;
+  createdBy?: {
+    account_id: string;
+    createdAt?: Date;
+  };
   $or?: unknown[];
   [key: string]: unknown;
 }
@@ -48,6 +52,17 @@ export const index = async (req: Request, res: Response): Promise<void> => {
 
   // Lấy dữ liệu trang hiện tại
   const records = await Account.find(find).lean().select("-password -token");
+
+  for (const account of records) {
+    if (account.createdBy && account.createdBy.account_id) {
+      const user = await Account.findOne({
+        _id: account.createdBy.account_id,
+      }).lean();
+      if (user) {
+        account["accountFullName"] = user.fullName;
+      }
+    }
+  }
 
   for (const record of records) {
     const role = await Role.findOne({
@@ -116,6 +131,10 @@ export const createPost = async (
       res.redirect(referer);
       return;
     }
+
+    req.body.createdBy = {
+      account_id: res.locals.authUser._id || "",
+    };
 
     // Tạo tài khoản mới
     const payload: Record<string, unknown> = {
@@ -243,7 +262,7 @@ export const detail = async (
       return;
     }
 
-    const findData: RoleFind = { deleted: false , _id: data.role_id};
+    const findData: RoleFind = { deleted: false, _id: data.role_id };
     const role = await Role.findOne(findData);
 
     res.render("admin/pages/accounts/detail", {

@@ -3,15 +3,16 @@ extends ../../layouts/default.pug
 //- include ../../mixins/search.pug
 //- include ../../mixins/pagination.pug
 //- include ../../mixins/form-change-multi.pug
-//- include ../../mixins/alert.pug
+include ../../mixins/alert.pug
 //- include ../../mixins/sort.pug
 include ../../mixins/deny-access.pug
+include ../../mixins/moment.pug
 
 block main
     .col-lg-10
         .main-content#mainContent(role="main")
             if(authRole.permissions.includes('accounts_view'))
-                //- +alert-success(5000)
+                +alert-success(5000)
                 section#products-section.content-section
                     //- .card.filter-card.mb-3
                     //-     .card-header.d-flex.justify-content-between.align-items-center
@@ -64,6 +65,7 @@ block main
                                             th Phân quyền
                                             th Email
                                             th Trạng thái
+                                            th Người tạo
                                             th Hành động
                                     tbody#productsTableBody
                                         each account, idx in records
@@ -108,6 +110,15 @@ block main
                                                                 data-status = account.status
                                                                 data-id = account._id
                                                             ) Dừng hoạt động
+                                                td
+                                                    if account.accountFullName
+                                                        p= account.accountFullName
+                                                    if account.createdBy && account.createdBy.createdAt
+                                                        +formatDate(account.createdBy.createdAt)
+                                                    else if account.createdAt
+                                                        +formatDate(account.createdAt)
+                                                    else
+                                                        span.text-muted Chưa có
                                                 td
                                                     if(authRole.permissions.includes('accounts_view'))
                                                         a.btn.btn-secondary.btn-sm.btn-glow(
