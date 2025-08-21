@@ -287,7 +287,13 @@ export const deleteItem = async (
 
   await Account.updateOne(
     { _id: id },
-    { deleted: true, deletedAt: new Date() }
+    {
+      deleted: true,
+      deletedBy: {
+        account_id: res.locals.user.id,
+        deletedAt: new Date(),
+      },
+    }
   );
 
   req.flash("success", "Xóa tài khoản thành công!");
