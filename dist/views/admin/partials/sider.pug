@@ -1,0 +1,52 @@
+//- Sidebar (left)
+.col-lg-2.p-0
+    nav.sidebar#sidebar(aria-label="Thanh điều hướng bên")
+        .p-3
+            ul.nav.nav-pills.flex-column
+                li.nav-item
+                    a.nav-link(
+                        href=`/${prefixAdmin}/dashboard`
+                        class=(activePage==='dashboard' ? 'active' : '')
+                    )
+                        i.fas.fa-tachometer-alt.mr-2
+                        | Tổng quan
+                if(authRole.permissions.includes("products_view"))
+                    li.nav-item
+                        a.nav-link(
+                            href=`/${prefixAdmin}/products`
+                            class=(activePage==='products' ? 'active' : '')
+                        )
+                            i.fas.fa-tags.mr-2
+                            | Sản phẩm
+                if(authRole.permissions.includes("products-category_view"))
+                    li.nav-item
+                        a.nav-link(
+                            href=`/${prefixAdmin}/products-category`
+                            class=(activePage==='products-category' ? 'active' : '')
+                        )
+                            i.fa-solid.fa-layer-group.mr-2
+                            | Danh mục sản phẩm
+                if(authRole.permissions.includes("roles_view"))
+                    li.nav-item
+                        a.nav-link(
+                            href=`/${prefixAdmin}/roles`
+                            class=(activePage==='roles' ? 'active' : '')
+                        )
+                            i.fa-solid.fa-user-secret.mr-2
+                            | Nhóm quyền
+                if(authRole.permissions.includes("roles_permissions"))
+                    li.nav-item
+                        a.nav-link(
+                            href=`/${prefixAdmin}/roles/permissions`
+                            class=(activePage==='rolePermissions' ? 'active' : '')
+                        )
+                            i.fa-solid.fa-fingerprint.mr-2
+                            | Phân quyền
+                if(authRole.permissions.includes("accounts_view"))
+                    li.nav-item
+                        a.nav-link(
+                            href=`/${prefixAdmin}/accounts`
+                            class=(activePage==='accounts' ? 'active' : '')
+                        )
+                            i.fa-solid.fa-elevator.mr-2
+                            | Danh sách tài khoản

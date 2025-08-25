@@ -1,0 +1,71 @@
+extends ../../layouts/auth.pug
+include ../../mixins/alert.pug
+
+block main
+	+alert-error(5000)
+
+	// Auth wrapper (nền & căn giữa)
+	.auth-wrap
+		.container
+			.row.justify-content-center
+				.col-12.col-sm-10.col-md-8.col-lg-6.col-xl-5
+					.card.auth-card
+						.card-body
+							// Brand / tiêu đề
+							.text-center.mb-3
+								//- Nếu có logo: img(src="/admin/images/logo.svg" alt="Logo" height="42" class="mb-2")
+								h4.mb-1 Chào mừng trở lại
+								p.text-muted.small Hãy đăng nhập để tiếp tục
+
+							form#loginForm(action=`/${prefixAdmin}/auth/login` method="POST" novalidate)
+								// Email
+								.form-group
+									label(for="email") Email<span class="text-danger">*</span>
+									.input-with-icon
+										i.fas.fa-envelope.input-icon(aria-hidden="true")
+										input#email.form-control(
+											type="email"
+											name="email"
+											placeholder="you@example.com"
+											autocomplete="username"
+											required
+											aria-required="true"
+										)
+									.invalid-feedback(data-for="email") Vui lòng nhập email hợp lệ.
+
+								// Password
+								.form-group
+									label(for="password") Mật khẩu<span class="text-danger">*</span>
+									.input-with-icon.has-action
+										i.fas.fa-lock.input-icon(aria-hidden="true")
+										input#password.form-control(
+											type="password"
+											name="password"
+											placeholder="••••••••"
+											autocomplete="current-password"
+											required
+											aria-required="true"
+											minlength="4"
+										)
+										button.type-toggle(type="button" aria-label="Hiện/ẩn mật khẩu")
+											i.fas.fa-eye
+									.invalid-feedback(data-for="password") Vui lòng nhập mật khẩu (tối thiểu 4 ký tự).
+
+									.d-flex.justify-content-between.align-items-center.mt-2
+										.custom-control.custom-checkbox
+											input#remember.custom-control-input(type="checkbox" name="remember")
+											label.custom-control-label(for="remember") Ghi nhớ tôi
+										a.small.link-forgot(href=`/${prefixAdmin}/auth/forgot`) Quên mật khẩu?
+
+								// Submit
+								button.btn.btn-primary.btn-block.btn-glow.mt-3(type="submit" aria-label="Đăng nhập")
+									i.fas.fa-sign-in-alt.mr-2
+									| Đăng nhập
+
+							// Footer nhỏ
+							.text-center.mt-3.auth-links
+								span.small Chưa có tài khoản?
+								a.link-register.ml-1(href=`/${prefixAdmin}/auth/register`) Đăng ký ngay
+
+	// Toggle + realtime validation
+	script(src="/admin/js/auth.js") 

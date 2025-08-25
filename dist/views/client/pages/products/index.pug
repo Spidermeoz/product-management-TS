@@ -1,0 +1,55 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+    // khu vực breadcrumb
+    .breadcrumb-section.breadcrumb-bg
+        .container
+            .row
+                .col-lg-8.offset-lg-2.text-center
+                    .breadcrumb-text
+                        p Tươi và Hữu cơ
+                        h1 Cửa Hàng
+
+    // sản phẩm
+    .product-section.mt-150.mb-150
+        .container
+            .row
+                .col-md-12
+                    .product-filters
+                        ul
+                            li.active(data-filter="*") Tất Cả
+                            li(data-filter=".strawberry") Dâu Tây
+                            li(data-filter=".berry") Quả Nho
+                            li(data-filter=".lemon") Chanh
+
+            .row.product-lists
+                each product in products
+                    .col-lg-4.col-md-6.text-center
+                        .single-product-item
+                            .product-image
+                                a(href=`/products/${product.slug}`)
+                                    img(src=product.thumbnail, alt=product.title)
+                            h3 #{product.title}
+                            p.product-price
+                                span Giá mỗi Kg
+                                del.old-price #{product.price}
+                                span.new-price #{product.newPrice}
+                                span.discount -#{product.discountPercentage}%
+                            a.cart-btn(href="/cart")
+                                i.fas.fa-shopping-cart
+                                |  Thêm Vào Giỏ Hàng
+
+            .row
+                .col-lg-12.text-center
+                    .pagination-wrap
+                        ul
+                            li
+                                a(href="#") Trước
+                            li
+                                a.active(href="#") 1
+                            li
+                                a(href="#") 2
+                            li
+                                a(href="#") Tiếp
+

@@ -1,0 +1,74 @@
+extends ../../layouts/default.pug
+include ../../mixins/form-change-multi.pug
+include ../../mixins/alert.pug
+include ../../mixins/table-tree.pug
+include ../../mixins/deny-access.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            if(authRole.permissions.includes('products-category_view'))
+                +alert-success(5000)
+                section#products-section.content-section
+                    .card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-box.mr-2
+                                | #{pageTitle}
+                            .d-flex.align-items-center
+                                if(authRole.permissions.includes('products-category_create'))
+                                    a#addBtn.btn.btn-primary.btn-glow(
+                                        href= `/${prefixAdmin}/products-category/create`
+                                    )
+                                        i.fas.fa-plus.mr-2
+                                        | Thêm danh mục
+
+                    .card
+                        .card-body
+                            .table-responsive
+                                +form-change-multi(
+                                    `/${prefixAdmin}/products-category/change-multi?_method=PATCH`
+                                )
+                                table.tree-table(
+                                    class="table table-hover table-sm"
+                                    checkbox-multi
+                                )
+                                    thead.thead-dark
+                                        tr
+                                            th 
+                                                input(
+                                                    type="checkbox"
+                                                    name="checkall"
+                                                ) 
+                                            th STT
+                                            th Hình ảnh
+                                            th(data-sort="name" role="button" tabindex="0" aria-label="Sắp xếp theo tiêu đề")
+                                                | Tiêu đề
+                                                i.fas.fa-sort.ml-1
+                                            th vị trí
+                                            th Trạng thái
+                                            th Người tạo
+                                            th Người cập nhật
+                                            th Hành động
+                                    tbody#productsTableBody
+                                        +table-tree(records)
+                            //- Pagination
+                            //- +pagination(pagination)
+
+                            form(
+                                action= ""
+                                method="POST"
+                                id = "form-change-status"
+                                data-path = `/${prefixAdmin}/products-category/change-status`
+                            ) 
+
+                            form(
+                                action= ""
+                                method="POST"
+                                id = "form-delete-item"
+                                data-path = `${prefixAdmin}/products-category/delete`
+                            ) 
+
+                    script(src="/admin/js/product.js")
+            else 
+                +deny-access()

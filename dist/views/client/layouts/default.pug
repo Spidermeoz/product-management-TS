@@ -1,0 +1,67 @@
+doctype html 
+html 
+    head 
+        title #{pageTitle}
+
+        // favicon
+        link(rel="shortcut icon", type="image/png", href="/img/favicon.png")
+
+        // google font
+        link(rel="preconnect", href="https://fonts.googleapis.com")
+        link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
+        link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap")
+
+        // fontawesome
+        link(rel="stylesheet", href="/css/all.min.css")
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css", integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==", crossorigin="anonymous", referrerpolicy="no-referrer")
+
+        // bootstrap
+        link(rel="stylesheet", href="/bootstrap/css/bootstrap.min.css")
+
+        // owl carousel
+        link(rel="stylesheet", href="/css/owl.carousel.css")
+
+        // magnific popup
+        link(rel="stylesheet", href="/css/magnific-popup.css")
+
+        // animate css
+        link(rel="stylesheet", href="/css/animate.css")
+
+        // mean menu css
+        link(rel="stylesheet", href="/css/meanmenu.min.css")
+
+        // main style
+        link(rel="stylesheet", href="/css/main.css")
+
+        // responsive
+        link(rel="stylesheet", href="/css/responsive.css")
+    body
+        include ../partials/header.pug
+
+        block main
+
+        include ../partials/footer.pug 
+
+        script(src="/js/jquery-1.11.3.min.js")
+        // bootstrap
+        script(src="/bootstrap/js/bootstrap.min.js")
+        // count down
+        script(src="/js/jquery.countdown.js")
+        //imageLoaded
+        script(src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js") 
+        // isotope
+        script(src="/js/jquery.isotope-3.0.6.min.js")
+        // waypoints
+        script(src="/js/waypoints.js")
+        // owl carousel
+        script(src="/js/owl.carousel.min.js")
+        // magnific popup
+        script(src="/js/jquery.magnific-popup.min.js")
+        // mean menu
+        script(src="/js/jquery.meanmenu.min.js")
+        // sticker js
+        script(src="/js/sticker.js")
+        // main js
+        script(src="/js/main.js")
+
+        script(src="/js/script.js")

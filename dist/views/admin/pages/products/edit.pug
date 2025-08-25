@@ -1,0 +1,204 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
+include ../../mixins/deny-access.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            if(authRole.permissions.includes('products_edit'))
+                +alert-error(5000)
+                +alert-success(5000)
+
+                section#product-edit.content-section
+                    .card.form-card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-edit.mr-2
+                                | Chỉnh sửa sản phẩm
+                            a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/products`)
+                                i.fas.fa-arrow-left.mr-1
+                                | Quay lại danh sách
+
+                        .card-body
+                            form#form-edit-product(
+                                action=`/${prefixAdmin}/products/edit/${product._id}?_method=PATCH`
+                                method="POST"
+                                enctype="multipart/form-data"
+                                novalidate
+                            )
+                                .form-row
+                                    .col-md-8
+                                        // Tiêu đề
+                                        .form-group
+                                            label(for="title") Tiêu đề
+                                            .input-with-icon
+                                                i.fas.fa-heading.input-icon
+                                                input#title.form-control(
+                                                    type="text"
+                                                    name="title"
+                                                    required
+                                                    aria-required="true"
+                                                    placeholder="Nhập tiêu đề sản phẩm"
+                                                    value=product.title
+                                                )
+                                            .invalid-feedback Vui lòng nhập tiêu đề.
+
+                                        .form-group
+                                            label(for="product_category_id") Danh mục sản phẩm
+                                            .input-group.select-parent
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-sitemap
+                                                select#product_category_id.form-control(
+                                                    name="product_category_id"
+                                                    aria-label="Chọn danh mục cha"
+                                                )
+                                                    option(value="") -- Chọn danh mục --
+                                                    if records
+                                                        +select-tree(records, 1, product.product_category_id)
+
+                                        // Mô tả
+                                        .form-group
+                                            label(for="desc") Mô tả
+                                            textarea.textarea-mce#desc.form-control(
+                                                textarea-mce
+                                                name="description"
+                                                rows="6"
+                                                placeholder="Mô tả ngắn gọn về sản phẩm"
+                                            ) !{product.description}
+
+                                .form-row
+                                    .col-md-4
+                                        // Giá (VND)
+                                        .form-group
+                                            label(for="price") Giá
+                                            .input-group
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-dollar-sign
+                                                input#price.form-control(
+                                                    type="number"
+                                                    name="price"
+                                                    min="0"
+                                                    step="1000"
+                                                    value=product.price
+                                                    aria-label="Giá VND"
+                                                )
+                                                .input-group-append
+                                                    span.input-group-text VNĐ
+
+                                    .col-md-4
+                                        // % Giảm giá
+                                        .form-group
+                                            label(for="discount") % Giảm giá
+                                            .input-group
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-percentage
+                                                input#discount.form-control(
+                                                    type="number"
+                                                    name="discountPercentage"
+                                                    min="0"
+                                                    max="100"
+                                                    step="1"
+                                                    value=product.discountPercentage
+                                                    aria-label="Phần trăm giảm giá"
+                                                )
+                                                .input-group-append
+                                                    span.input-group-text %
+
+                                    .col-md-4
+                                        // Số lượng
+                                        .form-group
+                                            label(for="stock") Số lượng
+                                            .input-group
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-boxes
+                                                input#stock.form-control(
+                                                    type="number"
+                                                    name="stock"
+                                                    min="0"
+                                                    step="1"
+                                                    value=product.stock
+                                                    aria-label="Tồn kho"
+                                                )
+
+                                .form-row
+                                    .col-md-8
+                                        // Ảnh mới (upload)
+                                        .form-group
+                                            label(for="thumbnail") Ảnh mới (tuỳ chọn)
+                                            .custom-file
+                                                input#thumbnail.custom-file-input(
+                                                    type="file"
+                                                    name="thumbnail"
+                                                    accept="image/*"
+                                                    aria-describedby="thumbHelp"
+                                                )
+                                                label.custom-file-label(for="thumbnail") Chọn ảnh mới...
+                                            small#thumbHelp.form-text.text-muted
+                                                | Để giữ nguyên ảnh cũ, hãy bỏ trống trường này.
+
+                                    .col-md-4
+                                        // Khung xem trước ảnh hiện tại
+                                        .thumb-preview-wrap
+                                            .thumb-preview.preview-contain.has-image
+                                                if product.thumbnail
+                                                    span.thumb-badge Ảnh hiện tại
+                                                    img#thumbPreview(src=product.thumbnail alt="Xem trước ảnh")
+                                                else
+                                                    img#thumbPreview(src="" alt="Xem trước ảnh" aria-hidden="true")
+
+                                    .col-md-4
+                                        // Vị trí
+                                        .form-group
+                                            label(for="position") Vị trí
+                                            .input-group
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-sort-numeric-down
+                                                input#position.form-control(
+                                                    type="number"
+                                                    name="position"
+                                                    min="1"
+                                                    step="1"
+                                                    placeholder="Tự động tăng"
+                                                    value=product.position
+                                                    aria-label="Vị trí sắp xếp"
+                                                )
+
+                                // Trạng thái
+                                .form-group.mt-2
+                                    label.d-block.mb-2 Trạng thái
+                                    .custom-controls-wrap
+                                        .custom-control.custom-radio.custom-control-inline
+                                            input#statusActive.custom-control-input(
+                                                type="radio"
+                                                name="status"
+                                                value="active"
+                                                checked=(product.status === "active")
+                                            )
+                                            label.custom-control-label(for="statusActive")
+                                                i.fas.fa-check-circle.mr-1.text-success
+                                                | Hoạt động
+                                        .custom-control.custom-radio.custom-control-inline
+                                            input#statusInActive.custom-control-input(
+                                                type="radio"
+                                                name="status"
+                                                value="inactive"
+                                                checked=(product.status === "inactive")
+                                            )
+                                            label.custom-control-label(for="statusInActive")
+                                                i.fas.fa-pause-circle.mr-1.text-muted
+                                                | Dừng hoạt động
+
+                                // Actions
+                                .form-actions.d-flex.justify-content-end.mt-3
+                                    button.btn.btn-primary.btn-glow(type="submit")
+                                        i.fas.fa-save.mr-2
+                                        | Cập nhật
+                    script(src="/admin/js/product.js")
+            else 
+                +deny-access()

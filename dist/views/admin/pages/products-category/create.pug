@@ -1,0 +1,131 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
+include ../../mixins/deny-access.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            if(authRole.permissions.includes('products-category_create'))
+                +alert-error(5000)
+                section#product-create.content-section
+                    .card.form-card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-plus-circle.mr-2
+                                | #{pageTitle}
+                            a.btn.btn-outline-secondary.btn-sm(href=`/${prefixAdmin}/products-category`)
+                                i.fas.fa-arrow-left.mr-1
+                                | Quay lại danh sách
+
+                        .card-body
+                            form#form-create-product(
+                                action=`/${prefixAdmin}/products-category/create` 
+                                method="POST" 
+                                novalidate
+                                enctype="multipart/form-data"
+                            )
+                                .form-row
+                                    .col-md-8
+                                        // Tiêu đề
+                                        .form-group
+                                            label(for="title") Tiêu đề<span class="text-danger">*</span>
+                                            .input-with-icon
+                                                i.fas.fa-heading.input-icon
+                                                input#title.form-control(
+                                                    type="text"
+                                                    name="title"
+                                                    placeholder="Nhập tiêu đề danh mục"
+                                                    required
+                                                    aria-required="true"
+                                                )
+                                            .invalid-feedback Vui lòng nhập tiêu đề.
+
+                                        .form-group
+                                            label(for="parent-id") Danh mục cha
+                                            .input-group.select-parent
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-sitemap
+                                                select#parent-id.form-control(
+                                                    name="parent_id"
+                                                    aria-label="Chọn danh mục cha"
+                                                )
+                                                    option(value="") -- Chọn danh mục cha --
+                                                    if records
+                                                        +select-tree(records)
+
+                                        // Mô tả
+                                        .form-group
+                                            label(for="desc") Mô tả
+                                            textarea.textarea-mce#desc.form-control(
+                                                textarea-mce
+                                                name="description"
+                                                rows="6"
+                                                placeholder="Mô tả ngắn gọn về danh mục"
+                                            )
+
+                                .form-row
+                                    .col-md-8
+                                        // Ảnh (URL)
+                                        .form-group
+                                            label(for="thumbnail") Ảnh danh mục
+                                            .custom-file
+                                                input#thumbnail.custom-file-input(
+                                                    type="file"
+                                                    name="thumbnail"
+                                                    accept="image/*"
+                                                    aria-describedby="thumbHelp"
+                                                )
+                                                label.custom-file-label(for="thumbnail") Chọn ảnh...
+                                            small#thumbHelp.form-text.text-muted
+                                                | Chọn tệp ảnh (JPG, PNG, GIF) để xem trước ở khung bên phải
+                                    
+                                    .col-md-4
+                                        // Thumbnail preview box (hiển thị khi bạn thêm JS set src)
+                                        .thumb-preview-wrap
+                                            .thumb-preview
+                                                img#thumbPreview(src="" alt="Xem trước ảnh" aria-hidden="true")
+
+                                    .col-md-4
+                                        // Vị trí
+                                        .form-group
+                                            label(for="position") Vị trí
+                                            .input-group
+                                                .input-group-prepend
+                                                    span.input-group-text
+                                                        i.fas.fa-sort-numeric-down
+                                                input#position.form-control(
+                                                    type="number"
+                                                    name="position"
+                                                    min="1"
+                                                    step="1"
+                                                    placeholder="Tự động tăng"
+                                                    aria-label="Vị trí sắp xếp"
+                                                )
+
+                                // Trạng thái
+                                .form-group.mt-2
+                                    label.d-block.mb-2 Trạng thái
+                                    .custom-controls-wrap
+                                        .custom-control.custom-radio.custom-control-inline
+                                            input#statusActive.custom-control-input(type="radio" name="status" value="active" checked)
+                                            label.custom-control-label(for="statusActive")
+                                                i.fas.fa-check-circle.mr-1.text-success
+                                                | Hoạt động
+                                        .custom-control.custom-radio.custom-control-inline
+                                            input#statusInActive.custom-control-input(type="radio" name="status" value="inactive")
+                                            label.custom-control-label(for="statusInActive")
+                                                i.fas.fa-pause-circle.mr-1.text-muted
+                                                | Dừng hoạt động
+
+                                // Actions
+                                .form-actions.d-flex.justify-content-end.mt-3
+                                    button.btn.btn-primary.btn-glow(type="submit")
+                                        i.fas.fa-save.mr-2
+                                        | Tạo mới
+
+                    // (tuỳ chọn) script xử lý preview ảnh/validate bạn có thể thêm trong /admin/js/product.js
+                    script(src="/admin/js/product.js")
+            else 
+                +deny-access()

@@ -1,0 +1,95 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/deny-access.pug
+include ../../mixins/moment.pug
+
+block main
+    .col-lg-10
+        .main-content#mainContent(role="main")
+            if(authRole.permissions.includes('roles_view'))
+                +alert-success(5000)
+                section#products-section.content-section
+                    .card
+                        .card-header.d-flex.justify-content-between.align-items-center
+                            h5.mb-0
+                                i.fas.fa-box.mr-2
+                                | #{pageTitle}
+                            .d-flex.align-items-center
+                                if(authRole.permissions.includes('roles_create'))
+                                    a#addBtn.btn.btn-primary.btn-glow(
+                                        href= `/${prefixAdmin}/roles/create`
+                                    )
+                                        i.fas.fa-plus.mr-2
+                                        | Thêm nhóm quyền
+
+                    .card
+                        .card-body
+                            .table-responsive
+                                table#productsTable.table.table-hover(aria-describedby="Danh sách sản phẩm")
+                                table(
+                                    class="table table-hover table-sm"
+                                    checkbox-multi
+                                )
+                                    thead.thead-dark
+                                        tr
+                                            th STT
+                                            th Nhóm quyền
+                                            th Người tạo
+                                            th Hành động
+                                    tbody#productsTableBody
+                                        each item, idx in roles
+                                            tr(data-id=item._id)
+                                                td #{idx + 1}
+                                                td
+                                                    strong= item.title
+                                                td
+                                                    if item.accountFullName
+                                                        p= item.accountFullName
+                                                    if item.createdBy && item.createdBy.createdAt
+                                                        +formatDate(item.createdBy.createdAt)
+                                                    else if item.createdAt
+                                                        +formatDate(item.createdAt)
+                                                    else
+                                                        span.text-muted Chưa có
+                                                td
+                                                    if(authRole.permissions.includes('roles_view'))
+                                                        a.btn.btn-secondary.btn-sm.btn-glow(
+                                                            href=`/${prefixAdmin}/roles/detail/${item._id}`
+                                                            aria-label=`Xem chi tiết sản phẩm ${item.title}`
+                                                        )
+                                                            i.fas.fa-eye.mr-1
+                                                            | Chi tiết
+                                                    if(authRole.permissions.includes('roles_edit'))
+                                                        a.btn.btn-warning.btn-sm.btn-glow(
+                                                        href=`/${prefixAdmin}/roles/edit/${item._id}`
+                                                        aria-label=`Sửa sản phẩm ${item.title}`
+                                                        )
+                                                            i.fas.fa-edit.mr-1
+                                                            | Sửa
+                                                    if(authRole.permissions.includes('roles_delete'))
+                                                        form.d-inline(method="POST", action=`/${prefixAdmin}/roles/delete/${item._id}?_method=DELETE`)
+                                                            button.btn.btn-danger.btn-sm.btn-glow(
+                                                                type="button"
+                                                                button-delete
+                                                                aria-label=`Xóa sản phẩm ${item.title}`
+                                                            )
+                                                                i.fas.fa-trash.mr-1
+                                                                | Xóa
+
+                            form(
+                                action= ""
+                                method="POST"
+                                id = "form-change-status"
+                                data-path = `/${prefixAdmin}/roles/change-status`
+                            ) 
+
+                            form(
+                                action= ""
+                                method="POST"
+                                id = "form-delete-item"
+                                data-path = `${prefixAdmin}/roles/delete`
+                            ) 
+
+                    script(src="/admin/js/product.js")
+            else 
+                +deny-access()

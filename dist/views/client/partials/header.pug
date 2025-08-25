@@ -1,0 +1,81 @@
+// Tải trước
+.loader
+  .loader-inner
+    .circle
+// Kết thúc Tải trước
+
+// tiêu đề
+.top-header-area#sticker
+  .container
+    .row
+      .col-lg-12.col-sm-12.text-center
+        .main-menu-wrap
+          // logo
+          .site-logo
+            a(href="/")
+              img(src="/img/logo.png", alt="")
+          // logo
+
+          // menu bắt đầu
+          nav.main-menu
+            ul
+              li.current-list-item
+                a(href="/") Trang Chủ
+              li
+                a(href="/about") Giới Thiệu
+              li
+                a(href="/new") Tin Tức
+              li
+                a(href="/contact") Liên Hệ
+              li
+                a(href="/products") Cửa Hàng
+                ul.sub-menu
+                  li
+                    a(href="/products") Cửa Hàng
+                  li
+                    a(href="/checkout") Thanh Toán
+                  li
+                    a(href="/cart") Giỏ Hàng
+              li
+                .header-icons
+                  a.shopping-cart(href="/cart")
+                    i.fas.fa-shopping-cart
+                  a.mobile-hide.search-bar-icon(href="#")
+                    i.fas.fa-search
+                  // user
+                  .user-icon
+                    label(for="user-icon-input")
+                      i.fa-solid.fa-user
+                    input#user-icon-input(type="checkbox", style="display: none;")
+                    .dropdown-user-info
+                      .dropdown-user-info-name
+                        | Tên Tài khoản: Xuân Quý
+                      .dropdown-user-info-email
+                        | gmail: spidermeow04@gmail.com
+                      .dropdown-user-info-history
+                        label.dropdown-user-info-history-input-check(for="dropdown-user-info-history-input")
+                          a.history__link(href="/history") Xem lại lịch sử giỏ hàng
+                        input#dropdown-user-info-history-input(type="checkbox")
+                      .dropdown-user-info-logout
+                        i.fa-solid.fa-right-from-bracket
+                        a.user-info__logout(href="/auth/logout") Đăng xuất
+          a.mobile-show.search-bar-icon(href="#")
+            i.fas.fa-search
+          .mobile-menu
+          // kết thúc menu
+// end header
+
+// khu vực tìm kiếm
+.search-area
+  .container
+    .row
+      .col-lg-12
+        span.close-btn
+          i.fas.fa-window-close
+        .search-bar
+          .search-bar-tablecell
+            h3 Tìm kiếm:
+            input(type="text", placeholder="Từ khóa")
+            button(type="submit")
+              a.search_link(href="/search") Tìm Kiếm
+              i.fas.fa-search

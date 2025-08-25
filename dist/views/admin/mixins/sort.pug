@@ -1,0 +1,32 @@
+mixin sort(selected)
+    //- Hộp sắp xếp
+    .sort-box.mt-2
+        label.sr-only(for="sortSelect") Sắp xếp
+        .input-group.input-group-sm.sort-group
+            .input-group-prepend
+                span.input-group-text(title="Sắp xếp")
+                    i.fas.fa-sort
+
+            //- Select sort (preselect theo biến 'selected' bạn truyền vào)
+            select#sortSelect.form-control(
+                name="sort"
+                sort-select
+                aria-label="Chọn kiểu sắp xếp"
+            )
+                option(disabled="disabled", selected="selected") --- Sắp xếp ---
+                option(value="position-desc", selected=selected==='position-desc') Vị trí giảm dần
+                option(value="position-asc",  selected=selected==='position-asc')  Vị trí tăng dần
+                option(value="price-desc",    selected=selected==='price-desc')    Giá giảm dần
+                option(value="price-asc",     selected=selected==='price-asc')     Giá tăng dần
+                option(value="title-asc",     selected=selected==='title-asc')     Tiêu đề A - Z
+                option(value="title-desc",    selected=selected==='title-desc')    Tiêu đề Z - A
+
+            .input-group-append
+                button.btn.btn-outline-danger(
+                    type="button"
+                    sort-clear
+                    aria-label="Xóa sắp xếp"
+                    title="Xóa sắp xếp"
+                )
+                    i.fas.fa-times.mr-1
+                    | Clear

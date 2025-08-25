@@ -1,0 +1,66 @@
+doctype html
+html(lang="vi")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(name="description", content="Admin Dashboard - Quản lý sản phẩm chuyên nghiệp")
+        title #{pageTitle}
+
+        // Bootstrap 4.6 CSS
+        link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+        // Font Awesome 6
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+
+        // Custom CSS
+        link(rel="stylesheet", href="/admin/css/style.css")
+
+    if(authRole.permissions.length > 0)
+        body
+            // Particles background (for header sparkle)
+            #particles.particles(aria-hidden="true")
+
+            // Header
+            include ../partials/header.pug
+
+            .body
+                .container-fluid(style="margin-top:56px")
+                    .row
+                        // Sidebar
+                        include ../partials/sider.pug
+
+                        // Main area
+                        block main
+
+            // Toast notifications container
+            #toastContainer.toast-container(aria-live="polite", aria-atomic="true")
+
+        // jQuery (slim)
+        script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js")
+        // Bootstrap Bundle (Popper included)
+        script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js")
+        // Chart.js (pin version 4.4.1)
+        script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js")
+        // TinyMCE
+        script(src="/tinymce/tinymce.min.js")
+        script(src="/admin/js/tinymce-config.js")
+        // App JS
+        script(src="/admin/js/script.js")
+    else
+        body.no-permission
+            .access-denied
+                .icon-ring
+                    i.fas.fa-lock
+                h1.title Truy cập bị từ chối
+                p.subtitle Có vẻ bạn chưa được cấp quyền để xem trang này.
+                .hints
+                    ul
+                        li Kiểm tra lại quyền trong nhóm vai trò của bạn.
+                        li Đăng nhập bằng tài khoản khác nếu bạn có quyền phù hợp.
+                .actions
+                    a.btn.btn-primary.btn-glow(href=`/${prefixAdmin}/auth/logout`)
+                        i.fas.fa-right-to-bracket.mr-2
+                        | Đăng xuất
+                    //- a.btn.btn-outline-secondary.ml-2(href="javascript:history.back()")
+                    //-     i.fas.fa-arrow-left.mr-2
+                    //-     | Quay lại
+
